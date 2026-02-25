@@ -3,6 +3,7 @@ Next.js uses folder based routing, meaning that the folder you create under your
 If you want to display something for a route, you have to create a `page.jsx` or `page.tsx` file inside your folder, this file will act as the component that will be rendered when you load that route.
 
 ![[assets/Pasted image 20260220111333.png]]
+![something](../../assets/Pasted image 20260220223159.png)
 
 **Layouts:**
 If you wish to create some sort of navigation or UI that is shared between multiple pages, you can use a `layout.tsx` file. Simply create `layout.tsx` under any route where you want to have a navigation. `layout` receives a `children` prop. This child can be either a page or another layout.
