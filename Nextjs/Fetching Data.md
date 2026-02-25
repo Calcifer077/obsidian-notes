@@ -43,7 +43,7 @@ However... there are two things you need to be aware of:
 
 #### What are request waterfalls?
 A "waterfall" refers to a sequence of network requests that depend on the completion of previous requests. In the case of data fetching, each request can only begin once the previous request has returned data.
-![[Pasted image 20260220223159.png]]
+![[assets/Pasted image 20260220223159.png]]
 For example, we need to wait for `fetchRevenue()` to execute before `fetchLatestInvoices()` can start running, and so on.
 
 ```tsx
