@@ -18,3 +18,11 @@ One benefit of using layouts in Next.js is that on navigation, only the page com
 \
 **Root Layout:**
 `layout` file which exists under app (`/`) only not to any subfolder or routes. It is required in every Next.js application. Any UI you add to the root layout will be shared across **all** pages in your application. You can use the root layout to modify your `<html>` and `<body>` tags, and add metadata.
+
+**Route group:**
+If you want to create a new subfolder (say you don't want to implement a few things like `loading.tsx` in the nested routes, they may have their own) without creating a new route, you can use `()`, you can write your folder name here, and it will not create a new route just a subfolder.
+![](../assets/route_group_from_next_doc.avif)
+\
+
+Route groups allow you to organize files into logical groups without affecting the URL path structure. When you create a new folder using parantheses `()`, the name won't be included in the URL path. So `/dashboard/(overview)/page.tsx` becomes `/dashboard`.
+
