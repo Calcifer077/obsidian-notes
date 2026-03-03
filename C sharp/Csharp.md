@@ -5,3 +5,4 @@ Backlinks:
 [Properties](Properties.md)
 [Enum](Enum.md)
 [Delegate](Delegate.md)
+[Generics](Generics.md)
