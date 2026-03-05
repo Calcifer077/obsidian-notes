@@ -43,7 +43,7 @@ However... there are two things you need to be aware of:
 
 #### What are request waterfalls?
 A "waterfall" refers to a sequence of network requests that depend on the completion of previous requests. In the case of data fetching, each request can only begin once the previous request has returned data.
-![](../assets/waterfall_problem_from_next_doc.png)  
+![](../../assets/waterfall_problem_from_next_doc.png)  
 \
 \
 

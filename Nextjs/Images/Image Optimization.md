@@ -77,4 +77,4 @@ export default config
 3. If the image is remote, you have to tell everything about it and even configure in config file.
 
 Backlinks:
-[Images](../Images.md)
+[Images](../Learning%20path/Images.md)

@@ -1,6 +1,6 @@
 #### What is streaming?
 Streaming is a data transfer technique that allows you to break down a route into smaller "chunks" and progressively stream them from the server to the client as they become ready. It means that components will only render when they are ready.
-![](../assets/streaming_visualization_from_next_doc.png)\
+![](../../assets/streaming_visualization_from_next_doc.png)\
 \
 By streaming, you can prevent slow data requests from blocking your whole page. This allows the user to see and interact with parts of the page without waiting for all the data to load before any UI can be shown to the user.
 
