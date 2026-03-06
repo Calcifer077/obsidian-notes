@@ -1,11 +1,3 @@
 Backlinks:
-[Link - Navigating Between Pages](Learning%20path/Link%20-%20Navigating%20Between%20Pages.md)
-[Image Optimization](Images/Image%20Optimization.md)
-[Image Optimization](Images/Image%20Optimization.md)
-[Working with URLs](Working%20with%20URLs.md)
-[Streaming](Streaming.md)
-[Layout.tsx - Creating Layout and Pages](Learning%20path/Layout.tsx%20-%20Creating%20Layout%20and%20Pages.md)
-[Static and Dynamic Rendering](Static%20and%20Dynamic%20Rendering.md)
-[Fetching Data](Learning%20path/Fetching%20Data.md)
-[Images](Learning%20path/Images.md)
-[Fonts](Learning%20path/Fonts.md)
+[Learning path from Docs](Learning%20path%20from%20Docs/Learning%20path%20from%20Docs.md)
+[Images](Learning%20path%20from%20Docs/Images.md)
