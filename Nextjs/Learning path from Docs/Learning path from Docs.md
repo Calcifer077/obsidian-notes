@@ -8,3 +8,4 @@ Links:
 [Streaming](Streaming.md)
 [Working with URLs](Working%20with%20URLs.md)
 [Mutating Data](Mutating%20Data/Mutating%20Data.md)
+[Error handling](Error%20handling.md)
