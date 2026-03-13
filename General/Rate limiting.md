@@ -192,6 +192,7 @@ In this approach, traffic is divided into two types: critical API methods and no
 
 ##### 4. Worker utilization load shedder
 Most API services use a set of workers to independently respond to incoming requests in a parallel fashion. Meaning that services like stripe have a number of workers that handle incoming requests in parallel one by one. If your workers start getting overwhelmed it will shed lower-priority traffic. This works by tracking the number of workers with available capacity at all times. If workers start getting overwhelmed it will start shedding of traffic starting from lowest priority tasks and going up (shedding ramps up if overwhelming continues). Once the workers are back to normal it will re-enable the traffic slowly to full capacity.
+
 ![](../assets/worker_utilization_load_shedder_from_stripe_blog.webp)
 /
 
