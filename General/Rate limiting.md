@@ -1,11 +1,17 @@
 Rate limiting is a strategy for limiting network traffic. It puts a cap on how often someone can repeat an action within a certain timeframe – for instance, trying to log in to an account. It can reduce strain on web servers.
 
-### What kinds of attacks are stopped by rate limiting?
+### What kinds of problems are mitigated by rate limiting?
 Rate limiting is often employed to stop malicious actors from negatively impacting a website or application. It can help mitigate:
 * Brute force attacks
 * DoS and DDoS attacks
 * Web scraping
 * API overuse
+* A user is sending you a lot of lower-priority requests, and you wan to make sure that it doesn't affect your high priority traffic.
+* Something in your system has gone wrong internally, and as a result you can't serve all of your regular traffic and need to drop low-priority requests.
+
+Rate limiters are amazing for day-to-day operations, but during incidents (for example, if a service is operating more slowly than usual), we sometimes need to drop low-priority requests to make sure that more critical requests get through. This is called _load shedding_. It happens infrequently, but it is an important part of keeping your application available.
+
+A _load shedder_ makes its decisions based on the whole state of the system rather than the user who is making the request. Load shedders help you deal with emergencies, since they keep the core part of your business working while the rest is on fire.
 
 ### How does rate limiting works?
 Rate limiting runs within an application, rather than running on the web server itself. Typically, rate limiting is based on tracking the IP addresses that requests are coming from, and tracking how much time elapses between each request.
@@ -23,6 +29,13 @@ Rate limiting on a login page can be applied according to the IP address of the 
 - If it's only done by username, any attacker that has a list of known usernames can try a variety of commonly used passwords with those usernames and is likely to successfully break into at least a few accounts, all from the same IP address.
 
 Because rate limiting is necessary to prevent these brute force attacks, users who can't remember their passwords may be rate limited along with malicious bots. Users will likely see a "too many login attempts" message of some sort and be prompted to try again within a specified timeframe, or be advised that they are locked out of their accounts altogether.
+
+#### Components of a Rate limiter
+The Rate limiter has the following components
+- **Configuration Store** - to keep all the rate limit configurations
+- **Request Store** - to keep all the requests made against one configuration key
+- **Decision Engine** - it uses data from the Configuration Store and Request Store and makes the decision
+Have talked more about them in sliding window algorithm
 
 ### Most common rate limiting algorithms:
 #### 1. Fixed Window 
@@ -60,13 +73,6 @@ Every time we get a request, we make a decision to either serve it or not; hence
 Below details about sliding window rate limiter is from [Arpit Bhayani - sliding window](https://arpitbhayani.me/blogs/sliding-window-ratelimiter/). According to this blog, a user or system that makes a request is abstracted away to a `key`.
 ##### Design
 Designing a rate limiter has to be super-efficient because the rate limiter decision engine will be invoked on every single request and if the engine takes a long time to decide this, it will add some overhead in the overall response time of the request. A better design will not only help us keep the response time to a bare minimum, but it also ensures that the system is extensible with respect to future requirement changes.
-
-##### Components of a Rate limiter
-The Rate limiter has the following components
-
-- Configuration Store - to keep all the rate limit configurations
-- Request Store - to keep all the requests made against one configuration key
-- Decision Engine - it uses data from the Configuration Store and Request Store and makes the decision
 ##### Configuration Store
 The primary role of the Configuration Store would be to
 - efficiently store configuration for a key
@@ -163,18 +169,45 @@ In this approach, we have a imaginary bucket which is getting filled at a consta
 * Stripe [uses a token bucket](https://stripe.com/blog/rate-limiters) in which each user gets a bucket with `limit = 500`, `refillInterval = 0.01s`, allowing for sustained activity of 100 requests per second, but bursts of up to 500 requests. ([Implementation details](https://gist.github.com/ptarjan/e38f45f2dfe601419ca3af937fff574d).)
 * OpenAI’s free tier for GPT-3.5 is limited to 200 [requests per day](https://platform.openai.com/docs/guides/rate-limits) using a token bucket with `limit = 200` and `refillInterval = 86400s / 200`, replenishing the bucket such that at the end of a day (86,400 seconds) an empty bucket will be 100% filled. They refill the bucket one token at a time.
 
-## Other considerations
+Below details are from [Stripe](https://stripe.com/blog/rate-limiters) and [Smudge](https://smudge.ai/blog/ratelimit-algorithms)
+#### Using different kinds of rate limiters
+##### 1. Request rate limiter
+This rate limiter restricts each user to _N_ requests per second. Request rate limiters are the first tool most APIs can use to effectively manage a high volume of traffic.
 
-If you decide to add rate limiting to your application or endpoint, in addition to selecting an appropriate algorithm there are a few other things you should keep in mind.
+##### 2. Concurrent requests limiter
+Instead of “You can use our API 1000 times a second”, this rate limiter says “You can only have 20 API requests in progress at the same time”. Some endpoints are much more resource-intensive than others, and users often get frustrated waiting for the endpoint to return and then retry. These retries add more demand to the already overloaded resource, slowing things down even more. The concurrent rate limiter helps address this nicely.
 
-- **Create a persisted store for the rate limiter.** If you ever intend to horizontally scale your server (or even just restart it, or use serverless) your rate limiter data store can’t be in-memory. A popular option is to save rate limiting data to a key-value store like Redis, which has built-in functions for expiring keys, on a separate machine from your application. You can, however, use an ephemeral in-memory cache to block requests without hitting Redis while the limiter is hot.
+When this limiter reaches its maximum capacity/limit it will ask the user to `Fork off X jobs and have them process the queue` meaning that the developer should create a fixed number of parallel processors which execute the requests instead of constantly bumping into rate limiters and retrying.
+
+![](../assets/concurrent_rate_limiter_from_stripe_blog.webp)
+/
+
+##### 3. Fleet usage load shedder
+Using this type of load shedder ensures that a certain percentage of your fleet will always be available for your most important API requests.
+
+In this approach, traffic is divided into two types: critical API methods and non-critical methods. We can have a Redis cluster that counts how many requests we currently have of each type. In this way we can reserve a fraction of our infrastructure for critical requests. If say the reservation number of 20%, then any non-critical request over their 80% allocation would be rejected with status code 503.
+
+![](../assets/fleet_usage_load_shedder_from_strip_rate_limiting.webp)
+/
+
+##### 4. Worker utilization load shedder
+Most API services use a set of workers to independently respond to incoming requests in a parallel fashion. Meaning that services like stripe have a number of workers that handle incoming requests in parallel one by one. If your workers start getting overwhelmed it will shed lower-priority traffic. This works by tracking the number of workers with available capacity at all times. If workers start getting overwhelmed it will start shedding of traffic starting from lowest priority tasks and going up (shedding ramps up if overwhelming continues). Once the workers are back to normal it will re-enable the traffic slowly to full capacity.
+![](../assets/worker_utilization_load_shedder_from_stripe_blog.webp)
+/
+
+#### Important things to consider when implementing rate limiters:
+- **Hook the rate limiters into your middleware stack safely.** Make sure that if there were bugs in the rate limiting code (or if Redis were to go down), requests wouldn’t be affected. This means catching exceptions at all levels so that any coding or operational errors would fail open and the API would still stay functional.
+- **Show clear exceptions to your users.** Figure out what kinds of exceptions to show your users. In practice, you should decide if you want [HTTP 429](https://tools.ietf.org/html/rfc6585#section-4) (Too Many Requests) or [HTTP 503](https://tools.ietf.org/html/rfc7231#section-6.6.4) (Service Unavailable) and what is the most accurate depending on the situation. The message you return should also be actionable.
+- **Build in safeguards so that you can turn off the limiters.** Make sure you have kill switches to disable the rate limiters should they kick in erroneously. Having feature flags in place can really help should you need a human escape valve. Set up alerts and metrics to understand how often they are triggering.
+- **Dark launch each rate limiter to watch the traffic they would block.** Evaluate if it is the correct decision to block that traffic and tune accordingly. You want to find the right thresholds that would keep your API up without affecting any of your users’ existing request patterns. This might involve working with some of them to change their code so that the new rate limit would work for them.
+-  **Create a persisted store for the rate limiter.** If you ever intend to horizontally scale your server (or even just restart it, or use serverless) your rate limiter data store can’t be in-memory. A popular option is to save rate limiting data to a key-value store like Redis, which has built-in functions for expiring keys, on a separate machine from your application. You can, however, use an ephemeral in-memory cache to block requests without hitting Redis while the limiter is hot.
 - **Fail open.** If your server’s connection to the persisted store fails, make sure to allow all requests rather than blocking access to your service altogether.
 - **Optionally throttle bursts.** Throttling can be used in combination with rate limiting to reduce the impact of burst traffic.
 - **Choose sensible keys.** In general, rate limiting is done on a per-user level. For most apps, this means keying on the user ID. For APIs, key on an API key. To rate limit unauthenticated users, the options aren’t great, but popular methods include using the request’s IP address, a device fingerprint, a unique installation ID, or just a shared limiter.
-- **Surface useful rate limiting errors.** Let users know how long they have to wait for their next request. For APIs, use the 429 HTTP status code when a request is blocked and include the relevant `x-ratelimit-*` response headers. [GitHub](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api?apiVersion=2022-11-28#checking-the-status-of-your-rate-limit) has good examples of the headers for their fixed-window limiter and [OpenAI](https://platform.openai.com/docs/guides/rate-limits/rate-limits-in-headers) has some for their token-bucket limiter.
 
 Sources:
 [Cloudflare - what is rate limiting](https://www.cloudflare.com/en-gb/learning/bots/what-is-rate-limiting/)
 [Smudge - rate limiting with types](https://smudge.ai/blog/ratelimit-algorithms)
 [Arpit Bhayani - sliding window](https://arpitbhayani.me/blogs/sliding-window-ratelimiter/)
+[Stripe - different kinds](https://stripe.com/blog/rate-limiters)
 [Github repo (implementation by me)](https://github.com/Calcifer077/Rate-limiting-implementation)
