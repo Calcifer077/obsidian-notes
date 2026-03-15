@@ -66,7 +66,7 @@ Above thing in technical terms:
 Every time we get a request, we make a decision to either serve it or not; hence we check the `number_of_requests` made in last `time_window_sec` seconds. So this process of checking for a fixed window of `time_window_sec` seconds on every request, makes this approach a sliding window where the fixed window of size `time_window_sec` seconds is moving forward with each request.
 
 
-![](../assets/sliding_window_rate_limiting_from_arpint_bhayani.png)
+![](../../assets/sliding_window_rate_limiting_from_arpint_bhayani.png)
 /
 /
 
@@ -102,7 +102,7 @@ Above configuration defines that the user with id `241531` would be allowed to m
 
 ##### Request Store
 Request store is a nested dictionary where the outer dictionary maps the configuration key `key` to an inner dictionary. The inner dictionary maps each epoch second to the number of requests made in that second.
-![](../assets/Request_Store_rate_limiting_arpit_bhayani.png)
+![](../../assets/Request_Store_rate_limiting_arpit_bhayani.png)
 /
 ##### Implementation
 Implementation is pretty simple. First you get the `key`(the one associated to the user) from configuration store. We can use a cache to speed up this process.
@@ -179,7 +179,7 @@ Instead of “You can use our API 1000 times a second”, this rate limiter says
 
 When this limiter reaches its maximum capacity/limit it will ask the user to `Fork off X jobs and have them process the queue` meaning that the developer should create a fixed number of parallel processors which execute the requests instead of constantly bumping into rate limiters and retrying.
 
-![](../assets/concurrent_rate_limiter_from_stripe_blog.webp)
+![](../../assets/concurrent_rate_limiter_from_stripe_blog.webp)
 /
 
 ##### 3. Fleet usage load shedder
@@ -187,13 +187,13 @@ Using this type of load shedder ensures that a certain percentage of your fleet 
 
 In this approach, traffic is divided into two types: critical API methods and non-critical methods. We can have a Redis cluster that counts how many requests we currently have of each type. In this way we can reserve a fraction of our infrastructure for critical requests. If say the reservation number of 20%, then any non-critical request over their 80% allocation would be rejected with status code 503.
 
-![](../assets/fleet_usage_load_shedder_from_strip_rate_limiting.webp)
+![](../../assets/fleet_usage_load_shedder_from_strip_rate_limiting.webp)
 /
 
 ##### 4. Worker utilization load shedder
 Most API services use a set of workers to independently respond to incoming requests in a parallel fashion. Meaning that services like stripe have a number of workers that handle incoming requests in parallel one by one. If your workers start getting overwhelmed it will shed lower-priority traffic. This works by tracking the number of workers with available capacity at all times. If workers start getting overwhelmed it will start shedding of traffic starting from lowest priority tasks and going up (shedding ramps up if overwhelming continues). Once the workers are back to normal it will re-enable the traffic slowly to full capacity.
 
-![](../assets/worker_utilization_load_shedder_from_stripe_blog.webp)
+![](../../assets/worker_utilization_load_shedder_from_stripe_blog.webp)
 /
 
 #### Important things to consider when implementing rate limiters:
