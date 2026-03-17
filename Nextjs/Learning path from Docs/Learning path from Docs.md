@@ -9,3 +9,6 @@ Links:
 [Working with URLs](Working%20with%20URLs.md)
 [Mutating Data](Mutating%20Data/Mutating%20Data.md)
 [Error handling](Error%20handling.md)
+[Using ZOD for validation](Using%20ZOD%20for%20validation.md)
+[Adding Authentication](Adding%20Authentication.md)
+[Adding metadata](Adding%20metadata.md)
