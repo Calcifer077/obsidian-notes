@@ -75,6 +75,3 @@ export default config
 1. Use `<Image/>` for optimization of your images.
 2. If image is local, comes from public folder, than Next.js refers much of the thing on its own.
 3. If the image is remote, you have to tell everything about it and even configure in config file.
-
-Backlinks:
-[Images](../Learning%20path%20from%20Docs/Images.md)
