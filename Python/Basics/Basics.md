@@ -18,3 +18,5 @@ Links:
 [Dictionary](Dictionary.md)
 [Sets](Sets.md)
 [Enums and Constants](Enums%20and%20Constants.md)
+[Objects and Classes](Objects%20and%20Classes.md)
+[Modules](Modules.md)
