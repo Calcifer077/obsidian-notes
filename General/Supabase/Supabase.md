@@ -1,1 +1,1 @@
-[How reset and forgot password works with supabase](How%20reset%20and%20forgot%20password%20works%20with%20supabase.md)
+- [How reset and forgot password works with supabase](How%20reset%20and%20forgot%20password%20works%20with%20supabase.md)

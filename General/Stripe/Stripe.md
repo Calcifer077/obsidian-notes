@@ -1,1 +1,1 @@
-[Stripe Checkouts, How to accept basic payments](Stripe%20Checkouts,%20How%20to%20accept%20basic%20payments.md)
+- [Stripe Checkouts, How to accept basic payments](Stripe%20Checkouts,%20How%20to%20accept%20basic%20payments.md)

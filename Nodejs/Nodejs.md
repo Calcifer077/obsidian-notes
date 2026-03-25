@@ -1,3 +1,3 @@
 Backlinks
-[Reading Inputs](Reading%20Inputs.md)
+- [Reading Inputs](Reading%20Inputs.md)
 

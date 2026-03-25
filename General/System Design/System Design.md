@@ -1,1 +1,1 @@
-[Rate limiting](Rate%20limiting.md)
+- [Rate limiting](Rate%20limiting.md)

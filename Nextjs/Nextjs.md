@@ -1,3 +1,3 @@
 Backlinks:
-[Learning path from Docs](Learning%20path%20from%20Docs/Learning%20path%20from%20Docs.md)
-[Images](Images/Images.md)
+- [Learning path from Docs](Learning%20path%20from%20Docs/Learning%20path%20from%20Docs.md)
+- [Images](Images/Images.md)

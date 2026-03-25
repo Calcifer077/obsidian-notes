@@ -1,1 +1,1 @@
-[Image Optimization](Image%20Optimization.md)
+- [Image Optimization](Image%20Optimization.md)
