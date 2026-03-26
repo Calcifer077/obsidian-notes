@@ -25,3 +25,7 @@ Links:
 - [Accepting arguments from command line](Accepting%20arguments%20from%20command%20line.md)
 - [Lambda functions](Lambda%20functions.md)
 - [Nested functions and Closures](Nested%20functions%20and%20Closures.md)
+- [Decorators](Decorators.md)
+- [Docstrings](Docstrings.md)
+- [Exceptions](Exceptions.md)
+- [Operator Overloading](Operator%20Overloading.md)

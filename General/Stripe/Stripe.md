@@ -1,1 +1,2 @@
 - [Stripe Checkouts, How to accept basic payments](Stripe%20Checkouts,%20How%20to%20accept%20basic%20payments.md)
+- [How to refund in Stripe](How%20to%20refund%20in%20Stripe.md)
