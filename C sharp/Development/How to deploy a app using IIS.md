@@ -5,7 +5,7 @@ What is IIS? Internet Information Service is a flexible, secure, and manageable 
 It is by default present in windows. You just have to enable it. 
 How to enable: Press `window` + `R` and type `optionalfeatures`. You will be shown a new window, just tick IIS in it. Restart your PC after this.
 
-You can verify installation by going to `http://localhost`. Would see a page kinda similar to windows 8 start menu.
+You can verify installation by going to `http://localhost`. Would see a page kind of similar to windows 8 start menu.
 
 #### 2. Install ASP.Net Core Hosting Bundle
 This is used by IIS to run .NET apps. You can download it from Microsoft website.
@@ -35,7 +35,7 @@ IIS_IUSRS
 Give all the permission to above user.
 
 #### 5. Create website in IIS
-Open `IIS Manager`  (can search for it in start). On the right hand side you would see `View Application Pools`, you can add a pool here for your application. On the left hand and also right hand you will see `sites`. Go there and add a new site.
+Open `IIS Manager`  (can search for it in start). On the right hand side you would see `View Application Pools`, you can add a pool here for your application. One `Application Pool` can only run one website. On the left hand and also right hand you will see `sites`. Go there and add a new site.
 
 While adding website, make sure to give the path of `inetpub\wwwroot` and the pool that you created just now. `5000` can be used as a port for your application. Now you can start your application from here and Browse (on right hand side) it.
 
