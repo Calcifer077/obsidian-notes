@@ -1,0 +1,17 @@
+- [ ] Postgres DB
+- [ ] Next.js
+- [ ] Mongo Certifications
+- [ ] Cassandra
+- [ ] Timescale DB
+- [ ] Graphql
+- [ ] AWS
+- [ ] Firebase
+- [ ] Animation from mannu pajji
+- [ ] AI-ML
+- [ ] Three js
+- [ ] Redis
+- [ ] Framer Motion
+- [ ] Redux
+- [ ] GSAP
+- [ ] Nestjs
+- [ ] Docker
