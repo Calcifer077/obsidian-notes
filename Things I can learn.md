@@ -15,3 +15,6 @@
 - [ ] GSAP
 - [ ] Nestjs
 - [ ] Docker
+- [ ] Zustand
+- [ ] Shadcn
+- [ ] 
