@@ -83,7 +83,7 @@ If anything is wrong → `validatedFields.success` = false
 We returns errors which we can render on the client, else the request will go through to the database.
 
 #### Frontend / Client side
-This will use [useActionState](../../React/useActionState.md) from react.
+This will use [useActionState](../../React/Hooks/useActionState.md) from react.
 Earlier you could have just called the server action directly (with binding) but with the help of `useActionState` you have to change a few things.
 ```tsx
 import { useActionState } from "react";
