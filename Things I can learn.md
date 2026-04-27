@@ -6,7 +6,6 @@
 - [ ] Graphql
 - [ ] AWS
 - [ ] Firebase
-- [ ] Animation from mannu pajji
 - [ ] AI-ML
 - [ ] Three js
 - [ ] Redis
@@ -17,4 +16,3 @@
 - [ ] Docker
 - [ ] Zustand
 - [ ] Shadcn
-- [ ] 
