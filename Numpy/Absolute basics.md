@@ -10,12 +10,13 @@ import numpy as np
 
 ## What is an “array"
 An array is a structure for storing and retrieving data. We might visualize a "one-dimensional" array like a list:
-![](../assets/numpy_one_dimensional_array.png)
 /
+![](../assets/numpy_one_dimensional_array.png)
 
 A two-dimensional array would be like a table:
-![](../assets/numpy_two_dimensional_array.png)
 /
+![](../assets/numpy_two_dimensional_array.png)
+
 
 A three-dimensional array would be like a set of tables, perhaps stacked as though they were printed on separate pages. In `NumPy`, this idea is generalized to an arbitrary number of dimensions, and so the fundamental array is called `ndarray`: it represents an "N-dimensional array".
 
