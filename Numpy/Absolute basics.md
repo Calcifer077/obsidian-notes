@@ -197,3 +197,182 @@ In order to remove elements from an array, it's simple to use indexing to select
 ## Can you reshape an array?
 Yes!
 Using `arr.reshape()` will give a new shape to an array without changing the data. Just remember that when you use the reshape method, the array you want to produce needs to have the same number of elements as the original array. If you start with an array with 12 elements, you'll need to make sure that your new array also has a total of 12 elements.
+
+If you start with this array:
+```python
+>>> a = np.arange(6)
+>>> print(a)
+[0 1 2 3 4 5]
+```
+
+You can use `reshape()` to reshape your array. For example, you can reshape this array to an array with three rows and two columns:
+```python
+>>> b = a.reshape(3, 2)
+>>> print(b)
+[[0 1]
+ [2 3]
+ [4 5]]
+```
+
+With `np.reshape`, you can specify a few optional parameters:
+```python
+>>> np.reshape(a, shape=(1, 6), order='C')
+array([[0, 1, 2, 3, 4, 5]])
+```
+`a` is the array to be reshaped.
+
+`shape` is the new shape you want. You can specify an integer or a tuple of integers. If you specify an integer, the result will be an array of that length. The shape should be compatible with the original shape.
+
+`order:` `C` means to read/write the elements using C-like index order, `F` means to read/write the elements using Fortran-like index order, `A` means to read/write the elements in Fortran-like index order if a is Fortran contiguous in memory, C-like order otherwise. (This is an optional parameter and doesn’t need to be specified.)
+
+Essentially, C and Fortran orders have to do with how indices correspond to the order the array is stored in memory. In Fortran, when moving through the elements of a two-dimensional array as it is stored in memory, the **first** index is the most rapidly varying index. As the first index moves to the next row as it changes, the matrix is stored one column at a time. This is why Fortran is thought of as a **Column-major language**. In C on the other hand, the **last** index changes the most rapidly. The matrix is stored by rows, making it a **Row-major language**. What you do for C or Fortran depends on whether it’s more important to preserve the indexing convention or not reorder the data.
+
+## How to convert a 1D array into a 2D array (how to add a new axis to an array)
+
+[Better explanation of `np.newaxis`](https://medium.com/@heyamit10/understanding-numpy-newaxis-6b4e4a4ad5ac)
+You can use `np.newaxis` and `np.expand_dims` to increase the dimensions of your existing array.
+
+Using `np.newaxis` will increase the dimensions of your array by one dimension when used once. This means that a **1D** array will become a **2D** array, a **2D** array will become a **3D** array, and so on.
+
+For example, if you start with this array:
+```python
+>>> a = np.array([1, 2, 3, 4, 5, 6])
+>>> a.shape
+(6, )
+```
+
+You can use `np.newaxis` to add a new axis:
+```python
+>>> a2 = a[np.newaxis, :]
+>>> a2.shape
+(1, 6)
+```
+You can explicitly convert a 1D array to either a row vector or a column vector using `np.newaxis`. For example, you can convert a 1D array to a row vector by inserting an axis along the first dimension:
+```python
+>>> row_vector = a[np.newaxis, :]
+>>> row_vector.shape
+(1, 6)
+```
+Or, for a column vector, you can insert an axis along the second dimension:
+```python
+>>> col_vector = a[:, np.newaxis]
+>>> col_vector.shape
+(6, 1)
+```
+
+You can also expand an array by inserting a new axis at a specified position with `np.expand_dims`.
+For example, if you start with this array:
+```python
+>>> a = np.array([1, 2, 3, 4, 5, 6])
+>>> a.shape
+(6, )
+```
+
+You can use `np.expand_dims` to add an axis at index position 1 with:
+```python
+>>> b = np.expand_dims(a, axis=1)
+>>> b.shape
+(1, 6)
+```
+
+`np.newaxis` adds a dimension to a 1D array converting it to a 2D array. `np.expand_dims` does the same thing.
+
+## Indexing and slicing
+You can index and slice Numpy arrays in the same ways you can slice Python lists.
+```python
+>>> data = np.array([1, 2, 3])
+
+>>> data[1]
+2
+>>> data[0:2]
+array([1, 2])
+>>> data[1:]
+array([2, 3])
+>>> data[-2:]
+array([2, 3])
+```
+Visualization:
+![](../assets/Visualization_of_indexing_numpy.png)
+/
+
+If you want to select values from your array that fulfil certain conditions, it's straightforward with NumPy.
+
+For example, if you start with this array:
+```python
+>>> a = np.array([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]])
+```
+You can easily print all the values in the array that are less than 5.
+```python
+>>> print(a[a < 5])
+[1 2 3 4]
+```
+You can also select, for example, numbers that are equal to or greater than 5, and use that condition to index an array.
+```python
+>>> five_up = (a >= 5)
+>>> print(a[five_up])
+[ 5  6  7  8  9 10 11 12]
+```
+
+You can select elements that are divisible by 2:
+```python
+>>> divisible_by_2 = a[a%2==0]
+>>> print(divisible_by_2)
+[ 2  4  6  8 10 12]
+```
+
+Or you can select elements that satisfy two conditions using the `&` and `|` operators:
+```python
+>>> c = a[(a > 2) & (a < 11)]
+>>> print(c)
+[ 3  4  5  6  7  8  9 10]
+```
+
+You can also make use of the logical operators **&** and **|** in order to return boolean values that specify whether or not the values in an array fulfill a certain condition. This can be useful with arrays that contain names or other categorical values.
+```python
+>>> five_up = (a > 5) | (a == 5)
+>>> print(five_up)
+[[False False False False]
+ [ True  True  True  True]
+ [ True  True  True True]]
+```
+If you were to do `a[five_up]` it will print the array elements else booleans.
+
+You can also use `np.nonzero()` to select elements or indices from an array.
+
+Starting with this array:
+```python
+>>> a = np.array([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]])
+```
+
+You can use `np.nonzero()` to print the indices of elements that are, for example, less than 5:
+```python
+>>> b = np.nonzero(a < 5)
+>>> print(b)
+(array([0, 0, 0, 0]), array([0, 1, 2, 3]))
+```
+In this example, a tuple of arrays was returned: one for each dimension. The first array represents the row indices where these values are found, and the second array represents the column indices where the values are found.
+
+If you want to generate a list of coordinates where the elements exist, you can zip the arrays, iterate over the list of coordinates, and print them. For example:
+```python
+>>> list_of_coordinates= list(zip(b[0], b[1]))
+
+>>> for coord in list_of_coordinates:
+	    print(coord)
+(np.int64(0), np.int64(0))
+(np.int64(0), np.int64(1))
+(np.int64(0), np.int64(2))
+(np.int64(0), np.int64(3))
+```
+Above output basically means `[(0, 0), (0, 1), (0, 2), (0, 3)]`
+
+You can also use `np.nonzero()` to print the elements in an array that are less than 5 with:
+```python
+>>> print(a[b])
+[1 2 3 4]
+```
+If the element you're looking for doesn't exist in the array, then the returned array of indices will be empty. For example:
+```python
+>>> not_there = np.nonzero(a == 42)
+>>> print(not_there)
+(array([], dtype=int64), array([], dtype=int64))
+```
