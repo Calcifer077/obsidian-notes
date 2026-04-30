@@ -376,3 +376,169 @@ If the element you're looking for doesn't exist in the array, then the returned 
 >>> print(not_there)
 (array([], dtype=int64), array([], dtype=int64))
 ```
+
+## How to create an array from existing data
+
+You can easily create a new array from a section of an existing array.
+
+Let’s say you have this array:
+```python
+>>> a = np.array([1,  2,  3,  4,  5,  6,  7,  8,  9, 10])
+```
+
+You can create a new array from a section of your array any time by specifying where you want to slice your array.
+```python
+>>> arr1 = a[3:8]
+>>> arr1
+array([4, 5, 6, 7, 8])
+```
+Grabbed a section of your array from position 3 to 8 not including position 8.
+
+You can also stack two existing arrays, both vertically and horizontally.
+```python
+>>> a1 = np.array([[1, 1],
+	               [2, 2]])
+
+>>> a2 = np.array([[3, 3],
+	               [4, 4]])
+```
+
+You can stack them vertically with `vstack`:
+```python
+>>> np.vstack((a1, a2))
+array([[1, 1],
+       [2, 2],
+       [3, 3],
+       [4, 4]])
+```
+Or stack them horizontally with `hstack`:
+```python
+>>> np.hstack((a1, a2))
+array([[1, 1, 3, 3],
+       [2, 2, 4, 4]])
+```
+You can split an array into several smaller arrays using `hsplit`. You can specify either the number of equally shaped arrays to return or the columns after which the division should occur. It splits around columns.
+
+Let's say you have this array:
+```python
+>>> x = np.arange(1, 25).reshape(2, 12)
+>>> x
+array([[ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12],
+       [13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]])
+```
+If you wanted to split this array into three equally shaped arrays, you would run:
+```python
+>>> np.hsplit(x, 3)
+  [array([[ 1,  2,  3,  4],
+         [13, 14, 15, 16]]), array([[ 5,  6,  7,  8],
+         [17, 18, 19, 20]]), array([[ 9, 10, 11, 12],
+         [21, 22, 23, 24]])]
+```
+
+If you wanted to split your array after the third and fourth column, you'd run:
+```python
+>>> np.hsplit(x, (3, 4))
+  [array([[ 1,  2,  3],
+         [13, 14, 15]]), array([[ 4],
+         [16]]), array([[ 5,  6,  7,  8,  9, 10, 11, 12],
+         [17, 18, 19, 20, 21, 22, 23, 24]])]
+```
+
+You can use the `view` method to create a new array object that looks at the same data as the original array (a shallow copy).
+
+Numpy functions, as well as operations like indexing and slicing, will return views whenever possible. This saves memory and is faster (no copy of the data has to be made). However it's important to be aware of this - modifying data in a view also modifies the original array!
+
+Let’s say you create this array:
+```python
+>>> a = np.array([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]])
+```
+
+Now we create an array `b1` by slicing `a` and modify the first element of `b1`. This will modify the corresponding element in `a` as well!
+```python
+>>> b1 = a[0, :]
+>>> b1
+array([1, 2, 3, 4])
+>>> b1[0] = 99
+>>> b1
+array([99,  2,  3,  4])
+>>> a
+array([[99,  2,  3,  4],
+       [ 5,  6,  7,  8],
+       [ 9, 10, 11, 12]])
+```
+
+Using the `copy` method will make a complete copy of the array and its data (a deep copy). To use this on your array, you could run:
+```python
+>>> b2 = a.copy()
+```
+`view` → Shallow copy
+`copy` → Deep copy
+
+## Basic array operations
+
+Once you've created your arrays, you can start to work with them. Let's say, for example, that you've created two arrays, one called "data" and one called "ones".
+![](../assets/sample_arrays_basic_array_operations_numpy.png)
+/
+You can add the arrays together with the plus sign.
+```python
+>>> data = np.array([1, 2])
+>>> ones = np.ones(2, dtype=int)
+>>> data + ones
+array([2, 3])
+```
+
+![](../assets/addition_basic_array_operations_numpy.png)
+/
+You can, of course, do more than just addition!
+```python
+>>> data - ones
+array([0, 1])
+>>> data * data
+array([1, 4])
+>>> data / data
+array([1., 1.])
+```
+
+![517](../assets/more_than_just_addition_basic_array_operations_numpy.png)
+/
+Basic operations are simple with NumPy. If you want to find the sum of the elements in an array, you’d use `sum()`. This works for 1D arrays, 2D arrays, and arrays in higher dimensions.
+```python
+>>> a = np.array([1, 2, 3, 4])
+>>> a.sum()
+10
+```
+
+To add the rows or the columns in a 2D array, you would specify the axis.
+
+If you start with this array:
+```python
+>>> b = np.array([[1, 1], [2, 2]])
+```
+
+You can sum over the axis of rows with:
+```python
+>>> b.sum(axis=0)
+array([3, 3])
+```
+
+You can sum over the axis of columns with:
+```python
+>>> b.sum(axis=1)
+array([2, 4])
+```
+If you just sum without mentioning any axis, it will just return the sum of all elements in array.
+
+## Broadcasting
+
+There are times when you might want to carry out an operation between an array and a single number (also called _an operation between a vector and a scalar_) or between arrays of two different sizes. For example, your array (we’ll call it “data”) might contain information about distance in miles but you want to convert the information to kilometres. You can perform this operation with:
+```python
+>>> data = np.array([1.0, 2.0])
+>>> data * 1.6
+array([1.6, 3.2])
+```
+![](../assets/broadcasting_absolute_beginners_guide_numpy.png)
+/
+NumPy understands that the multiplication should happen with each cell. That concept is called **broadcasting**. Broadcasting is a mechanism that allows NumPy to perform operations on arrays of different shapes. The dimensions of your array must be compatible, for example, when the dimensions of both arrays are equal or when one of them is 1. If the dimensions are not compatible, you will get a `ValueError`.
+
+You can apply broadcasting with addition, subtraction and division also.
+
