@@ -478,7 +478,7 @@ Using the `copy` method will make a complete copy of the array and its data (a d
 
 Once you've created your arrays, you can start to work with them. Let's say, for example, that you've created two arrays, one called "data" and one called "ones".
 ![](../assets/sample_arrays_basic_array_operations_numpy.png)
-/
+
 You can add the arrays together with the plus sign.
 ```python
 >>> data = np.array([1, 2])
@@ -488,7 +488,7 @@ array([2, 3])
 ```
 
 ![](../assets/addition_basic_array_operations_numpy.png)
-/
+
 You can, of course, do more than just addition!
 ```python
 >>> data - ones
@@ -500,7 +500,7 @@ array([1., 1.])
 ```
 
 ![517](../assets/more_than_just_addition_basic_array_operations_numpy.png)
-/
+
 Basic operations are simple with NumPy. If you want to find the sum of the elements in an array, you’d use `sum()`. This works for 1D arrays, 2D arrays, and arrays in higher dimensions.
 ```python
 >>> a = np.array([1, 2, 3, 4])
@@ -537,8 +537,48 @@ There are times when you might want to carry out an operation between an array a
 array([1.6, 3.2])
 ```
 ![](../assets/broadcasting_absolute_beginners_guide_numpy.png)
-/
 NumPy understands that the multiplication should happen with each cell. That concept is called **broadcasting**. Broadcasting is a mechanism that allows NumPy to perform operations on arrays of different shapes. The dimensions of your array must be compatible, for example, when the dimensions of both arrays are equal or when one of them is 1. If the dimensions are not compatible, you will get a `ValueError`.
 
 You can apply broadcasting with addition, subtraction and division also.
 
+## More useful array operations
+
+NumPy also performs aggregation functions. In addition to `min`, `max`, and `sum`, you can easily run `mean` to get the average, `prod` to get the result of multiplying the elements together, `std` to get the standard deviation, and more.
+
+```python
+>>> data = np.array([1, 2, 3])
+>>> data.max()
+3
+>>> data.min()
+1
+>>> data.sum()
+6
+```
+
+![](../assets/more_useful_array_operations_absolute_beginners_guide_numpy.png)
+Let’s start with this array, called “a”
+```python
+>>> a = np.array([[0.45053314, 0.17296777, 0.34376245, 0.5510652],
+              [0.54627315, 0.05093587, 0.40067661, 0.55645993],
+              [0.12697628, 0.82485143, 0.26590556, 0.56917101]])
+```
+
+It’s very common to want to aggregate along a row or column. By default, every NumPy aggregation function will return the aggregate of the entire array. To find the sum or the minimum of the elements in your array, run:
+
+```python
+>>> a.sum()
+4.8595784
+```
+Or:
+```python
+>>> a.min()
+0.05093587
+```
+
+You can specify on which axis you want the aggregation function to be computed. For example, you can find the minimum value within each column by specifying `axis=0`.
+```python
+>>> a.min(axis=0)
+array([0.12697628, 0.05093587, 0.26590556, 0.5510652 ])
+```
+
+The four values listed above correspond to the number of columns in your array. With a four-column array, you will get four values as your result.
