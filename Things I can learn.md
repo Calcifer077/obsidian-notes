@@ -1,5 +1,4 @@
-- [ ] Postgres DB
-- [ ] Next.js
+- [ ] Postgres DB from Neon
 - [ ] Mongo Certifications
 - [ ] Cassandra
 - [ ] Timescale DB
@@ -15,4 +14,5 @@
 - [ ] Nestjs
 - [ ] Docker
 - [ ] Zustand
-- [ ] Shadcn
+- [ ] Practice Next.js
+- [ ] Revise Drizzle
