@@ -496,3 +496,6 @@ ASP.NET Core MVC is **convention over configuration**:
 - `_Layout.cshtml` in `Views/Shared/` is auto-discovered
 
 You don't configure any of this — it just works by naming things correctly.
+
+The above part just uses basic MVC, models, in memory repository, controllers. But we can also use things like SQL server, DTOs, Automapper, Authentication and Authorization which have been discussed in the following note.
+[MVC — Step-by-Step Learning Guide — V2](MVC%20—%20Step-by-Step%20Learning%20Guide%20—%20V2.md)

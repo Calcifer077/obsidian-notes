@@ -4,3 +4,5 @@ Use `dotnet watch run` for hot reload in your application.
 - [Connecting Razor Pages to web Api](Connecting%20Razor%20Pages%20to%20web%20Api.md)
 - [How to deploy a app using IIS](How%20to%20deploy%20a%20app%20using%20IIS.md)
 - [Errors](Errors.md)
+- [MVC — Step-by-Step Learning Guide — V1](MVC%20—%20Step-by-Step%20Learning%20Guide%20—%20V1.md)
+- [MVC — Step-by-Step Learning Guide — V2](MVC%20—%20Step-by-Step%20Learning%20Guide%20—%20V2.md)
