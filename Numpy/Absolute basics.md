@@ -582,3 +582,646 @@ array([0.12697628, 0.05093587, 0.26590556, 0.5510652 ])
 ```
 
 The four values listed above correspond to the number of columns in your array. With a four-column array, you will get four values as your result.
+
+## Creating matrices
+
+You can pass Python lists of list to create a 2-D array (or "matrix") to represent them in NumPy.
+```python
+>>> data = np.array([[1, 2], [3, 4], [5, 6]])
+>>> data
+array([[1, 2],
+       [3, 4],
+       [5, 6]])
+```
+![](../assets/creating_matrices_absolute_basics_numpy.png)
+
+Indexing and slicing operations are useful when you're manipulating matrices:
+```python
+>>> data[0, 1]
+2
+>>> data[1:3] # It silces rows, starting from 1st row till 3rd row, 3rd row is excluded.
+array([[3, 4],
+       [5, 6]])
+>>> data[0:2, 0]
+array([1, 3])
+```
+![](../assets/indexing_slicing_absolute_basics_numpy.png)
+
+You can aggregate matrices the same way you aggregated vectors:
+```python
+>>> data.max()
+6
+>>> data.min()
+1
+>>> data.sum()
+21
+```
+![](../assets/aggregate_matrices_absolute_basics_numpy.png)
+
+You can aggregate all the values in a matrix and you can aggregate them across columns or rows using the `axis` parameter. To illustrate this point, let's look at a slightly modified dataset:
+```python
+>>> data = np.array([[1, 2], [5, 3], [4, 6]])
+>>> data
+array([[1, 2],
+       [5, 3],
+       [4, 6]])
+>>> data.max(axis=0)
+array([5, 6])
+>>> data.max(axis=1)
+array([2, 5, 6])
+```
+![](../assets/aggregate_matrices_with_axis_absolute_basics_numpy.png)
+
+Once you've created your matrices, you can add and multiply them using arithmetic operators if you have two matrices that are the same size.
+```python
+>>> data = np.array([[1, 2], [3, 4]])
+>>> ones = np.array([[1, 1], [1, 1]])
+>>> data + ones
+array([[2, 3],
+       [4, 5]])
+```
+![](../assets/arithmetic_matrices_absolute_basics_numpy.png)
+
+You can do these arithmetic operations on matrices of different sizes, but only if one matrix has only one column or one row. In this case, NumPy will use its broadcast rules for the operations.
+```python
+>>> data = np.array([[1, 2], [3, 4], [5, 6]])
+>>> ones_row = np.array([[1, 1]])
+>>> data + ones_row
+array([[2, 3],
+       [4, 5],
+       [6, 7]])
+```
+![](../assets/matrices_broadcasting_absolute_basics_numpy.png)
+
+**Be aware that when NumPy prints the N-dimensional arrays, the last axis is looped over the fastest while the first axis is the slowest.**
+
+There are often instances where we want NumPy to initialize the values of an array. NumPy offers functions like `ones()` and `zeroes()`, and the `random.Generator` class for random number generation for that. All you need to do is pass in the number of elements you want it to generate.
+```python
+>>> np.ones(3)
+array([1., 1., 1.])
+>>> np.zeros(3)
+array([0., 0., 0.])
+>>> rng = np.random.default_rng()  # the simplest way to generate random numbers
+>>> rng.random(3) 
+array([0.63696169, 0.26978671, 0.04097352])
+```
+![](../assets/matrices_ones_zeroes_random_absolute_basics_numpy.png)
+
+You can also use `ones()`, `zeroes()` and `random()` to create a 2D array if you give them a tuple describing the dimensions of the matrix:
+```python
+>>> np.ones((3, 2))
+array([[1., 1.],
+       [1., 1.],
+       [1., 1.]])
+>>> np.zeros((3, 2))
+array([[0., 0.],
+       [0., 0.],
+       [0., 0.]])
+>>> rng.random((3, 2)) 
+array([[0.01652764, 0.81327024],
+       [0.91275558, 0.60663578],
+       [0.72949656, 0.54362499]])  # may vary
+```
+![](../assets/matrices_ones_zeros_random_2d_absolute_basics_numpy.png)
+
+## Generating random numbers
+
+The use of random number generation is an important part of the configuration and evaluation of many numerical and machine learning algorithms. Whether you need to randomly initialize weights in an artificial neural network, split data into random sets, or randomly shuffle your dataset, being able to generate random numbers (actually, repeatable pseudo-random numbers) is essential.
+
+With `Generator.integers`, you can generate random integers from low (remember that this is inclusive with NumPy) to high (exclusive). You can set `endpoint=True` to make the high number inclusive.
+
+You can generate a 2 x 4 array of random integers between 0 and 4 with:
+```python
+>>> rng = np.random.default_rng()
+>>> rng.integers(5, size=(2, 4))
+array([[2, 1, 1, 0],
+       [0, 0, 0, 4]])  # may vary
+```
+Above is `5` is the max value (exclusive) of random numbers that will be generated.
+
+## How to get unique items and counts
+
+You can find the unique elements in an array easily with `np.unique`.
+
+For example, if you start with this array:
+```python
+>>> a = np.array([11, 11, 12, 13, 14, 15, 16, 17, 12, 13, 11, 14, 18, 19, 20])
+```
+
+you can use `np.unqiue` to print the unique values in your array:
+```python
+>>> unique_values = np.unique(a)
+>>> print(unique_values)
+[11 12 13 14 15 16 17 18 19 20]
+```
+
+To get the indices of unique values in a NumPy array (an array of first index positions of unique values in the array), just pass the `return_index` argument in `np.unique()` as well as your array.
+```python
+>>> unique_values, indices_list = np.unique(a, return_index=True)
+>>> print(indices_list)
+[ 0  2  3  4  5  6  7 12 13 14]
+```
+
+You can pass the `return_counts` argument in `np.unique()` along with your array to get the frequency count of unique values in a NumPy array.
+```python
+>>> unique_values, occurrence_count = np.unique(a, return_counts=True)
+>>> print(occurrence_count)
+[3 2 2 2 1 1 1 1 1 1]
+```
+
+This also works with 2D arrays! If you start with this array:
+```python
+a_2d = np.array([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [1, 2, 3, 4]])
+```
+
+You can find unique values with:
+```python
+unique_values = np.unique(a_2d)
+print(unique_values)
+[ 1  2  3  4  5  6  7  8  9 10 11 12]
+```
+
+If the axis argument isn’t passed, your 2D array will be flattened.
+
+If you want to get the unique rows or columns, make sure to pass the `axis` argument. To find the unique rows, specify `axis=0` and for columns, specify `axis=1`.
+```python
+unique_rows = np.unique(a_2d, axis=0)
+print(unique_rows)
+[[ 1  2  3  4]
+ [ 5  6  7  8]
+ [ 9 10 11 12]]
+```
+
+To get the unique rows, index position, and occurrence count, you can use:
+```python
+unique_rows, indices, occurrence_count = np.unique(
+     a_2d, axis=0, return_counts=True, return_index=True)
+print(unique_rows)
+[[ 1  2  3  4]
+ [ 5  6  7  8]
+ [ 9 10 11 12]]
+print(indices)
+[0 1 2]
+print(occurrence_count)
+[2 1 1]
+```
+
+## Transposing and reshaping a matrix
+
+It's common to need to transpose your matrices. NumPy arrays have the property `T` that allows you to transpose a matrix.
+![](../assets/transposing_and_reshaping_a_matrix_transpose_absolute_basics_numpy.png)
+
+You may also need to switch the dimensions of a matrix. This can happen when, for example, you have a model that expects a certain input shape that is different from your dataset. This is where the `reshape` method can be useful. You simply need to pass in the new dimensions that you want for the matrix.
+```python
+>>> data.reshape(2, 3)
+array([[1, 2, 3],
+       [4, 5, 6]])
+>>> data.reshape(3, 2)
+array([[1, 2],
+       [3, 4],
+       [5, 6]])
+```
+Your reshaped matrix should contain the same amount of elements as the original matrix, else it will give `ValueError`.
+![](../assets/transpose_and_rehsaping_a_matrix_reshape_absolute_basics_numpy.png)
+
+You can also use `.transpose()` to reverse or change the axes of an array according to the values you specify.
+
+If you start with this array:
+```python
+>>> arr = np.arange(6).reshape((2, 3))
+>>> arr
+array([[0, 1, 2],
+       [3, 4, 5]])
+```
+
+You can transpose your array with `arr.transpose()`.
+```python
+>>> arr.transpose()
+array([[0, 3],
+       [1, 4],
+       [2, 5]])
+```
+
+You can also use `arr.T`:
+```python
+>>> arr.T
+array([[0, 3],
+       [1, 4],
+       [2, 5]])
+```
+
+## How to reverse an array
+
+NumPy’s `np.flip()` function allows you to flip, or reverse, the contents of an array along an axis. When using `np.flip()`, specify the array you would like to reverse and the axis. If you don’t specify the axis, NumPy will reverse the contents along all of the axes of your input array.
+
+**Reversing a 1D array**
+
+If you begin with a 1D array like this one:
+```python
+>>> arr = np.array([1, 2, 3, 4, 5, 6, 7, 8])
+```
+
+You can reverse it with:
+```python
+>>> reversed_arr = np.flip(arr)
+>>> print('Reversed Array: ', reversed_arr)
+Reversed Array:  [8 7 6 5 4 3 2 1]
+```
+
+**Reversing a 2D array**
+
+A 2D array works much the same way.
+
+If you start with this array:
+```python
+>>> arr_2d = np.array([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]])
+```
+
+You can reverse the content in all of the rows and all of the columns with:
+```python
+>>> reversed_arr = np.flip(arr_2d)
+>>> print(reversed_arr)
+[[12 11 10  9]
+ [ 8  7  6  5]
+ [ 4  3  2  1]]
+```
+
+You can easily reverse only the _rows_ with:
+```python
+>>> reversed_arr_rows = np.flip(arr_2d, axis=0)
+>>> print(reversed_arr_rows)
+[[ 9 10 11 12]
+ [ 5  6  7  8]
+ [ 1  2  3  4]]
+```
+
+Or reverse only the _columns_ with:
+```python
+>>> reversed_arr_columns = np.flip(arr_2d, axis=1)
+>>> print(reversed_arr_columns)
+[[ 4  3  2  1]
+ [ 8  7  6  5]
+ [12 11 10  9]]
+```
+
+You can also reverse the contents of only one column or row. For example, you can reverse the contents of the row at index position 1 (the second row):
+```python
+>>> arr_2d[1] = np.flip(arr_2d[1])
+>>> print(arr_2d)
+[[ 1  2  3  4]
+ [ 8  7  6  5]
+ [ 9 10 11 12]]
+```
+
+You can also reverse the column at index position 1 (the second column):
+```python
+>>> arr_2d[:,1] = np.flip(arr_2d[:,1])
+>>> print(arr_2d)
+[[ 1 10  3  4]
+ [ 8  7  6  5]
+ [ 9  2 11 12]]
+```
+
+## Reshaping and flattening multidimensional arrays
+
+There are two popular ways to flatten an array: `.flatten()` and `.ravel()`. The primary difference between the two is that the new array created using `ravel()` is actually a reference to the parent array (i.e., a “view”). This means that any changes to the new array will affect the parent array as well. Since `ravel` does not create a copy, it’s memory efficient.
+
+If you start with this array:
+```python
+>>> x = np.array([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]])
+```
+
+You can sue `flatten` to flatten your array into a 1D array.
+
+```python
+>>> x.flatten()
+array([ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12])
+```
+
+When you use `flatten`, changes to your new array won't change the parent array.
+
+For example:
+```python
+>>> a1 = x.flatten()
+a1[0] = 99
+>>> print(x)  # Original array
+[[ 1  2  3  4]
+ [ 5  6  7  8]
+ [ 9 10 11 12]]
+>>> print(a1)  # New array
+[99  2  3  4  5  6  7  8  9 10 11 12]
+```
+
+But when you use `ravel`, the changes you make to the new array will affect the parent array.
+
+For example:
+```python
+>>> a2 = x.ravel()
+>>> a2[0] = 98
+>>> print(x)  # Original array
+[[98  2  3  4]
+ [ 5  6  7  8]
+ [ 9 10 11 12]]
+>>> print(a2)  # New array
+[98  2  3  4  5  6  7  8  9 10 11 12]
+```
+
+## How to access the docstring for more information
+
+Every object contains the reference to a string, which is known as the **docstring**. In most cases, this docstring contains a quick and concise summary of the object and how to use it. Python has a built-in `help()` function that can help you access this information. This means that nearly any time you need more information, you can use `help()` to quickly find the information that you need.
+
+For example:
+```python
+>>> help(max)
+Help on built-in function max in module builtins:
+
+max(...)
+    max(iterable, *[, default=obj, key=func]) -> value
+    max(arg1, arg2, *args, *[, key=func]) -> value
+
+    With a single iterable argument, return its biggest item. The
+    default keyword-only argument specifies an object to return if
+    the provided iterable is empty.
+    With two or more arguments, return the largest argument.
+```
+
+Because access to additional information is so useful, IPython uses the `?` character as a shorthand for accessing this documentation along with other relevant information. IPython is a command shell for interactive computing in multiple languages. The `?` syntax for docstring also work on colab.
+
+For example:
+```text
+In [0]: max?
+max(iterable, *[, default=obj, key=func]) -> value
+max(arg1, arg2, *args, *[, key=func]) -> value
+
+With a single iterable argument, return its biggest item. The
+default keyword-only argument specifies an object to return if
+the provided iterable is empty.
+With two or more arguments, return the largest argument.
+Type:      builtin_function_or_method
+```
+
+You can even use this notation for object methods and objects themselves:
+
+Let’s say you create this array:
+```python
+>>> a = np.array([1, 2, 3, 4, 5, 6])
+```
+Then you can obtain a lot of useful information (first details about `a` itself, followed by the docstring of `ndarray` of which `a` is an instance):
+```text
+In [1]: a?
+Type:            ndarray
+String form:     [1 2 3 4 5 6]
+Length:          6
+File:            ~/anaconda3/lib/python3.9/site-packages/numpy/__init__.py
+Docstring:       <no docstring>
+Class docstring:
+ndarray(shape, dtype=float, buffer=None, offset=0,
+        strides=None, order=None)
+
+An array object represents a multidimensional, homogeneous array
+of fixed-size items.  An associated data-type object describes the
+format of each element in the array (its byte-order, how many bytes it
+occupies in memory, whether it is an integer, a floating point number,
+or something else, etc.)
+
+Arrays should be constructed using `array`, `zeros` or `empty` (refer
+to the See Also section below).  The parameters given here refer to
+a low-level method (`ndarray(...)`) for instantiating an array.
+
+For more information, refer to the `numpy` module and examine the
+methods and attributes of an array.
+
+Parameters
+----------
+(for the __new__ method; see Notes below)
+
+shape : tuple of ints
+        Shape of created array.
+...
+```
+
+This also works for functions and other objects that **you** create. Just remember to include a docstring with your function using a string literal (`""" """` or `''' '''` around your documentation).
+
+For example, if you create this function:
+```python
+>>> def double(a):
+	  '''Return a * 2'''
+	  return a * 2
+```
+
+You can obtain information about the function:
+```text
+In [2]: double?
+Signature: double(a)
+Docstring: Return a * 2
+File:      ~/Desktop/<ipython-input-23-b5adf20be596>
+Type:      function
+```
+
+You can reach another level of information by reading the source code of the object you’re interested in. Using a double question mark (`??`) allows you to access the source code.
+
+For example:
+```text
+In [3]: double??
+Signature: double(a)
+Source:
+def double(a):
+    '''Return a * 2'''
+    return a * 2
+File:      ~/Desktop/<ipython-input-23-b5adf20be596>
+Type:      function
+```
+
+If the object in question is compiled in a language other than Python, using `??` will return the same information as `?`. You’ll find this with a lot of built-in objects and types, for example:
+```text
+In [4]: len?
+Signature: len(obj, /)
+Docstring: Return the number of items in a container.
+Type:      builtin_function_or_method
+```
+
+and:
+```text
+In [5]: len??
+Signature: len(obj, /)
+Docstring: Return the number of items in a container.
+Type:      builtin_function_or_method
+```
+
+have the same output because they were compiled in a programming language other than Python.
+
+## Working with mathematical formulas
+
+The ease of implementing mathematical formulas that work on arrays is one of the things that make NumPy so widely used in the scientific Python community.
+
+For example, this is the mean square error formula (a central formula used in supervised machine learning models that deal with regression):
+![](../assets/working_with_mathematical_formulas_mean_square_value_absolute_basics_numpy.png)
+
+Implementing this formula is simple and straightforward in NumPy:
+![](../assets/working_with_mathematical_formulas_mean_square_formula_absolute_basics_numpy.png)
+
+What makes this work so well is that `predictions` and `labels` can contain one or a thousand values. They only need to be the same size.
+
+You can visualize it this way:
+![](../assets/working_with_mathematical_formulas_mean_square_formula_visulization_absolute_basics_numpy.png)
+
+In this example, both the predictions and labels vectors contain three values, meaning `n` has a value of three. After we carry out subtractions the values in the vector are squared. Then NumPy sums the values, and your result is the error value for that prediction and a score for the quality of the model.
+![](../assets/working_with_mathematical_formulas_mean_square_formula_step_by_step_guide_absolute_basics_numpy.png)
+
+## How to save and load NumPy objects
+
+You will, at some point, want to save your arrays to disk and load them back without having to re-run the code. Fortunately, there are several ways to save and load objects with NumPy. The ndarray objects can be saved to and loaded from the disk files with `loadtxt` and `savetxt` functions that handle normal text files, `load` and `save` functions that handle NumPy binary files with a **.npy** file extension, and a `savez` function that handles NumPy files with a **.npz** file extension.
+
+The **.npy** and **.npz** files store data, shape, dtype, and other information required to reconstruct the ndarray in a way that allows the array to be correctly retrieved, even when the file is on another machine with different architecture.
+
+If you want to store a single ndarray object, store it as a .npy file using `np.save`. If you want to store more than one ndarray object in a single file, save it as a .npz file using `np.savez`. You can also save several arrays into a single file in compressed npz format with [`savez_compressed`](https://numpy.org/doc/stable/reference/generated/numpy.savez_compressed.html#numpy.savez_compressed "numpy.savez_compressed").
+
+It’s easy to save and load an array with `np.save()`. Just make sure to specify the array you want to save and a file name. For example, if you create this array:
+```python
+>>> a = np.array([1, 2, 3, 4, 5, 6])
+```
+
+You can save it as "filename.npy" with:
+```python
+>>> np.save('filename', a)
+```
+
+You can use `np.load()` to reconstruct your array.
+```python
+>>> b = np.load('filename.npy')
+
+>>> print(b)
+[1 2 3 4 5 6]
+```
+
+You can save a NumPy array as a plain text file like a **.csv** or **.txt** file with `np.savetxt`.
+
+For example, if you create this array:
+```python
+>>> csv_arr = np.array([1, 2, 3, 4, 5, 6, 7, 8])
+```
+
+You can easily save it as a .csv file with the name “new_file.csv” like this:
+```python
+>>> np.savetxt('new_file.csv', csv_arr)
+```
+
+You can quickly and easily load your saved text file using `loadtxt()`:
+```python
+>>> np.loadtxt('new_file.csv')
+array([1., 2., 3., 4., 5., 6., 7., 8.])
+```
+
+The `savetxt()` and `loadtxt()` functions accept additional optional parameters such as header, footer, and delimiter. While text files can be easier for sharing, .npy and .npz files are smaller and faster to read. If you need more sophisticated handling of your text file (for example, if you need to work with lines that contain missing values), you will want to use the [`genfromtxt`](https://numpy.org/doc/stable/reference/generated/numpy.genfromtxt.html#numpy.genfromtxt "numpy.genfromtxt") function.
+
+With [`savetxt`](https://numpy.org/doc/stable/reference/generated/numpy.savetxt.html#numpy.savetxt "numpy.savetxt"), you can specify headers, footers, comments, and more.
+
+All these above functions work on colab.
+
+## Importing and exporting a CSV
+
+It’s simple to read in a CSV that contains existing information. The best and easiest way to do this is to use [Pandas](https://pandas.pydata.org/).
+```python
+>>> import pandas as pd
+
+>>> # If all of your columns are the same type:
+>>> x = pd.read_csv('music.csv', header=0).values
+>>> print(x)
+[['Billie Holiday' 'Jazz' 1300000 27000000]
+ ['Jimmie Hendrix' 'Rock' 2700000 70000000]
+ ['Miles Davis' 'Jazz' 1500000 48000000]
+ ['SIA' 'Pop' 2000000 74000000]]
+
+>>> # You can also simply select the columns you need:
+>>> x = pd.read_csv('music.csv', usecols=['Artist', 'Plays']).values
+>>> print(x)
+[['Billie Holiday' 27000000]
+ ['Jimmie Hendrix' 70000000]
+ ['Miles Davis' 48000000]
+ ['SIA' 74000000]]
+```
+![](../assets/importing_and_exporting_a_csv_into_to_pandas_absolute_basics_numpy.png)
+
+It’s simple to use Pandas in order to export your array as well. If you are new to NumPy, you may want to create a Pandas dataframe from the values in your array and then write the data frame to a CSV file with Pandas.
+
+If you created this array “a”
+```python
+>>> a = np.array([[-2.58289208,  0.43014843, -1.24082018, 1.59572603],
+              [ 0.99027828, 1.17150989,  0.94125714, -0.14692469],
+              [ 0.76989341,  0.81299683, -0.95068423, 0.11769564],
+              [ 0.20484034,  0.34784527,  1.96979195, 0.51992837]])
+```
+
+You could create a Pandas dataframe
+```python
+>>> df = pd.DataFrame(a)
+>>> print(df)
+          0         1         2         3
+0 -2.582892  0.430148 -1.240820  1.595726
+1  0.990278  1.171510  0.941257 -0.146925
+2  0.769893  0.812997 -0.950684  0.117696
+3  0.204840  0.347845  1.969792  0.519928
+```
+
+You can easily save your dataframe with:
+```python
+df.to_csv('pd.csv')
+```
+
+And read your CSV with:
+```python
+data = pd.read_csv('pd.csv')
+```
+![](../assets/importing_and_exporting_a_csv_reading_from_csv_absolute_basics_numpy.png)
+
+You can also save your array with the NumPy `savetxt` method.
+```python
+>>> np.savetxt('np.csv', a, fmt='%.2f', delimiter=',', header='1,  2,  3,  4')
+```
+
+If you’re using the command line, you can read your saved CSV any time with a command such as:
+```bash
+$ cat np.csv
+#  1,  2,  3,  4
+-2.58,0.43,-1.24,1.60
+0.99,1.17,0.94,-0.15
+0.77,0.81,-0.95,0.12
+0.20,0.35,1.97,0.52
+```
+Or you can open the file any time with a text editor!
+
+## Plotting arrays with matplotlib
+
+If you need to generate a plot for your values, it’s very simple with [Matplotlib](https://matplotlib.org/).
+
+For example, you may have an array like this one:
+```python
+>>> a = np.array([2, 1, 5, 7, 4, 6, 8, 14, 10, 9, 18, 20, 22])
+```
+
+If you already have Matplotlib installed, you can import it with:
+```python
+>>> import matplotlib.pyplot as plt
+
+# If you're using Jupyter Notebook, you may also want to run the following
+# line of code to display your code in the notebook:
+
+%matplotlib inline
+```
+
+All you need to do to plot your values is run:
+```python
+>>> plt.plot(a)
+
+# If you are running from a command line, you may need to do this:
+# >>> plt.show()
+```
+![](../assets/plotting_arrays_with_matplotlib_plotting_a_1D_array_absolute_basics_numpy.png)
+For example, you can plot a 1D array like this:
+```python
+x = np.linspace(0, 5, 20)
+y = np.linspace(0, 10, 20)
+plt.plot(x, y, 'purple') # line
+plt.plot(x, y, 'o')      # dots
+```
+![](../assets/plotting_arrays_with_matplotlib_plotting_a_2D_array_absolute_basics_numpy.png)
