@@ -17,8 +17,7 @@ A two-dimensional array would be like a table:
 /
 ![](../assets/numpy_two_dimensional_array.png)
 
-
-A three-dimensional array would be like a set of tables, perhaps stacked as though they were printed on separate pages. In `NumPy`, this idea is generalized to an arbitrary number of dimensions, and so the fundamental array is called `ndarray`: it represents an "N-dimensional array".
+The number of dimensions is the **rank** of the array; the **shape** of an array is a tuple of integers giving the size of the array along each dimension. A three-dimensional array would be like a set of tables, perhaps stacked as though they were printed on separate pages. In `NumPy`, this idea is generalized to an arbitrary number of dimensions, and so the fundamental array is called `ndarray`: it represents an "N-dimensional array".
 
 Most NumPy arrays have some restrictions. For instance:
 - All elements of the array must be of the same type of data.
@@ -109,6 +108,20 @@ Or an array filled with `1`'s:
 ```python
 >>> np.ones(2)
 array([1., 1.])
+```
+
+Or an array of same element:
+```python
+>>> np.full((2, 2), 7)
+array([	[7., 7.], 
+		[7., 7.]])
+```
+
+Or an identity matrix
+```python
+>>> np.eye(2)
+array([ [1., 0.],
+		[0., 1.]])
 ```
 
 Or even an empty array! The function `empty` creates an array whose initial content is random and depends on the state of the memory. The reason to use `empty` over `zeroes` is speed.
@@ -278,7 +291,7 @@ You can use `np.expand_dims` to add an axis at index position 1 with:
 `np.newaxis` adds a dimension to a 1D array converting it to a 2D array. `np.expand_dims` does the same thing.
 
 ## Indexing and slicing
-You can index and slice Numpy arrays in the same ways you can slice Python lists.
+You can index and slice NumPy arrays in the same ways you can slice Python lists.
 ```python
 >>> data = np.array([1, 2, 3])
 
@@ -606,6 +619,25 @@ array([[3, 4],
 array([1, 3])
 ```
 ![](../assets/indexing_slicing_absolute_basics_numpy.png)
+
+A fancy way of indexing:
+```python
+a = np.array([[1,2], [3, 4], [5, 6]])
+
+# An example of integer array indexing.
+# The returned array will have shape (3,) and
+print(a[[0, 1, 2], [0, 1, 0]])  # Prints "[1 4 5]"
+
+# The above example of integer array indexing is equivalent to this:
+print(np.array([a[0, 0], a[1, 1], a[2, 0]]))  # Prints "[1 4 5]"
+
+# When using integer array indexing, you can reuse the same
+# element from the source array:
+print(a[[0, 0], [1, 1]])  # Prints "[2 2]"
+
+# Equivalent to the previous integer array indexing example
+print(np.array([a[0, 1], a[0, 1]]))  # Prints "[2 2]"
+```
 
 You can aggregate matrices the same way you aggregated vectors:
 ```python
