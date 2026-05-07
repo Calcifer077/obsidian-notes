@@ -517,7 +517,136 @@ You parse it
   └── int.Parse("3")  →  3
 ```
 ##### • `ActionResult` VS `IActionResult`:
+The simple rule:
+```text
+Has a response body  →  ActionResult<T>
+No response body     →  IActionResult
+```
+In our `PostsController`
+```c#
+// Returns data — use ActionResult<T>
+public async Task<ActionResult<List<PostResponseDto>>> GetAll()     // returns a list
+public async Task<ActionResult<PostResponseDto>>      GetById()     // returns one post
+public async Task<ActionResult<PostResponseDto>>      Create()      // returns created post
+
+// Returns no data — use IActionResult
+public async Task<IActionResult> Update()    // returns 204 No Content
+public async Task<IActionResult> Delete()    // returns 204 No Content
+```
+
+What each one actually is:
+```c#
+// IActionResult
+// ─────────────
+// A plain interface. Represents "some HTTP response".
+// No type information — the compiler has no idea what's inside.
+// You can return Ok(), NotFound(), BadRequest(), NoContent(),
+// CreatedAtAction() — anything. All are valid.
+
+public async Task<IActionResult> Update(int id, UpdatePostDto dto)
+{
+    // ...
+    return NoContent();   // 204, no body — perfectly fine
+    return NotFound();    // 404, no body — perfectly fine
+    return Forbid();      // 403, no body — perfectly fine
+}
+
+
+// ActionResult<T>
+// ───────────────
+// A generic wrapper. Tells the compiler (and Swagger) exactly
+// what type lives in the response body on success.
+// Still lets you return NotFound(), BadRequest() etc. for errors.
+
+public async Task<ActionResult<PostResponseDto>> GetById(int id)
+{
+    var post = await _db.Posts.FindAsync(id);
+
+    if (post == null) return NotFound();         // error — no body, fine
+    return Ok(_mapper.Map<PostResponseDto>(post)); // success — typed body
+}
+```
+One other benefit of `ActionResult<T>` is in Swagger:
+This is the most practical reason to use `ActionResult<T>` whenever you have a response body. Swagger reads the `<T>` to generate accurate documentation automatically:
+```csharp
+// With IActionResult — Swagger sees nothing
+public async Task<IActionResult> GetById(int id)
+// Swagger documents this as returning: "No schema"
+// Developers consuming your API have no idea what shape the response is
+
+
+// With ActionResult<T> — Swagger sees everything
+public async Task<ActionResult<PostResponseDto>> GetById(int id)
+// Swagger documents this as returning:
+// {
+//   "id": 0,
+//   "title": "string",
+//   "content": "string",
+//   "authorUsername": "string",
+//   "createdAt": "2026-01-01T00:00:00Z",
+//   "commentCount": 0
+// }
+```
+`ActionResult<T>` can even implicitly convert a `T` directly, so you don't even need `Ok()` in some cases.
+
+Quick decision guide for every endpoint you write:
+```text
+Writing GET by id?         →  ActionResult<PostResponseDto>
+Writing GET all?           →  ActionResult<List<PostResponseDto>>
+Writing POST (create)?     →  ActionResult<PostResponseDto>   (returns created resource)
+Writing PUT (update)?      →  IActionResult                   (204, no body)
+Writing PATCH?             →  IActionResult                   (204, no body)
+Writing DELETE?            →  IActionResult                   (204, no body)
+Writing auth login?        →  ActionResult<AuthResponseDto>   (returns token)
+```
+The pattern is consistent across every API you'll ever build — if something comes back in the body, type it with `ActionResult<T>`. If the success case is just a status code with no body, use `IActionResult`.
 ##### • `Controller` VS `ControllerBase`:
+
+| Feature                        | `ControllerBase` | `Controller`            |
+| ------------------------------ | ---------------- | ----------------------- |
+| Intended for                   | APIs             | MVC apps with Views     |
+| Supports Views/Razor           | ❌ No             | ✅ Yes                   |
+| Includes API helper methods    | ✅ Yes            | ✅ Yes                   |
+| Includes View-related features | ❌ No             | ✅ Yes                   |
+| Lightweight                    | ✅ Yes            | ❌ Slightly heavier      |
+| Common use case                | REST APIs        | Web apps returning HTML |
+Inheritance Relationship:
+```text
+Object
+   └── ControllerBase
+           └── Controller
+```
+
+**What can `ControllerBase` do:**
+`ControllerBase` is the **minimal base class** for API controllers.
+It provides:
+- Http Context access
+- Request/Response handling
+- Model binding
+- Validation
+- Helper methods like:
+	- `Ok()`
+	- `BadRequest()`
+	- `NotFound()`
+	- `CreatedAtAction()`
+	- `File()`
+	- `Json()`
+But it does not support:
+- Razor views
+- `View()`
+- `PartialView()`
+- `ViewBag`
+- `TempData`
+
+**What can `Controller` do:**
+`Controller` is used for **MVC applications** that return HTML views.
+It includes everything from `ControllerBase` plus:
+- `View()`
+- `PartialView()`
+- `ViewBag`
+- `ViewData`
+- `TempData`
+
 
 #### 5. JWT auth
 First we will create services which will handle authentication work (register and login).
