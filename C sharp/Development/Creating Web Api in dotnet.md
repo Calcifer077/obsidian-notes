@@ -1,5 +1,4 @@
 You can create web api in dotnet which can serve requests to your frontend. Steps to do so:
-
 #### 1. Setup
 
 **1. Create the Project**
@@ -497,10 +496,30 @@ new Claim(ClaimTypes.Name, user.Username),
 new Claim(ClaimTypes.Email, user.Email),
 ```
 
+The full chain visualized:
+```text
+Client sends request
+  └── Header: Authorization: Bearer eyJhbGci...
+
+ASP.NET Core JWT Middleware
+  └── Decodes token
+  └── Validates signature, issuer, audience, expiry
+  └── Rebuilds claims into ClaimsPrincipal
+  └── Assigns it to HttpContext.User
+
+Your Controller
+  └── User  →  HttpContext.User  (ClaimsPrincipal)
+        └── .FindFirstValue(ClaimTypes.NameIdentifier)
+                └── searches Claims collection
+                └── returns "3"  (the user's Id as string)
+
+You parse it
+  └── int.Parse("3")  →  3
+```
 ##### • `ActionResult` VS `IActionResult`:
 ##### • `Controller` VS `ControllerBase`:
 
-### 5. JWT auth
+#### 5. JWT auth
 First we will create services which will handle authentication work (register and login).
 ```c#
 // Services/IAuthService.cs
@@ -678,8 +697,10 @@ Another reason for `readonly` is that dependencies should not change while contr
 Now you need to add JWT auth in your `Program.cs`
 Use dotnet 9, 10 have many issues regarding Swagger.
 ```c#
+// Dependency Injection
 builder.Services.AddScoped<IAuthService, AuthService>();
 
+// 'JwtSettings:Issuer' and 'JwtSettings:Audience' are present in appsettings.json
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -702,58 +723,132 @@ builder.Services
         };
     });
 
+builder.Services.AddAuthorization();
+
 // In the middleware pipeline (order matters!)
 app.UseAuthentication();   // before
 app.UseAuthorization();    // after
 ```
-#### 4. Update your `Program.cs`
-Now you have to add `Swagger` for testing of your api in your `Program.cs` file. It should something like this:
+#### 6. Swagger & Errors
+We will add a custom middleware which will be responsible for handling exceptions.
 ```csharp
-using Microsoft.EntityFrameworkCore;
-using MyWebApi.Models;  
+// Middleware/ExceptionMiddleware.cs
+using Microsoft.AspNetCore.Mvc;
 
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi(); 
-
-builder.Services.AddControllers(); 
-
-builder.Services.AddEndpointsApiExplorer();
-
-builder.Services.AddSwaggerGen(); 
-
-// Using in memory database
-builder.Services.AddDbContext<ProductContext>(opt => opt.UseInMemoryDatabase("Products")); 
-
-var app = builder.Build();  
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+public class ExceptionMiddleware
 {
-    app.MapOpenApi();
-    app.UseSwagger();
-    app.UseSwaggerUI();
+	// a function that processes an HTTP request. It must accept an 'HttpContext' and return a 'Task'.
+    private readonly RequestDelegate _next;
+    // 'ILogger' is prebuilt loggin interface.
+    private readonly ILogger<ExceptionMiddleware> _logger;
+
+    public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
+    {
+        _next = next;
+        _logger = logger;
+    }
+
+    public async Task InvokeAsync(HttpContext context)
+    {
+        try
+        {
+            await _next(context);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            await HandleExceptionAsync(context, ex);
+        }
+    }
+
+    private static async Task HandleExceptionAsync(HttpContext context, Exception ex)
+    {
+        context.Response.ContentType = "application/json";
+
+        context.Response.StatusCode = ex switch
+        {
+            UnauthorizedAccessException => 401,
+            InvalidOperationException => 400,
+            KeyNotFoundException => 404,
+            _ => 500,
+        };
+
+        var problem = new ProblemDetails
+        {
+            Status = context.Response.StatusCode,
+            Title = GetTitle(ex),
+            Detail = ex.Message,
+        };
+
+        await context.Response.WriteAsJsonAsync(problem);
+    }
+
+    private static string GetTitle(Exception ex) =>
+        ex switch
+        {
+            UnauthorizedAccessException => "Unauthorized",
+            InvalidOperationException => "Bad request",
+            KeyNotFoundException => "Not found",
+            _ => "Server error",
+        };
 }
-app.UseSwagger();
-app.UseSwaggerUI(); 
-
-app.UseHttpsRedirection();  
-
-app.MapControllers();
-app.Run();
 ```
 
-#### 5. Run your program using `dotnet run`
-Now, you can simply do `dotnet run` and you will get a url `localhost:<port>` in your terminal. You can append `/swagger` to visualize your api.
+Now we can add `Swagger` with `JWT`  support in our `Program.cs`.
+```csharp
+// Program.cs
+using Microsoft.OpenApi.Models
 
-#### Short notes
-1. Create project
-2. Create models and context
-3. Create controller
-4. Update `Program.cs`
-5. Run your app
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title   = "Blog API",
+        Version = "v1",
+        Description = "A blog platform API"
+    });
+
+    // Add JWT bearer input to Swagger UI
+    options.AddSecurityDefinition("Bearer",
+        new OpenApiSecurityScheme
+    {
+        Name   = "Authorization",
+        Type   = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        In     = ParameterLocation.Header,
+        Description = "Enter your JWT token"
+    });
+
+	// Apply the JWT requirement to all endpoints globally
+    options.AddSecurityRequirement(new
+        OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme {
+                Reference = new OpenApiReference {
+                    Type = ReferenceType.SecurityScheme,
+                    Id   = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
+
+// Global error handler, catches all unhandled exceptions from everything below it.
+app.UseMiddleware<ExceptionMiddleware>();
+
+// Enable Swagger UI in development
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint(
+        "/swagger/v1/swagger.json", "Blog API v1"));
+}
+```
+
+#### 7. Run your program using `dotnet run`
+Now, you can simply do `dotnet run` and you will get a url `localhost:<port>` in your terminal. You can append `/swagger` to visualize your api.
 
 [Connecting Razor Pages to web Api](Connecting%20Razor%20Pages%20to%20web%20Api.md)
