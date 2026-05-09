@@ -151,4 +151,7 @@ class Program
 }
 ```
 
-[Abstract class and Interface](Basics/Abstract%20class%20and%20Interface.md)
+[Abstract class and Interface](Abstract%20class%20and%20Interface.md)
+
+#csharp 
+#oops

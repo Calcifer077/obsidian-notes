@@ -557,3 +557,9 @@ Write a method that takes a `List<Order>` where Order has `{ int Id, string Cust
 4. Returns a list of `{ CustomerName, TotalAmount, OrderCount }` sorted by TotalAmount descending
 5. Write it FIRST in query syntax, THEN in method syntax
 6. Tell me which you preferred and WHY
+
+Tags:
+#csharp 
+#dotnet 
+#development
+#database

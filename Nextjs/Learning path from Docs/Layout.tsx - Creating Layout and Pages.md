@@ -26,3 +26,7 @@ If you want to create a new subfolder (say you don't want to implement a few thi
 
 Route groups allow you to organize files into logical groups without affecting the URL path structure. When you create a new folder using parantheses `()`, the name won't be included in the URL path. So `/dashboard/(overview)/page.tsx` becomes `/dashboard`.
 
+Tags:
+#development 
+#javascript
+#nextjs

@@ -116,3 +116,8 @@ export default function NotFound() {
   );
 }
 ```
+
+Tags:
+#development 
+#javascript
+#nextjs

@@ -30,3 +30,6 @@ def hello(name):
 	return name, 'Roger', 9
 ```
 What you return will be in a tuple form.
+
+Tags:
+#python

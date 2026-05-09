@@ -100,3 +100,9 @@ function useIdeas() {
 
 export { IdeasContextProvider, useIdeas };
 ```
+
+
+Tags:
+#javascript 
+#react
+#development 

@@ -49,3 +49,8 @@ Where you place your Suspense boundaries will depend on a few things:
 1. How you want the user to experience the page as it streams.
 2. What content you want to prioritize.
 3. If the components rely on data fetching.
+
+Tags:
+#development 
+#javascript
+#nextjs

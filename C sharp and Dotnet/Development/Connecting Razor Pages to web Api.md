@@ -124,3 +124,7 @@ Now, you can go ahead and run your application using `dotnet run` and go to the 
 2. Configure `HttpClient` ( connect with your api)
 3. Create pages
 4. Run your application
+
+Tags:
+#development 
+#dotnet 

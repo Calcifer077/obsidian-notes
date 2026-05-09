@@ -23,3 +23,8 @@ Vectorization describes the absence of any explicit looping, indexing, etc., in 
     
 
 Broadcasting is the term used to describe the implicit element-by-element behavior of operations; generally speaking, in NumPy all operations, not just arithmetic operations, but logical, bit-wise, functional, etc., behave in this implicit element-by-element fashion, i.e., they broadcast. Moreover, in the example above, `a` and `b` could be multidimensional arrays of the same shape, or a scalar and an array, or even two arrays with different shapes, provided that the smaller array is “expandable” to the shape of the larger in such a way that the resulting broadcast is unambiguous. For detailed “rules” of broadcasting see [Broadcasting](https://numpy.org/doc/stable/user/basics.broadcasting.html#basics-broadcasting).
+
+Tags:
+#aiml 
+#python
+#numpy

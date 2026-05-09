@@ -124,3 +124,6 @@ Here are your challenges — think carefully before reading further answers:
 **Q5.** F# is a functional language. C# is object-oriented. They both run on the CLR. Explain how this is possible — what does the CLR actually understand?
 
 ---
+
+Tags:
+#dotnet

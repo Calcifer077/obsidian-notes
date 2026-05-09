@@ -70,3 +70,6 @@ name[0:2] # 'Ro'
 name[:2] # 'Ro' 
 name[2:] # 'ger'
 ```
+
+Tags:
+#python

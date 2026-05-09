@@ -50,3 +50,8 @@ return new Response('Hello, Next.js!', { status: 200, headers: { 'Set-Cookie': `
 
 Read more:
 [Next.js route](https://nextjs.org/docs/app/api-reference/file-conventions/route)
+
+Tags:
+#development 
+#javascript
+#nextjs

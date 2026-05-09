@@ -40,3 +40,8 @@ export default async function RootLayout({
   );
 }
 ```
+
+Tags:
+#development 
+#javascript
+#nextjs

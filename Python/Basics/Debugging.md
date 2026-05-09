@@ -18,3 +18,6 @@ Once you have debugger running, it will ask for your commands to execute. Some o
 - `print` - `p` - Evaluate and print the value of an expression or value in the current context. Use: `p <variable_name>`
 - `quit` - `q` - Exit the debugger and terminate the program
 - `help` - `h` - Display list of commands.
+
+Tags:
+#python

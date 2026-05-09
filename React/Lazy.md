@@ -87,7 +87,7 @@ It would reload again only if you:
 2. Will cache the result even if same file is loaded across many files.
 3. Use `suspense` around it.
 
-
-
-
-
+Tags:
+#javascript 
+#react
+#development 

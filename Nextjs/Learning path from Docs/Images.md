@@ -36,3 +36,8 @@ export default function Page(){
 ```
 
 Above we have set `width` and `height`. It's good practice to set the `width` and `height` of your images to avoid layout shift, these should be an aspect ratio **identical** to the source image. These values are _not_ the size the image is rendered, but instead the size of the actual image file used to understand the aspect ratio.
+
+Tags:
+#development 
+#javascript
+#nextjs

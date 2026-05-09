@@ -10,3 +10,8 @@
 - [Properties](Properties.md)
 - [The Foundation of .NET, CLR, CLS, CTS, BCL](The%20Foundation%20of%20.NET,%20CLR,%20CLS,%20CTS,%20BCL.md)
 - [Collections, Generic and Non-Generic](Collections,%20Generic%20and%20Non-Generic.md)
+- [LINQ](LINQ.md)
+- [EF Core and ADO.Net](EF%20Core%20and%20ADO.Net.md)
+
+Tags:
+#csharp 

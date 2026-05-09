@@ -57,3 +57,5 @@ Then you have methods to interoperate with arithmetic operations:
 - `__lshift__()`  respond to the  `<<`  operator
 
 
+Tags:
+#python

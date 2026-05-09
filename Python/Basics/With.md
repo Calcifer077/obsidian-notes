@@ -21,3 +21,6 @@ with open(filename, 'r') as file:
 ```
 
 In other words we have built-in implicit exception handling.
+
+Tags:
+#python

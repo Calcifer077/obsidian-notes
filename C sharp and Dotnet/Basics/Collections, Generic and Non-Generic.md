@@ -778,3 +778,6 @@ Console.WriteLine(dict["vegs"].Count);
 1. What does each `Console.WriteLine` print?
 2. Is `v.Add("potato")` modifying the original dictionary value or a copy?
 3. What would happen if TryGetValue failed (key didn't exist) and you called `v.Add()`?
+
+Tags:
+#csharp 

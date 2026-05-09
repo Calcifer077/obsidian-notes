@@ -53,3 +53,6 @@ Some operators are used to work on bits and binary numbers:
 name = 'Roger'
 print('ger' in name) # True
 ```
+
+Tags:
+#python

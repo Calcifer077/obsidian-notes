@@ -475,3 +475,7 @@ Go to any .NET project (or create a console app) and:
 **SharpLab link:** https://sharplab.io — paste C# code, select "IL" output. This will show you EXACTLY what the CLR receives before JIT.
 
 ---
+
+Tags:
+#csharp 
+#dotnet 

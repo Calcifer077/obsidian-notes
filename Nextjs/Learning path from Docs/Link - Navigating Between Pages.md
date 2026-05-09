@@ -73,4 +73,7 @@ Short Notes:
 1. Use `Link` instead of `<a>`
 2. You can also avoid prefetching if you want.
 
-Backlinks:
+Tags:
+#development 
+#javascript
+#nextjs

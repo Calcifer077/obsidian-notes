@@ -6,3 +6,7 @@ Use `dotnet watch run` for hot reload in your application.
 - [Errors](Errors.md)
 - [MVC — Step-by-Step Learning Guide — V1](MVC%20—%20Step-by-Step%20Learning%20Guide%20—%20V1.md)
 - [MVC — Step-by-Step Learning Guide — V2](MVC%20—%20Step-by-Step%20Learning%20Guide%20—%20V2.md)
+
+Tags:
+#development 
+#dotnet 

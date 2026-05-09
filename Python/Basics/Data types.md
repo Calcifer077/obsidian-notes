@@ -124,3 +124,6 @@ complexNumber.imag # 3.0
 
 ##### Arithmetic operations
 `**` for exponentiation, `//` for floor division, rest are same as in other languages
+
+Tags:
+#python

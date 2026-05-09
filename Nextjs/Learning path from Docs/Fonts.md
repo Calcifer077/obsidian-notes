@@ -29,3 +29,8 @@ export default function RootLayout({
 }
 ```
 As above is the root layout, your font will be applied throughout your application. You can add fonts to specific elements also by following the same steps.
+
+Tags:
+#development 
+#javascript
+#nextjs

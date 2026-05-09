@@ -65,3 +65,7 @@ inc(n)
 ```
 There are many standards out there and you can follow whichever one you like. One of the standards is by google.
 [Github - google standard]([styleguide/pyguide.md at gh-pages · google/styleguide · GitHub](https://github.com/google/styleguide/blob/gh-pages/pyguide.md#38-comments-and-docstrings))
+
+
+Tags:
+#python

@@ -138,3 +138,6 @@ builder.Services.AddSingleton<ISingletonService, SingletonService>();
 
 var app = builder.Build();
 ```
+
+Tags:
+#csharp 

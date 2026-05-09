@@ -166,3 +166,9 @@ export default function SideNav() {
 `auth.config.ts` -> where you config `NextAuth.js`
 `proxy.ts` -> the file that runs before every request to our server and stops rendering (protected routes) if the user is not logged in.
 `auth.ts` -> file where your real logic resides.
+
+Tags:
+#development 
+#javascript
+#nextjs 
+#auth

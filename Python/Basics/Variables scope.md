@@ -35,3 +35,6 @@ test() # 9
 
 print(age) # NameError: name 'age' is not defined
 ```
+
+Tags:
+#python

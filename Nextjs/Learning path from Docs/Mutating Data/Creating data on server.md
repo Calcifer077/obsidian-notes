@@ -162,3 +162,8 @@ export async function createInvoice(formData: FormData) {
 Workflow of above:
 1. We should be redirected to the `/dashboard/invoices` route on submission.
 2. We should see the new invoice at the top of the table.
+
+Tags:
+#development 
+#javascript
+#nextjs

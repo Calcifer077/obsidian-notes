@@ -51,3 +51,8 @@ IIS does not run our app directly. It acts as a reverse proxy.
 5. Response goes back
 
 Kestrel is a lightweight, cross-platform, and high-performance open-source web server for ASP.NET Core, included by default in all .NET Core templates.
+
+Tags:
+#development 
+#dotnet 
+#deployment

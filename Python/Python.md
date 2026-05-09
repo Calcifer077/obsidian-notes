@@ -1,1 +1,4 @@
-- [Basics](Basics/Basics.md)
+- [Basics Python](Basics/Basics%20Python.md)
+
+Tags:
+#python

@@ -64,3 +64,6 @@ except DogNotFoundException:
 Exceptions follow a order, meaning that if in the `try` block there occur any exception nothing below it will run and its corresponding `except` block will run and than `finally`.
 
 [Built-in Exceptions](https://docs.python.org/3/library/exceptions.html)
+
+Tags:
+#python

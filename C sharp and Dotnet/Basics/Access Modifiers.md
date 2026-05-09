@@ -138,3 +138,6 @@ public static class Repositories
 - `private protected` → my children, but only if they live in my house (same assembly)
 
 **Assembly** -> A single compiled .NET unit — basically one `.dll` or one `.exe` file. It's the **smallest deployable, versionable, and securable chunk** of .NET code.
+
+Tags:
+#csharp 

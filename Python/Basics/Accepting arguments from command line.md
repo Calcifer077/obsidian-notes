@@ -52,3 +52,7 @@ usage: program.py [-h] -c color
 program.py: error: argument -c/--color: invalid choice: 'blue'
 (choose from 'yellow', 'red')
 ```
+
+
+Tags:
+#python

@@ -164,3 +164,8 @@ createInvoice checks if data is good (using Zod)
 If bad → sends error messages back
 If good → saves to database → redirects to invoice list
 ```
+
+Tags:
+#development 
+#javascript
+#nextjs

@@ -12,3 +12,6 @@ You can create a new tuple from existing tuples using `+` operator:
 ```python
 newtuple = names + ('Vanilla', 'Tina')
 ```
+
+Tags:
+#python

@@ -235,3 +235,8 @@ const handleSearch = useDebouncedCallback((term) => {
 ```
 This function will wrap the contents of `handleSearch`, and only run the code after a specific time once the user has stopped typing (300ms).
 By debouncing, we can reduce the number of requests sent to your database, thus saving resources.
+
+Tags:
+#development 
+#javascript
+#nextjs

@@ -30,3 +30,6 @@ main();
 ```
 
 Whenever we call `say_hello`, decorator is going to be called.
+
+Tags:
+#python

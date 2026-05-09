@@ -981,3 +981,9 @@ if (app.Environment.IsDevelopment())
 Now, you can simply do `dotnet run` and you will get a url `localhost:<port>` in your terminal. You can append `/swagger` to visualize your api.
 
 [Connecting Razor Pages to web Api](Connecting%20Razor%20Pages%20to%20web%20Api.md)
+
+
+Tags:
+#development 
+#dotnet 
+#database 

@@ -72,3 +72,6 @@ Some modules by python:
 - `requests`  to perform HTTP network requests 
 - `http`  to create HTTP servers 
 - `urllib`  to manage URLs
+
+Tags:
+#python

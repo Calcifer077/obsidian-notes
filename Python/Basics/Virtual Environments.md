@@ -44,3 +44,6 @@ This installs **only inside the virtual environment**, not globally.
 ```bash
 deactivate
 ```
+
+Tags:
+#python

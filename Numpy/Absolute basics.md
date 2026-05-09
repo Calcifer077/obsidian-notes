@@ -1257,3 +1257,8 @@ plt.plot(x, y, 'purple') # line
 plt.plot(x, y, 'o')      # dots
 ```
 ![](../assets/plotting_arrays_with_matplotlib_plotting_a_2D_array_absolute_basics_numpy.png)
+
+Tags:
+#aiml 
+#python
+#numpy

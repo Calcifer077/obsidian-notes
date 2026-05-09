@@ -45,3 +45,7 @@ Links to different mutations:
 [Deleting data on server](Deleting%20data%20on%20server.md)
 
 
+Tags:
+#development 
+#javascript
+#nextjs

@@ -4,6 +4,15 @@ Think of it as:
 - Once you have a variable of delegate type → you can assign any compatible method to it
 - You can call it like a normal method → but which actual method runs is decided at runtime
 
+### Simple Analogy
+Imagine a TV remote. The remote does not contain the TV logic.
+It only knows:
+- which button calls which action
+Delegate works similarly:
+- stores method reference
+- invokes method later
+
+
 Example:
 **1. Basic Syntax : Declaration & Usage** 
 ```csharp
@@ -79,6 +88,89 @@ class Program
 }
 ```
 
+### Different Types of Delegates
+#### 1. Custom delegates
+These are manually declared.
+```csharp
+public delegate void Logger(string message);
+
+Logger log = Console.WriteLine;
+log("Hello");
+```
+
+#### 2. Action delegate
+It represents methods with **NO** return value.
+```csharp
+Action<string> log = Console.WriteLine;
+log("Hello");
+
+// Above is equivalent to:
+delegate void Something(string value);
+```
+
+It is mandatory that `Action<>` always return `void`.
+`Action<>` is very common in callbacks, middleware, event handlers, background processing.
+
+##### 3. Func delegate
+It represents methods that **returns** a value.
+```csharp
+Func<int, int, int> add = (a, b) => a + b;
+```
+
+Meaning:
+```
+Input: int, int
+Return: int
+```
+Last type parameter is always return type.
+
+#### 4. Predicate delegate
+It represents methods that return a bool. Used for conditions.
+```csharp
+Predicate<int> isEven = x => x % 2 == 0;
+
+// Above is equal to:
+Func<int, bool>
+```
+
+#### 5. Multicast delegate
+A delegate that points to multiple methods.
+```csharp
+Action action = Method1;
+action += Method2;
+action += Method3;
+
+action(); // All methods are executed sequentially.
+```
+
+#### 6. Anonymous delegates
+Old syntax before lambdas.
+```c#
+Func<int, int> square = delegate(int x) {
+	return x * x;
+};
+```
+
+#### 7. Lambda expressions
+Modern shorthand syntax. This is not technically a delegate type, it is syntax that creates delegates.
+```c#
+x => x * x
+```
+
+#### 8. Event delegate
+Special delegates used by events.
+```c#
+public delegate void ButtonClick(object sender, EventArgs e);
+```
+
+#### 9. Generic delegate
+```c#
+Func<T>
+Action<T>
+Predicate<T>
+```
+
+
 ### Quick Summary Table — What to Remember
 
 | Question                         | Answer / Best Practice                            |
@@ -92,3 +184,6 @@ class Program
 | Most used in practice?           | Event handlers + LINQ + callbacks + async/await   |
 Backlinks:
 [Predicate](Predicate.md)
+
+Tags:
+#csharp 

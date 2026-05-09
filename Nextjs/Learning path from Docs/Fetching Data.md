@@ -90,3 +90,8 @@ By using this pattern, you can:
 
 - Start executing all data fetches at the same time, which is faster than waiting for each request to complete in a waterfall.
 - Use a native JavaScript pattern that can be applied to any library or framework.
+
+Tags:
+#development 
+#javascript
+#nextjs

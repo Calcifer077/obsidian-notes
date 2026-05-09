@@ -1,1 +1,6 @@
 Same steps as [Updating data on server](Updating%20data%20on%20server.md), just different SQL.
+
+Tags:
+#development 
+#javascript
+#nextjs

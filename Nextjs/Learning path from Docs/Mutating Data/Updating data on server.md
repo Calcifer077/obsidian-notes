@@ -85,3 +85,8 @@ Using `bind` will make sure that both `id` and `formData` is passed to the Serve
 We could have also used a hidden input but that can't be used if you have some sensitive data which you don't want to expose to the frontend.
 
 Now just create a server action that performs the required task.
+
+Tags:
+#development 
+#javascript
+#nextjs

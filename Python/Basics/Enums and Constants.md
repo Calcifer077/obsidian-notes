@@ -38,3 +38,6 @@ class Constants(Enum):
 	HEIGHT = 256
 ```
 No one can reassign that value.
+
+Tags:
+#python

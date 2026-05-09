@@ -42,3 +42,6 @@ You can check if an item is contained into a set with the `in` operator:
 ```python
 print('Roger' in names) # True
 ```
+
+Tags:
+#python

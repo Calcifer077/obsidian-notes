@@ -88,3 +88,9 @@ export const metadata: Metadata = {
 };
 ```
 The title for the above page will be `Invoices | Acme Dashboard`
+
+
+Tags:
+#development 
+#javascript
+#nextjs

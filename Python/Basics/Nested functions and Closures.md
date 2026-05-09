@@ -49,3 +49,6 @@ print(inc()) # 2
 print(inc()) # 3
 ```
 We return the `inc()` inner function, and that has still access to the state of the `count` variable even though the `counter()` function has ended.
+
+Tags:
+#python

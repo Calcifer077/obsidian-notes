@@ -50,3 +50,8 @@ function Counter() {
 Any action must return a state after working on it.
 
 You can combine `useReducer` with **Context API**: [Context API with `useReducer`](Context%20API%20with%20`useReducer`.md)
+
+Tags:
+#javascript 
+#react
+#development 
