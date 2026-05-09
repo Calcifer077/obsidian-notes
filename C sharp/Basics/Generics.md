@@ -180,3 +180,4 @@ public static T Max<T>(T a, T b) where T : IComparable<T>
 | Writing base class/interface for entities | Yes           | Copy-paste per entity type                     |
 | Only 2–3 types needed                     | Maybe not     | Separate classes sometimes clearer             |
 
+- [Collections, Generic and Non-Generic](Collections,%20Generic%20and%20Non-Generic.md)
