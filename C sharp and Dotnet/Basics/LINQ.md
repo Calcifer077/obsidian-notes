@@ -40,7 +40,7 @@ Just like SQL lets you query a database:
 SELECT Name, Age FROM Users WHERE Age > 18 ORDER BY Name
 ```
 
-LINQ lets you query any collection in C#:
+LINQ lets you query any [Collection](Collections,%20Generic%20and%20Non-Generic.md) in C#:
 
 ```csharp
 var result = users
@@ -112,8 +112,6 @@ select n * 2        // Projection — translated to .Select() by compiler
 
 ## 4. INTERNAL WORKING — What Actually Happens at Compile Time?
 
-This is where most developers are completely ignorant. Let me show you something shocking.
-
 **You write this query syntax:**
 
 ```csharp
@@ -140,7 +138,7 @@ This means:
 
 ## 5. SIDE-BY-SIDE COMPARISON — Every Common Operation
 
-Let me show you both syntaxes for every major LINQ operation:
+Let's see both syntaxes for every major LINQ operation:
 
 ### WHERE (Filter)
 
@@ -271,8 +269,6 @@ var result = from t in teams
 ---
 
 ## 6. DEFERRED EXECUTION — The Most Misunderstood LINQ Concept
-
-This is where developers in production cause serious bugs.
 
 ```csharp
 var numbers = new List<int> { 1, 2, 3, 4, 5 };
