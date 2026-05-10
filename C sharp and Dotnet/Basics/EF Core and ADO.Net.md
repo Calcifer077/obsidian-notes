@@ -6,7 +6,7 @@ Let's start from the absolute beginning.
 
 ### The Real World Analogy
 
-Imagine you're a chef. You need ingredients from a warehouse. The warehouse stores everything in **boxes with a specific labeling system** (rows, columns, data types). But your kitchen works with **objects** — a `Recipe` has `Ingredients`, quantities, steps.
+Imagine you're a chef. You need ingredients from a warehouse. The warehouse stores everything in **boxes with a specific labelling system** (rows, columns, data types). But your kitchen works with **objects** — a `Recipe` has `Ingredients`, quantities, steps.
 
 Every time you need ingredients, you have to:
 
@@ -149,7 +149,6 @@ Second request: Your app → pool says "here's a free one" → reuses TCP connec
 ```
 
 **Why does this matter?**
-
 - Opening a real TCP connection takes **~100-300ms**
 - Without pooling, a high-traffic app would be **unusably slow**
 - Connection string controls pooling: `"Max Pool Size=100;Min Pool Size=5"`
@@ -236,7 +235,6 @@ public async Task<Order> GetOrderWithDetailsAsync(int orderId)
 ### What EF Core Actually Is
 
 EF Core is NOT magic. It is a **code generator and runtime** that:
-
 1. **Reads your C# classes** (your model)
 2. **Understands relationships** (via configuration or conventions)
 3. **Generates SQL** at runtime
@@ -415,8 +413,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 ---
 
 ## 5. CHANGE TRACKING — EF CORE'S SUPERPOWER (AND DANGER)
-
-This is where most developers have no idea what's happening internally.
 
 ### How Change Tracking Works
 
@@ -748,17 +744,297 @@ public class ProductRepository
 ## Interview Questions You Should Know Cold
 
 1. What is the difference between `FirstOrDefault()` and `Find()` in EF Core?
+Ans: Both `Find()` and `FirstOrDefault()` search for a item, if not found return `null`. Than what is the difference? `Find()` is **identity-map aware** — it checks the DbContext's in-memory cache first, and only hits the database if the entity isn't already tracked. `FirstOrDefault()` **always goes to the database**, builds a SQL query, executes it, and returns the result. For `Find()` to work you have to have that table in **cache**, you would have to query it some point in the past.
+`Find` is made to work on Primary key, but `FirstOrDefault` can work on anything. It is made on `IQueryable`. 
+Problems in production:
+```c#
+// Scenario: Update flow in a service method
+
+// Step 1: Load product (now it's tracked)
+var product = await context.Products.FindAsync(5);
+product.Price = 999.99m;
+// We have NOT called SaveChanges yet!
+// In memory: Price = 999.99
+// In database: Price still = 50.00
+
+// Step 2: Somewhere else in the SAME REQUEST, someone calls:
+var checkProduct = await context.Products.FindAsync(5);
+Console.WriteLine(checkProduct.Price); 
+// OUTPUT: 999.99  ← returns the IN-MEMORY modified version
+// Same object reference! No DB call!
+
+// Step 3: Now with FirstOrDefault:
+var checkProduct2 = await context.Products
+    .FirstOrDefaultAsync(p => p.Id == 5);
+Console.WriteLine(checkProduct2.Price);
+// OUTPUT: 50.00  ← went to database, got the OLD value
+// BUT WAIT — is this a DIFFERENT object now?
+```
+
+What happens when `FirstOrDefault` loads an already-tracked entity?
+```csharp
+// This is subtle and critical:
+var p1 = await context.Products.FindAsync(5);
+p1.Price = 999.99m;
+
+var p2 = await context.Products
+    .FirstOrDefaultAsync(p => p.Id == 5); // Goes to DB, gets Price=50.00
+
+// Q: What is p2.Price?
+// A: 999.99 — NOT 50.00!
+
+// WHY? EF Core fetches from DB, but then checks the identity map.
+// It finds Product #5 is already tracked.
+// It DISCARDS the database values and returns the EXISTING tracked object.
+// This is called "identity resolution" — EF Core guarantees one object
+// per primary key per context instance.
+
+Console.WriteLine(object.ReferenceEquals(p1, p2)); // TRUE — same object!
+```
+
+**Full comparison table:**
+
+```
+┌─────────────────────────┬──────────────────────┬───────────────────────┐
+│ Behavior                │ Find()               │ FirstOrDefault()      │
+├─────────────────────────┼──────────────────────┼───────────────────────┘
+│ Checks cache first?     │ YES                  │ NO                    │
+│ Always hits DB?         │ NO (if cached)       │ YES                   │
+│ Works on IQueryable?    │ NO                   │ YES                   │
+│ Can filter by non-PK?   │ NO                   │ YES                   │
+│ Can use Include()?      │ NO                   │ YES                   │
+│ Async version           │ FindAsync()          │ FirstOrDefaultAsync() │
+│ Works on Detached       │ Only on tracked      │ Always                │
+│ Composite PK support    │ YES Find(1, 2)       │ YES (manual filter)   │
+│ Can add .Where() before?│ NO                   │ YES                   │
+└─────────────────────────┴──────────────────────┴───────────────────────┘
+```
+
 2. What happens if you call `SaveChangesAsync()` with no changes?
+Ans: `SaveChangesAsync` with no changes **returns** `0` and **no SQL is sent to the database**.
+
+What happens internally:
+```text
+Step 1: Call interceptors (if any registered)
+        → SaveChangesInterceptor.SavingChangesAsync() fires
+        → Even with no changes. Always.
+
+Step 2: ChangeTracker.DetectChanges()
+        → Scans EVERY tracked entity
+        → Compares current property values against original snapshot
+        → Marks entities as Modified/Added/Deleted if needed
+        → THIS IS NOT FREE — cost = O(n) where n = tracked entities
+
+Step 3: Collect all pending changes
+        → Finds entities in Added, Modified, Deleted state
+        → Result: empty list (no changes)
+
+Step 4: Return value = 0
+        → No SQL generated
+        → No transaction opened
+        → No database round-trip
+
+Step 5: Call interceptors again
+        → SaveChangesInterceptor.SavedChangesAsync() fires
+        → With result = 0
+```
+
 3. Explain what happens internally when EF Core executes a LINQ query.
+Ans: When you write a lambda in LINQ-to-objects context:
+```c#
+// Against a plain List<T>:
+var list = new List<Product>();
+var result = list.Where(p => p.Price > 100);
+```
+The compiler turns `p => p.Price > 100` into a **delegate** — actual compiled IL code, executable machine instructions.
+```text
+Func<Product, bool> = compiled method in memory
+"Take a Product, access .Price, compare to 100, return bool"
+This is EXECUTABLE CODE.
+```
+
+But when you write the same lambda against `IQueryable<T>`:
+```csharp
+// Against DbSet<T> which implements IQueryable<T>:
+var result = context.Products.Where(p => p.Price > 100);
+```
+**The compiler does something completely different.**
+It does NOT compile the lambda to executable code.
+It compiles it to an **Expression Tree.**
+
+**Expression Trees:**
+An expression Tree is a data structure that represents code as inspectable objects - not as executable machine code.
+```text
+Compiled delegate  = a sealed black box
+                   = "here is machine code, just run it"
+                   = EF Core cannot look inside
+
+Expression tree    = a transparent blueprint
+                   = "here is a description of the code as objects"
+                   = EF Core CAN inspect every part of it
+```
+
+**What does this expression tree actually look like?**
+```c#
+// When you write this:
+Expression<Func<Product, bool>> expr = p => p.Price > 100;
+
+// The C# compiler builds this object tree:
+BinaryExpression  (NodeType: GreaterThan)
+├── Left:  MemberExpression
+│          ├── Expression: ParameterExpression (p, type: Product)
+│          └── Member: PropertyInfo (Price)
+└── Right: ConstantExpression
+           └── Value: 100 (type: decimal)
+
+// You can actually inspect it at runtime:
+Console.WriteLine(expr.Body.NodeType);        // GreaterThan
+Console.WriteLine(expr.Body.GetType().Name);  // BinaryExpression
+
+var binary = (BinaryExpression)expr.Body;
+Console.WriteLine(binary.Left.GetType().Name); // MemberExpression
+Console.WriteLine(binary.Right.GetType().Name);// ConstantExpression
+```
+This is why LINQ to SQL works at all. EF core walks this tree and translates each node to SQL.
+```c#
+// IEnumerable<T>.Where — takes a DELEGATE (Func)
+// Defined in System.Linq.Enumerable
+public static IEnumerable<T> Where<T>(
+    this IEnumerable<T> source,
+    Func<T, bool> predicate)  // ← compiled code, black box
+// Result: filter runs IN MEMORY in C#
+
+// IQueryable<T>.Where — takes an EXPRESSION TREE
+// Defined in System.Linq.Queryable  
+public static IQueryable<T> Where<T>(
+    this IQueryable<T> source,
+    Expression<Func<T, bool>> predicate)  // ← inspectable blueprint
+// Result: filter gets TRANSLATED TO SQL
+
+// The C# compiler decides which overload to call
+// based on the TYPE of the source variable
+// DbSet<T> implements IQueryable<T>
+// So the compiler AUTOMATICALLY chooses the Expression<> overload
+// This is transparent to you — same syntax, completely different behavior
+```
+
+
 4. Why is `DbContext` scoped and not singleton?
+Ans: `DbContext` is scoped lifetime (one context per HTTP request) and not singleton because `DbContext` is not thread-safe. One request = one thread = safe. If you made it Singleton, multiple requests sharing one context = race conditions.
+
 5. What is the difference between eager loading, lazy loading, and explicit loading?
-6. What is a "tracking query" vs a "no-tracking query"?
+Ans: These are three strategies for loading **related entities** in EF Core:
+**Eager Loading:**
+Loads related data **immediately** as part of the initial query using `Include()`.
 
----
+```c#
+var orders = context.Orders
+    .Include(o => o.Customer)
+    .Include(o => o.OrderItems)
+        .ThenInclude(i => i.Product)
+    .ToList();
+```
 
-## 🔥 Cross Questions For YOU
+**How it works:** EF Core generates a single SQL query with JOINs (or multiple queries with `AsSplitQuery()`).
 
-Think carefully before answering. Don't Google. Reason through it:
+**Use when:** You _know_ you'll need the related data, and want to minimize round-trips to the DB.
+**Watch out for:** Over-fetching — loading large object graphs you don't fully use.
+
+**Lazy Loading:**
+Loads related data **on demand**, automatically, the first time a navigation property is accessed.
+```csharp
+// Setup: install Microsoft.EntityFrameworkCore.Proxies
+// and call .UseLazyLoadingProxies() in DbContext config
+
+var order = context.Orders.First();
+var customerName = order.Customer.Name; // DB hit happens HERE
+```
+
+Navigation properties must be `virtual`:
+```csharp
+public class Order {
+    public virtual Customer Customer { get; set; }
+    public virtual ICollection<OrderItem> OrderItems { get; set; }
+}
+```
+
+**Use when:** You have optional relationships you may or may not need.
+**Watch out for:** The **N+1 problem** — looping over a list and touching a nav property fires a separate query _per item_.
+
+**Explicit Loading:**
+Loads related data **manually**, on demand, by calling `Load()` yourself after the parent is already tracked.
+```c#
+var order = context.Orders.First(); // related data NOT loaded
+
+// Load later, explicitly
+context.Entry(order)
+    .Reference(o => o.Customer)   // for single nav property
+    .Load();
+
+context.Entry(order)
+    .Collection(o => o.OrderItems) // for collections
+    .Query()
+    .Where(i => i.Quantity > 1)   // you can filter!
+    .Load();
+```
+
+**Use when:** You need conditional loading logic, or want to filter/sort the related collection before loading.
+**Watch out for:** More verbose code; easy to forget a load and get nulls.
+
+### Quick Comparison
+
+|              | Eager                        | Lazy                  | Explicit                      |
+| ------------ | ---------------------------- | --------------------- | ----------------------------- |
+| When Loaded  | With parent query            | On property access    | Manually view `Load()`        |
+| SQL trips    | 1 (or split)                 | 1 per access          | 1 per `Load()` call           |
+| Setup needed | None                         | Proxies + `virtual`   | None                          |
+| Filterable   | Via `Where` before `Include` | No                    | Yes                           |
+| N + 1 risk   | Low                          | High                  | Low                           |
+| Best for     | Known, required relations    | Optional, rarely used | Conditional or filtered loads |
+
+**Rule of thumb:** Start with **eager loading** as your default. Use **explicit loading** when you need fine-grained control. Avoid **lazy loading** in loops or high-traffic APIs unless you're very deliberate about it.
+
+5. What is a "tracking query" vs a "no-tracking query"?
+Ans: **Tracking Queries (Default)**
+When you query entities, EF Core's **Change Tracker** watches them. It remembers their original values so it can detect changes when you call `SaveChanges()`.
+```c#
+var order = context.Orders.First(); // tracked by default
+
+order.Status = "Shipped"; // change tracker detects this
+
+context.SaveChanges(); // generates UPDATE automatically
+```
+Behind the scenes, EF Core stores a snapshot of every tracked entity — its original values + current state (`Added`, `Modified`, `Deleted`, `Unchanged`).
+**Use when:** You intend to **update, delete, or insert** the entity.
+
+**No-Tracking Queries**
+EF Core fetches the data but **doesn't watch it** — no snapshot, no change detection.
+```c#
+var orders = context.Orders
+    .AsNoTracking()
+    .ToList();
+
+orders[0].Status = "Shipped";
+
+context.SaveChanges(); // nothing happens — EF doesn't know about this entity
+```
+
+**Use when:** You're doing **read-only** work — displaying data, building reports, returning API responses, etc.
+
+**Why Does it Matter?**
+**Performance.** Tracking has real overhead:
+- Memory — snapshots of every entity's original values are stored
+- CPU — `DetectChanges()` runs on every `SaveChanges()`, scanning all tracked entities
+On large result sets, `AsNoTracking()` can be **significantly faster**.
+```c#
+// Slow — tracking 10,000 rows you'll never modify
+var products = context.Products.ToList();
+
+// Fast — no overhead
+var products = context.Products.AsNoTracking().ToList();
+```
+
+## Cross Questions For YOU
 
 **Q1.** You have a `DbContext` registered as **Singleton** instead of Scoped in a web application. Two users make simultaneous requests. User A loads a Product and modifies the price. User B simultaneously loads the same Product. What happens? What are the specific failure modes?
 
