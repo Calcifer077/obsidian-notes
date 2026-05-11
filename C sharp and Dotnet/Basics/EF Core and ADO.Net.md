@@ -924,9 +924,9 @@ Ans: `DbContext` is scoped lifetime (one context per HTTP request) and not singl
 
 5. What is the difference between eager loading, lazy loading, and explicit loading?
 Ans: These are three strategies for loading **related entities** in EF Core:
+
 **Eager Loading:**
 Loads related data **immediately** as part of the initial query using `Include()`.
-
 ```c#
 var orders = context.Orders
     .Include(o => o.Customer)
