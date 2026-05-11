@@ -208,7 +208,6 @@ Browser                    Server
 ### ITempDataProvider — The Plug
 
 TempData doesn't store data itself. It uses an **`ITempDataProvider`** interface. By default, ASP.NET Core uses:
-
 ```csharp
 // Default: CookieTempDataProvider (stores in cookie)
 // Alternative: SessionStateTempDataProvider (stores in session)
@@ -414,14 +413,12 @@ public IActionResult Index()
 ## 8. Memory and Performance Implications
 
 ### ViewData/ViewBag:
-
 - Lives on the **heap** as a dictionary
 - Garbage collected after request ends (very fast)
 - Boxing/unboxing has a **minor CPU cost**
 - No I/O involved — pure in-memory
 
 ### TempData (Cookie-based):
-
 - Data must be **serialized to JSON**
 - JSON is then **encrypted** (Data Protection API)
 - Sent over the wire in HTTP headers on EVERY request
@@ -429,7 +426,6 @@ public IActionResult Index()
 - Deserializes on every request even if you don't use it
 
 ### TempData (Session-based):
-
 - Data stored in server memory (or Redis/SQL)
 - Lookup by Session ID
 - Network I/O if using distributed session
@@ -449,11 +445,18 @@ public IActionResult Index()
     
 5. **What happens if you read TempData["key"] twice?** → Reading it once marks it for deletion. If you read it a second time in the same request, the value is still there (deletion happens at end of request). But the next request won't have it.
     
-6. **What's the difference between `Peek()` and `Keep()` in TempData?**
+6. **What's the difference between `Peek()` and `Keep()` in TempData?** → `Peek()` is used to read from `TempData` without marking it for deletion. `Keep()` un-mark data for deletion after reading.
     
-7. **Why is ViewBag considered a code smell in production applications?**
+7. **Why is ViewBag considered a code smell in production applications?** 
+Ans: The core problem: **no type safety.**
+**Five quick reasons:**
+- No IntelliSense — you're guessing property names
+- No compile-time errors — typos become runtime bugs
+- No refactoring support — rename a property and nothing updates
+- Unreadable — what data does this view expect? You have to hunt through the controller
+- Untestable — you can't assert on a dynamic object cleanly in unit tests
+The fix is always a **ViewModel**.
     
-
 ---
 
 ## 10. Cross Questions For You 🎯
@@ -468,7 +471,7 @@ ViewBag.Name = "Rahul";
 // What is ViewData["Name"] now? What is ViewBag.Name?
 ```
 
-Think before reading on. What do you predict?
+Ans: `ViewBag` is just a dynamic wrapper over `ViewData`. It means that `Viewata["Name"]` will just be overwritten.
 
 **Q2.** Your colleague writes this code:
 
@@ -490,7 +493,10 @@ public IActionResult Confirmation()
 
 Will `ViewBag.Message` be available in the Confirmation view? **Why or why not?** What would you use instead?
 
-**Q3.** TempData uses cookies by default. What is a **security risk** this introduces? How does ASP.NET Core mitigate it?
+Ans: `ViewBag.Message` will not be available in the Confirmation view as `ViewBag` only persists data in current request. The correct approach would be to use `TempData` because it is designed for persisting data over redirects.
+
+**Q3.** `TempData` uses cookies by default. What is a **security risk** this introduces? How does ASP.NET Core mitigate it?
+Ans: The main security risk is that cookies are visible to the user in the browser. A malicious user can modify these to try and gain access to our application. ASP.Net core mitigates this by using the **Data Protection API** for the cookie provider. It encrypts the cookie content and signs the cookie to prevent tampering.
 
 **Q4.** What do you think happens to TempData if the user opens the POST page in **two browser tabs** simultaneously?
 
@@ -499,6 +505,7 @@ Will `ViewBag.Message` be available in the Confirmation view? **Why or why not?*
 > "I'll use TempData to store the entire shopping cart so it persists across pages."
 
 What problems do you foresee? What would you recommend instead?
+Ans: 
 
 ---
 

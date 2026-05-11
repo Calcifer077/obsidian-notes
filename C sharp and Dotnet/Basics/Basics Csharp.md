@@ -1,6 +1,5 @@
 - [Dotnet Architecture](Dotnet%20Architecture.md)
 - [Abstract class and Interface](Abstract%20class%20and%20Interface.md)
-- [Access Modifiers](Access%20Modifiers.md)
 - [Delegate](Delegate.md)
 - [Dependency Injection](Dependency%20Injection.md)
 - [Enum](Enum.md)
@@ -12,6 +11,8 @@
 - [Collections, Generic and Non-Generic](Collections,%20Generic%20and%20Non-Generic.md)
 - [LINQ](LINQ.md)
 - [EF Core and ADO.Net](EF%20Core%20and%20ADO.Net.md)
+- [OOPS](OOPS.md)
+- [Access Specifiers & Access Modifiers](Access%20Specifiers%20&%20Access%20Modifiers.md)
 
 Tags:
 #csharp 
