@@ -382,6 +382,7 @@ References:
 
 Links:
 [Object references and copying](Object%20references%20and%20copying.md)
+[Garbage collection](Garbage%20collection.md)
 
 Tags:
 #javascript 
