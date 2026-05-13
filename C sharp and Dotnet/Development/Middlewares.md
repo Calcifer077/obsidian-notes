@@ -130,8 +130,6 @@ public delegate Task RequestDelegate(HttpContext context);
 
 ## 4. Internal Working — How ASP.NET Core Chains Middleware
 
-This is where most developers never look. Let me show you what's happening under the hood.
-
 ```
 app.Use(MW1)
 app.Use(MW2)
@@ -326,8 +324,6 @@ app.UseGlobalExceptionHandling();  // Clean, discoverable, testable
 ---
 
 ## 7. WHY Order Matters — The Most Critical Concept
-
-This is where **bugs happen in production** when developers don't understand middleware.
 
 ```csharp
 // ❌ WRONG ORDER — This will break your app in production
@@ -534,4 +530,4 @@ Build a middleware called `RequestTimingMiddleware` that:
 
 Write it using the full class-based pattern with an extension method.
 
-Then tell me: **Should this middleware be registered first or last? Why?**
+**Should this middleware be registered first or last? Why?**

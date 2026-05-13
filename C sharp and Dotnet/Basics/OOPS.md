@@ -45,10 +45,6 @@ OOP solves this by **grouping data + behavior together into a single unit** — 
 
 ## 3. THE FOUR PILLARS — But Taught the Right Way
 
-Most tutorials list them. I will explain **WHY they exist and what problem each solves.**
-
----
-
 ### PILLAR 1 — ENCAPSULATION
 
 #### What is it?
@@ -188,7 +184,7 @@ Code reuse. When multiple types share common behavior, don't repeat it.
 
 #### Real-world analogy
 
-A `SavingsAccount` and `CurrentAccount` are both `BankAccount`s. They share common behavior (deposit, withdraw) but have unique behavior (savings earns interest, current has overdraft).
+A `SavingsAccount` and `CurrentAccount` are both `BankAccount`'s. They share common behaviour (deposit, withdraw) but have unique behaviour (savings earns interest, current has overdraft).
 
 ```csharp
 // BASE CLASS — common behavior for ALL account types
@@ -293,8 +289,6 @@ public class CurrentAccount : BankAccount
 ---
 
 #### Internal Mechanics — Virtual Dispatch Table (vTable)
-
-This is where it gets deeply interesting.
 
 When you declare a method as `virtual`, the CLR creates a **virtual dispatch table (vTable)** for each type.
 
@@ -424,8 +418,6 @@ public class SavingsAccount : BankAccount, IInterestBearing, IAuditable
 
 #### Abstract Class vs Interface — The Deep Distinction
 
-This is a **senior-level question** in every interview.
-
 ||Abstract Class|Interface|
 |---|---|---|
 |**Purpose**|Partial base implementation|Pure behavioral contract|
@@ -456,7 +448,7 @@ If both `Dog` and `Cat` override `MakeSound()`, and `DogCat` inherits from both 
 
 #### What is it?
 
-One interface, many behaviors. The same method call behaves differently based on the actual type at runtime.
+One interface, many behaviours. The same method call behaves differently based on the actual type at runtime.
 
 ```csharp
 // The power of polymorphism
@@ -506,7 +498,7 @@ bank.ProcessMonthEndWithdrawals(450m);
 
 ---
 
-## 5. COMMON MISTAKES — What junior developers do wrong
+## 5. COMMON MISTAKES
 
 ```csharp
 // MISTAKE 1: Using inheritance for code reuse when there's no IS-A relationship
@@ -580,6 +572,7 @@ account.Withdraw(100m);
 ```
 
 _Which `Withdraw` method gets called — `BankAccount.Withdraw` or `SavingsAccount.Withdraw`? WHY? Explain the internal mechanism._
+Ans: `SavingsAccount.Withdraw` will be called. This is called runtime polymorphism. `account` reference type is `BankAccount` but actual object type in memory is `SavingsAccount`. C# decided which overridden method to call based on the actual object type at runtime, not the reference type.
 
 ---
 
@@ -593,10 +586,12 @@ public class BankAccount
 ```
 
 _What are THREE specific problems this causes in a production application? Think about validation, thread safety, and future changes._
+Ans: No Validation, even negative balance can be used. `Balance` can be accessed by anyone.
 
 ---
 
 **Question 3:** _When should you use an **abstract class** instead of an **interface**? Give me a real-world scenario where choosing the wrong one causes problems._
+Ans: When multiple related classes share some common state and behaviour. A real world example can be a banking system. We can store `balance` in our abstract class as a instance variable which is not possible for interface.
 
 ---
 
@@ -616,6 +611,7 @@ acc.Withdraw(100m);
 ```
 
 _What does `new` do here instead of `override`? What gets printed? Why is this dangerous?_
+Ans: `new` says that `Hide the base class version instead of overriding it.` Meaning that parents `Withdraw` will be called.
 
 ---
 
@@ -624,6 +620,7 @@ _What does `new` do here instead of `override`? What gets printed? Why is this d
 > _"Let's make all our domain classes inherit from a single `BaseEntity` class that has logging, auditing, and database ID built in."_
 
 _What are the problems with this approach? What would YOU recommend instead?_
+Ans: It will violate single responsibility principle. It will have tight coupling across entire system. It also creates fake `is-a` relationships. We should keep domain models focused and separated. 
 
 ---
 
@@ -649,7 +646,3 @@ Build this in code:
     
 
 **Predict before you code:** What happens when you call `Refuel()` on an `ElectricCar` reference stored as `Vehicle`?
-
----
-
-Answer my cross-questions first. Then show me your assignment code. I will review it line by line and challenge you on it.

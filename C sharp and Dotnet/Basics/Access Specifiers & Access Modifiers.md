@@ -96,7 +96,7 @@ account._balance = decimal.MaxValue;  // No validation, no rules
 ```csharp
 public class EmailService
 {
-    // This is your PUBLIC CONTRACT — the API you promise to the world
+    // This is your PUBLIC CONTRACT — the API you give to the world
     public void SendEmail(string to, string subject, string body)
     {
         ValidateEmailAddress(to);      // calls private method internally
@@ -579,9 +579,7 @@ This is **Dependency Inversion Principle** + `internal` working together.
 
 ---
 
-## 🔥 Cross Questions for You
-
-Now I want YOU to think:
+## 🔥 Cross Questions 
 
 **Q1.** Look at this code:
 
@@ -593,6 +591,7 @@ public class Order
 ```
 
 What are **three specific problems** with this? Don't just say "it's public." Think deeply about what can go wrong.
+Ans: Well the obvious answer is that `it's public`. It means that anyone can access our `Items` and modify it.
 
 ---
 
@@ -615,10 +614,13 @@ public class OrderService
 ```
 
 Is this valid? **WHY or WHY NOT?** What would happen at runtime?
+Ans: Yes, this is completely valid, because both the class `PaymentHelper` and method `ProcessRefund` are marked as internal meaning they can be accessed and instantiated by `OrderService`. They can be accessed because they are in the same assembly. Another good thing about this is `OrderService` belongs to the same assembly and only uses the method, doesn't expose it to the public.
 
 ---
 
 **Q3.** You're building a NuGet package. You have a class `CacheManager` that you use internally but you don't want consumers of your NuGet to use it. What access modifier do you use, and WHY?
+
+Ans: Use `internal` because that way only your current project / assembly will be able to use this class.
 
 ---
 
@@ -646,9 +648,13 @@ Console.WriteLine(dog.Sound);  // Line C
 
 Which lines compile? Which fail? WHY?
 
+Ans: Only `Line C` will fail because `Sound` is protected, it can't be accessed outside parent and child class. One more thing to note is that you can't declare a top class as protected.
+
 ---
 
 **Q5.** A teammate says: _"I'll make all my class members `public` during development and restrict them later."_ What problems do you foresee with this approach? Name at least 3 real consequences.
+
+Ans: By the time, they make it restricted, many other parts of code may already start using it which will break the app in later run.
 
 ---
 
@@ -666,7 +672,3 @@ Create a `BankAccount` class with these constraints:
 8. `ApplyMonthlyInterest()` — public method that internally uses `CalculateInterest()`
 
 Write this and explain every access modifier decision you made.
-
----
-
-**Before you answer:** Tell me — what do you think will happen if `GetTransactionHistory()` returns the **actual list** reference instead of a read-only copy? What could go wrong?
