@@ -15,6 +15,7 @@ Use `dotnet watch run` for hot reload in your application.
 - [HTML Helpers & Partial Views](HTML%20Helpers%20&%20Partial%20Views.md)
 - [Entity Framework Core Migrations](Entity%20Framework%20Core%20Migrations.md)
 - [Routing in MVC and API](Routing%20in%20MVC%20and%20API.md)
+- [Testing in .NET](Testing%20in%20.NET.md)
 
 Tags:
 #development 

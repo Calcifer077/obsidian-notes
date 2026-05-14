@@ -30,7 +30,7 @@ dotnet add package Swashbuckle.AspNetCore
 dotnet add package BCrypt.Net-Next
 ```
 
-Our folder structure should something like this:
+Our folder structure should be something like this:
 ```text
 BlogApi/
 ├── Controllers/
@@ -418,6 +418,7 @@ public class PostsController : ControllerBase
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
         // converts incoming dto to post
+        // create a new 'Post' from 'dto'
         var post = _mapper.Map<Post>(dto);
         // assigns current user as owner
         post.UserId = userId;
