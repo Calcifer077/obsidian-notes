@@ -4,7 +4,7 @@ You can create web api in dotnet which can serve requests to your frontend. Step
 **1. Create the Project**
 ```bash
 dotnet new webapi -n BlogApi
-cd MyWebApi
+cd BlogApi
 ```
 `BlogApi` can be any name of your choice.
 To open in Visual Studio, `start devenv BlogApi.csproj`, In VS code `code .`
