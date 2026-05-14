@@ -741,7 +741,7 @@ public class AuthService : IAuthService
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret!));
 
         // create claims, user info inside token.
-        // these claims are stored inside the jwt, and can be used for authorization.
+        // these claims are stored inside the jwt, and can be accessed for authorization.
         var claims = new[]
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
@@ -825,7 +825,7 @@ AddScoped<IPostService, CachedPostService>();
 Another reason for `readonly` is that dependencies should not change while controller is running.
 
 Now you need to add JWT auth in your `Program.cs`
-Use dotnet 9, 10 have many issues regarding Swagger.
+Use dotnet 9. dotnet 10 have many issues regarding Swagger.
 ```c#
 // Dependency Injection
 builder.Services.AddScoped<IAuthService, AuthService>();

@@ -129,9 +129,8 @@ var result = numbers.Where(n => n > 5).Select(n => n * 2);
 Query syntax **does not exist at the CLR level**. It is pure **syntactic sugar**. The compiler translates every single query syntax expression into method syntax at compile time. They produce identical IL bytecode.
 
 This means:
-
 - No performance difference
-- No behavioral difference
+- No behavioural difference
 - Query syntax is just a friendlier face on method syntax
 
 ---
@@ -351,7 +350,6 @@ If your table has 1 million users, `IEnumerable` loads ALL 1 million into RAM th
 `IQueryable<T>` builds an **Expression Tree** — a data structure representing your query as code-as-data. When you call `.ToList()`, Entity Framework Core **translates** that expression tree into SQL and sends it to the database.
 
 This is why:
-
 ```csharp
 // Works with IQueryable (EF can translate to SQL)
 dbContext.Users.Where(u => u.Age > 18)
@@ -481,13 +479,30 @@ foreach (var order in dbContext.Orders.Include(o => o.Customer).ToList())
 ## 11. INTERVIEW QUESTIONS
 
 1. What is the difference between `IEnumerable<T>` and `IQueryable<T>` in LINQ?
+Ans: `IEnumerable<T>` loads the data into RAM first and than apply your conditions whereas `IQueryable<T>` applies the conditions in database (translated SQL is run on database) and than stores the result into ram.
 2. What is deferred execution? When does a LINQ query actually execute?
+Ans: Deferred execution means that your query hasn't been executed yet. It has been postponed until the data is actually needed. It will be executed when you materialize it by using methods like `ToList`, `ToArray`, `First` or traverse it.
 3. What does `.ToList()` do internally and why does calling it "materialize" a query?
+Ans: `.ToList()` forces immediate execution of a LINQ query and loads the results into a `List<T>` in memory. "materialize" a query means that it has been executed and is available to you for usage.
 4. What is the difference between `First()` and `FirstOrDefault()`? When would you use each?
+Ans: `First()` throws an exception when no matching element exists, while `FirstOrDefault()` returns the default value instead. Use `First()` when absence of data is exceptional, and `FirstOrDefault()` when no result is acceptable. You can use `First` when the data must exist, missing data is error. `FirstOrDefault` is used when missing data is acceptable.
 5. Can you mix `IQueryable` and in-memory LINQ operations? What are the risks?
+Ans: Yes you can mix `IQueryable` with `IEnumerable` (in-memory LINQ operations) when you need to switch from database execution to in-memory execution. If you execute a large amount of data in-memory it will lead to performance issues.
 6. What is an Expression Tree and how does Entity Framework use it?
+Ans: An [Expression Trees](EF%20Core%20and%20ADO.Net.md#6.%20QUERYING%20—%20IQueryable%20vs%20IEnumerable%20(CRITICAL%20CONCEPT)) is a data structure that represents code as an object tree instead of executable compiled code. It allows LINQ providers like Entity Framework to inspect, analyse, and translate queries into SQL. Expression trees are typically used with `IQueryable<T>`. If you were to use `C#` code here, it will throw a error. EF core captures the lambda as an expression tree and execute it. 
 7. When would `Select` before `Where` be preferred vs `Where` before `Select`?
+Ans: `Select` before `Where` is preferred when sometimes you project into another shape first and then filter on the projected result.
+```c#
+var result = _dbContext.Products
+    .Select(p => new
+    {
+        p.Name,
+        DiscountedPrice = p.Price * 0.9m
+    })
+    .Where(x => x.DiscountedPrice > 100);
+```
 8. What does `SelectMany` do? When do you need it?
+Ans: `SelectMany` is used to flatten nested collections into a single collection. It is commonly used when one object contains a collection inside it, and you want one combined sequence of all inner elements.
 
 ---
 
@@ -553,6 +568,38 @@ Write a method that takes a `List<Order>` where Order has `{ int Id, string Cust
 4. Returns a list of `{ CustomerName, TotalAmount, OrderCount }` sorted by TotalAmount descending
 5. Write it FIRST in query syntax, THEN in method syntax
 6. Tell me which you preferred and WHY
+
+Method syntax:
+```c#
+var resultMethod = orders
+    .Where(order =>
+        order.IsCompleted &&
+        order.Date >= DateTime.Now.AddDays(-30))
+    .GroupBy(order => order.CustomerName)
+    .Select(groupedOrders => new
+    {
+        CustomerName = groupedOrders.Key,
+        TotalAmount = groupedOrders.Sum(x => x.Amount),
+        OrderCount = groupedOrders.Count()
+    })
+    .OrderByDescending(x => x.TotalAmount);
+```
+
+Query syntax:
+```c#
+var resultQuery =
+    from order in orders
+    where order.IsCompleted
+          && order.Date >= DateTime.Now.AddDays(-30)
+    group order by order.CustomerName into groupedOrders
+    orderby groupedOrders.Sum(x => x.Amount) descending
+    select new
+    {
+        CustomerName = groupedOrders.Key,
+        TotalAmount = groupedOrders.Sum(x => x.Amount),
+        OrderCount = groupedOrders.Count()
+    };
+```
 
 Tags:
 #csharp 
