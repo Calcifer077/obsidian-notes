@@ -1,13 +1,10 @@
 ## 1. Simple Explanation — What Is It?
 
-Let me start with the most honest definition:
-
 > **Dependency Injection is not a framework feature. It is a design principle. The framework just automates it.**
 
 When a class needs another object to do its job, that "needed object" is called a **dependency**.
 
 The question is: **who creates that dependency?**
-
 - **Bad answer:** The class creates it itself.
 - **Good answer:** Someone from outside gives it to the class.
 
@@ -22,18 +19,15 @@ Imagine you're a chef (a class).
 You need a knife (a dependency) to cook.
 
 **Bad approach (no DI):**
-
 > The chef goes to the factory, builds their own knife, and keeps it forever.
 
 **Problems:**
-
 - What if you need a different knife tomorrow?
 - What if the factory requires internet access — and in tests, there is none?
 - What if the knife is expensive and shared by 50 chefs?
 - What if you want to test the chef's cooking skill WITHOUT needing a real knife?
 
 **Good approach (DI):**
-
 > The restaurant manager (the DI container) provides the knife to the chef when they arrive for work.
 
 The chef doesn't know where the knife came from. Doesn't care. Just uses it.
@@ -47,7 +41,6 @@ That is Dependency Injection.
 Let's look at real code, layer by layer.
 
 ### ❌ The Bad Way — Tight Coupling
-
 ```csharp
 public class OrderService
 {
@@ -73,8 +66,7 @@ public class OrderService
 }
 ```
 
-**What's wrong here — let me count the violations:**
-
+**What's wrong here — let's count the violations:**
 1. `OrderService` is **responsible for creating** `EmailService` — that's not its job
 2. You **cannot swap** `EmailService` for `SmsService` without changing `OrderService`
 3. You **cannot unit test** `OrderService` without actually sending emails
@@ -87,7 +79,6 @@ public class OrderService
 ---
 
 ### ✅ The Good Way — Dependency Injection via Constructor
-
 ```csharp
 // Step 1: Define a CONTRACT (interface)
 // This is the abstraction — the "what", not the "how"
@@ -160,13 +151,13 @@ Now let me explain **every single keyword** you see here.
 
 - **What:** The field can only be assigned in the **declaration** OR the **constructor**. After the constructor finishes, it's frozen.
 - **Why this matters deeply:** It makes your dependency **immutable after construction**. The object is in a valid, complete state from the moment it's born.
-- **What the compiler does:** The C# compiler enforces this at **compile time**. If you try `_notificationService = something` anywhere outside the constructor, it's a compiler error — not a runtime error. This is powerful.
+- **What the compiler does:** The C# compiler enforces this at **compile time**. If you try `_notificationService = something` anywhere outside the constructor, it's a compiler error — not a runtime error. 
 - **What breaks if removed:** Without `readonly`, a method inside `OrderService` could reassign `_notificationService = null` or swap it for a different instance. In a multi-threaded environment (like ASP.NET Core handles hundreds of concurrent requests), this creates a **race condition**. Thread A might be reading `_notificationService` while Thread B is replacing it.
 - **Memory implication:** `readonly` fields in value types have special JIT optimizations. But more importantly, it signals **intent** to every developer reading the code: "This object is set once, never changes."
 
 ### `INotificationService` (interface, not class)
 
-This is the most important design decision here. Let me spend real time on this.
+This is the most important design decision here. 
 
 **Why inject the INTERFACE and not `EmailNotificationService` directly?**
 
@@ -241,8 +232,6 @@ When a request comes in, the framework creates your `OrderController`, and it de
 ---
 
 ## 6. How the ASP.NET Core DI Container Works Internally
-
-This is where we go senior level.
 
 ### Registration Phase (at startup)
 
@@ -415,7 +404,6 @@ public class OrderService
 ```
 
 **Why preferred:**
-
 - Dependencies are explicit and visible
 - Object is always in valid state after construction
 - Easy to test — just pass mock in constructor
@@ -433,7 +421,6 @@ public class OrderService
 ```
 
 **Problems:**
-
 - Object can exist in invalid state (before property is set)
 - Not enforced by the compiler
 - Hidden dependency — not visible in constructor
@@ -650,7 +637,7 @@ public class OrderService
 - Same problems as Service Locator
 - Exception: Factories and generic host scenarios where you genuinely need dynamic resolution
 
-### Mistake 3: Captive Dependency (already covered — but it destroys prod)
+### Mistake 3: Captive Dependency (already covered — it destroys prod)
 
 ### Mistake 4: Constructor Over-Injection
 

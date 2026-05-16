@@ -293,7 +293,6 @@ Assert.Equal(3, list.Count);
 **Which should you use in 2025?**
 
 **xUnit** is the industry standard for:
-
 - ASP.NET Core team uses it internally
 - .NET runtime tests use it
 - Better isolation by design
@@ -305,12 +304,9 @@ NUnit is still valid and widely used. Many enterprise codebases have it. Know bo
 
 ## 8. Moq — The Dependency Simulator
 
-This is where it gets _really_ powerful.
-
 ### WHY Moq Exists
 
 Consider this service:
-
 ```csharp
 public class OrderService
 {
@@ -343,12 +339,11 @@ public class OrderService
 ```
 
 **Problem**: How do you unit test `PlaceOrder`?
-
 - You can't hit a real database in unit tests (slow, state, setup)
 - You can't charge real credit cards
 - You can't send real emails
 
-**Solution: Mock the dependencies** — create fake versions that _simulate_ real behavior.
+**Solution: Mock the dependencies** — create fake versions that _simulate_ real behaviour.
 
 ---
 
