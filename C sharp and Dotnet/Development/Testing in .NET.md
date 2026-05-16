@@ -13,7 +13,6 @@ Before we touch a single framework, understand _why_ testing exists.
 Think of a **car manufacturing plant**.
 
 Before a car leaves the factory:
-
 - Individual parts are tested (unit testing — "does this brake pad work?")
 - Parts assembled together are tested (integration testing — "do the brakes work with the wheels?")
 - The whole car is test-driven (end-to-end testing — "does the car stop when you press the brake at 100 km/h?")
@@ -28,10 +27,10 @@ Your software is the car. xUnit/NUnit are the testing machines. Moq is the _simu
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                    Testing Pyramid                       │
-│                                                         │
-│                        /\                               │
-│                       /E2E\        ← Few, Slow, Costly  │
+│                    Testing Pyramid                      │
+│                         /\                              │
+│                        /  \                             │
+│                       /E2E \        ← Few, Slow, Costly │
 │                      /──────\                           │
 │                     /Integra-\                          │
 │                    / tion     \    ← Medium             │
@@ -69,7 +68,6 @@ MSTest (Microsoft) ──► built into Visual Studio, but
 **Why did xUnit author abandon NUnit and create xUnit?**
 
 Because NUnit had _architectural mistakes_ baked in:
-
 - Test classes were reused across tests (shared state = bugs)
 - `[SetUp]` and `[TearDown]` encouraged bad patterns
 - Not designed for modern async/await
@@ -121,7 +119,6 @@ public class CalculatorTests // ← just a plain C# class, no base class needed
         // WHY Assert.Equal(expected, actual) and not Assert.Equal(actual, expected)?
         // Convention: EXPECTED comes first, ACTUAL comes second
         // When it fails: "Expected 5 but got 6" — reads naturally
-        // If reversed: "Expected 6 but got 5" — confusing
     }
 }
 ```
@@ -186,7 +183,6 @@ public void Add_VariousInputs_ReturnsCorrectSum(int a, int b, int expected)
 **WHY not just write 4 separate [Fact] tests?**
 
 You could. But that's duplication. [Theory] + [InlineData] gives you:
-
 - One test definition
 - Multiple data sets
 - Each runs independently — one failure doesn't stop others
