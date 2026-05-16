@@ -31,7 +31,7 @@ Razor Engine is that press. It takes `.cshtml` templates, injects C# data, and p
 
 ## 3. Technical Deep Dive — What Is Razor?
 
-Razor is not a language. Let that sink in.
+Razor is not a language.
 
 > **Razor is a markup syntax / templating engine that allows you to embed C# inside HTML.**
 
@@ -39,7 +39,7 @@ It was introduced by **Scott Guthrie at Microsoft in 2011** as part of ASP.NET M
 
 ---
 
-### The Three Pillars You Asked About
+### The Three Pillars You should know about
 
 |Concept|What It Is|Lives In|
 |---|---|---|
@@ -47,7 +47,7 @@ It was introduced by **Scott Guthrie at Microsoft in 2011** as part of ASP.NET M
 |**Razor Views**|Templates used in **MVC pattern**|Views/ folder|
 |**Razor Pages**|A **page-based** model (alternative to MVC)|Pages/ folder|
 
-These are **three different things** that share the same engine. Most juniors confuse them. Let me untangle them fully.
+These are **three different things** that share the same engine. Let's learn them clearly.
 
 ---
 
@@ -81,7 +81,7 @@ public class YourView : RazorPage<CustomerModel>
 }
 ```
 
-Let that hit you. **Your `.cshtml` file IS a C# class.** It inherits from `RazorPage<TModel>`.
+**Your `.cshtml` file IS a C# class.** It inherits from `RazorPage<TModel>`.
 
 ### Step 2 — Roslyn Compilation
 
@@ -314,8 +314,6 @@ Without this, you'd need `@using` at the top of every single view file.
 
 ### WHY Were Razor Pages Created?
 
-Here's the history that most tutorials skip.
-
 In classic ASP.NET MVC, for a simple "Contact Us" page, you needed:
 
 - A `ContactController.cs`
@@ -462,7 +460,6 @@ public class DetailsModel : PageModel
 
 ## 8. The `@` Symbol — How Razor Switches Context
 
-This is something 90% of tutorials gloss over but is fundamental.
 
 ```
 @expression         → Single C# expression, output to HTML
