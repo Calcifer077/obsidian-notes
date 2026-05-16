@@ -176,8 +176,6 @@ System.Object  ← ROOT of everything in .NET
     └── Delegates
 ```
 
-**This is CRITICAL to understand for performance.**
-
 Value types live on the **stack** (or inline in containing type). Reference types live on the **heap**.
 
 ```csharp
@@ -319,28 +317,28 @@ You'll see these terms:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    YOUR APPLICATION                          │
+│                    YOUR APPLICATION                         │
 │              (C#, VB.NET, F# source code)                   │
 └──────────────────────┬──────────────────────────────────────┘
                        │  uses
 ┌──────────────────────▼──────────────────────────────────────┐
-│                        BCL                                   │
+│                        BCL                                  │
 │     List<T>, File, HttpClient, DateTime, Task...            │
 └──────────────────────┬──────────────────────────────────────┘
                        │  built on
 ┌──────────────────────▼──────────────────────────────────────┐
-│                        CTS                                   │
+│                        CTS                                  │
 │    int=System.Int32, string=System.String, class, struct    │
 └──────────────────────┬──────────────────────────────────────┘
                        │  governed by
 ┌──────────────────────▼──────────────────────────────────────┐
-│                        CLS                                   │
+│                        CLS                                  │
 │         Rules for cross-language interoperability           │
 └──────────────────────┬──────────────────────────────────────┘
                        │  executed by
 ┌──────────────────────▼──────────────────────────────────────┐
-│                        CLR                                   │
-│     JIT, GC, Type Safety, Thread Management, Security      │
+│                        CLR                                  │
+│     JIT, GC, Type Safety, Thread Management, Security       │
 └──────────────────────┬──────────────────────────────────────┘
                        │  runs on
 ┌──────────────────────▼──────────────────────────────────────┐
