@@ -205,6 +205,29 @@ john = {
 We can use constructor functions to make multiple similar objects.
 JavaScript provides constructor functions for many built-in language objects: like `Date` for dates, `Set` for sets and others that we plan to study.
 
+
+## Questions
+#### 1. Is it possible to create functions `A` and `B` so that `new A() == new B()`?
+```js
+function A() { ... }
+function B() { ... }
+
+let a = new A();
+let b = new B();
+
+alert( a == b ); // true
+```
+Ans: Yes, it's possible. If a function returns an object then `new` returns it instead of `this`.
+```js
+let obj = {};
+
+function A() { return obj; }
+function B() { return obj; }
+
+alert( new A() == new B() ); // true
+```
+
+
 ## Source
 [JavaScript Info](https://javascript.info/constructor-new)
 
