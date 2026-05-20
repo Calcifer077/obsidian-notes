@@ -113,7 +113,7 @@ let key = "name";
 alert( user.key ) // undefined
 ```
 
-## Computer properties
+## Computed properties
 
 We can use square brackets in an object literal, when creating an object. That’s called _computed properties_.
 ```js
