@@ -380,9 +380,11 @@ Objects in JavaScript are very powerful. Here we’ve just scratched the surface
 References:
 [JS Info](https://javascript.info/object)
 
-Links:
+## Links:
 [Object references and copying](Object%20references%20and%20copying.md)
 [Garbage collection](Garbage%20collection.md)
+[Object methods, `this`](Object%20methods,%20`this`.md)
+[Constructor, operator `new`](Constructor,%20operator%20`new`.md)
 
 Tags:
 #javascript 
