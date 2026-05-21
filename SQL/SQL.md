@@ -493,7 +493,7 @@ FROM employee_demographics;
 
 A query nested inside another query, enclosed in parentheses.
 
-### Subquery in WHERE
+### Subquery in `WHERE`
 
 ```sql
 -- Get employees whose IDs appear in dept 1 of salary table
@@ -506,7 +506,7 @@ WHERE employee_id IN (
 );
 ```
 
-### Subquery in SELECT
+### Subquery in `SELECT`
 
 ```sql
 -- Show each employee's salary alongside the overall average
@@ -515,7 +515,7 @@ SELECT first_name, salary,
 FROM employee_salary;
 ```
 
-### Subquery in FROM
+### Subquery in `FROM`
 
 Used when you need to aggregate over an already-aggregated result.
 
@@ -542,7 +542,6 @@ FROM (
 A CTE is a named, temporary result set defined using the `WITH` keyword. It exists only for the duration of the query it's attached to.
 
 **Key rules:**
-
 - CTEs must be used _immediately_ after definition — you can't define a CTE and run it later.
 - You can reference aliases from the inner query in the outer query.
 - You can apply further aggregation on top of a CTE's result (e.g., `AVG(avg_sal)`).
@@ -609,7 +608,6 @@ FROM cte_example;
 ```
 
 > **CTE vs Subquery vs Temp Table:**
-> 
 > - **CTE** — best for readability and when you need to reference the result once.
 > - **Subquery** — quick and inline, but can get deeply nested.
 > - **Temp Table** — best when you need to query the intermediate result multiple times or manipulate it further.
@@ -618,7 +616,7 @@ FROM cte_example;
 
 ## 14. Window Functions
 
-Window functions perform calculations across a _set of rows related to the current row_ **without collapsing the result** — unlike `GROUP BY`. Each row keeps its individual detail while also gaining an aggregate or ranking value.
+Window functions perform calculations across a _set of rows related to the current row_ **without collapsing the result** — unlike `GROUP BY`. Each row keeps its individual detail while also gaining an aggregate or ranking value. 
 
 ### Aggregate Window Functions
 
