@@ -151,8 +151,8 @@ Teams usually take this path to reduce operational cost, simplify debugging, low
 The key idea is simple: architecture should serve the team and the product. It should not become something the team is forced to serve.
 
 ## Sources:
-[Algomonster](https://blog.algomaster.io/p/monolith-vs-microservices-vs-modular-monoliths?img=https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fe0d2e693-060c-4985-a01f-6a6a95994f5f_1950x1440.png&open=false)
-
+[Algomonster](https://open.substack.com/pub/algomaster/p/monolith-vs-microservices-vs-modular-monoliths?utm_campaign=post-expanded-share&utm_medium=web)
+[Github](https://github.com/Calcifer077/Blogs-Read/blob/main/Monolith%20vs%20Microservices%20vs%20Modular%20Monoliths%20AlgoMonster%20Ashish%20Pratap%20Singh.pdf)
 ## Tags:
 #deployment 
 #architecture
