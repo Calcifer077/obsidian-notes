@@ -386,6 +386,8 @@ References:
 [Object methods, `this`](Object%20methods,%20`this`.md)
 [Constructor, operator `new`](Constructor,%20operator%20`new`.md)
 [Optional chaining](Optional%20chaining.md)
+[Symbol type](Symbol%20type.md)
+[Object to primitive conversion](Object%20to%20primitive%20conversion.md)
 
 Tags:
 #javascript 
