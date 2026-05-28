@@ -1,1 +1,2 @@
 - [Objects](Objects/Objects.md)
+- [Data types](Data%20types/Data%20types.md)

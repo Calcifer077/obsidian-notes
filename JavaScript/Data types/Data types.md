@@ -1,0 +1,2 @@
+- [Methods of primitives](Methods%20of%20primitives.md)
+- [Numbers](Numbers.md)
