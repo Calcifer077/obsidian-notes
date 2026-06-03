@@ -1,234 +1,406 @@
-The medium through which client and servers send and receive data.
+## What is HTTP?
 
-### 1. stateless
-It means that it has no memory of past interaction. So each HTTP request carries all the necessary information for the server to process it. After a server responds it forgets about this request. If client were to make another request it would have to send all these things again.
+HTTP (HyperText Transfer Protocol) is the medium through which clients and servers send and receive data.
 
-Benefits of stateless design:
-**simplicity** -> It simplifies server architecture because the server does not need to store session information which would otherwise require additional resources.
+---
 
-**scalability** -> It is also easy to distribute request across multiple servers. Even if the server crashes it doesn't affect the state of client Interaction.
+## Core Characteristics
 
-Because HTTP is stateless developers create state management techniques like cookies or sessions or tokens to maintain continuity in interactions. 
+### 1. Stateless
 
-### 2. Client server model
+HTTP has no memory of past interactions. Each request carries all the information the server needs to process it. Once the server responds, it forgets the request entirely.
+
+**Benefits of stateless design:**
+
+**Simplicity** — The server doesn't need to store session information, which reduces resource overhead and simplifies architecture.
+
+**Scalability** — Requests can be distributed across multiple servers easily. If one server crashes, client interactions aren't affected because no session state is lost.
+
+Because HTTP is stateless, developers use state management techniques like cookies, sessions, or tokens to maintain continuity across interactions.
+
+### 2. Client-Server Model
+
 ```
- ________                     ----------
-|        |                   |          |
-| Client |                   | Server   |
-|________|                   |__________|
-```
-
-Client is typically a web browser or a application which initiates the communication by sending a request to the server. the client is responsible for providing all information needed by the server such as headers. 
-
-Server hosts resources like websites or apis and waits for incoming requests from the client. when the server receives the request it processes and sends back a appropriate response such as a webpage or data.
-
-
-HTTP states that communication has to be intiated by the client to get some kind of response. 
-
-HTTPs is just more secure version of HTTP.
-
-HTTP uses TCP for creating a connection (used to send request and recieve response)
-
-Versions of HTTP
-1. HTTP 1.0 -> Each request opened a new connection. This led to ineffeciency since connection has to be opened and closed for each req/res. 
-2. HTTP 1.1 -> introduced persistent connections allowing multiple requests and responses over the same connection, over the same tcp connection that was extablished before sending the request. it also added stuff like chunk transfer encoding and better cahcing. 
-3. HTTP 2.0 -> added multiplixeing. allowing multiple request and response over a single connection. it uses something called binary framing instead of text and supports header compression. it also has server push allowing server to send resources before client asks for them. 
-4. HTTP 3.0 -> built over udp rather than tcp which improved performance with faster connection establishement, reduce latency and better handling of packet loss. Supports multiplexing without head of line blocking which is still an issue in http 2.
-
-Client and server some kiind of network connection which they used to connect. 
-
-Requst message is the one that is sent by the client to the server.
-response message is the one that is receieved by the client from the server. 
-![](../../assets/request_response_headers_http_backend_from_first_principles_youtube.png)
-
-about request message
-`put` is the http method
-`api/user/12345` is the resource url, the one that we are requesting from the server.
-`http1.1` is http version
-`host: example.com` is the domain that we are tyring to fetch, the backend domain
-rest till cookies are headers. 
-after the blank line is the request body.
-
-
-in response message
-`http1.1` is the http version
-`200 ok` is the status code
-than we have response headers 
-after the blank line, we have the response body
-
-
-headers are just basically key value pair.
-
-why not just send them in the url or request body?
-
-type of request headers?
-
-user-agent -> what kind of client> is it a browser or it is postman
-Authorization -> stores credentials which are like tokens for the server to identiy the user. 
-accept -> like what kind of content we are accepting.
-
-
-general headers (used both in requst and responss)
-date
-cache-control
-connection
-
-
-represntation header , deals with the representation of the resource being transferred
-content-type -> describes the media type of the request or the response 
-content-length -> size of resource in bytes
-content-encoding -> specifies encoding
-ETag -> unqiue identifier which is mostly used for caching 
-
-
-security, used to enhance the security of the request and response by controlling behavours like content loading, cookies and encryption. 
-strict-transport-security -> ensures that client only communicate to the server over https, precenting protocol downgrade attack
-content-security-Policy -> restricts the sources from which content like js, css can be loaded helping prevent cross site scripting attack
-x-frame-options -> prevents the webpage from being embedded in i-frame mitigating clickjacking attack
-x-content-type-options -> ensure that the browser does not try to guess the mime type of the content preventing MIME type sniffing attack 
-set-cookie -> set cookie with http only or secure flags, ensuring that they are sent over https 
-
-
-about headers only
-Extensibility -> http is highly extensible because headers can be easily added or customized without altering the underlying protocol. we only have to add some kind of metadata and the whole flow of the interaction changes  depeding on that. developers can create custom headers. content - negotatioation -> like the accept and the accept language and accept encoding allows server to server different version of the content depending on the client preference. 
-
-remote - control -> headers kind of act like remote control on the server side, they allow client to send preferences influencing how the server responds or proccesses the requst. client can ask the server to send a particular type of fomat in the response. caching and expiration control. can be used to control how long a resource should be cached. client can authenticate himself through authorization headers influencing access control decisions. 
-
-http methods
-get -> get something from the server, it should not modify anything on the server. 
-post -> create something on the server. it will have a request body with it. 
-patch -> used to update some data, also has a request body. always try to use patch
-put -> also used to update data, difference from patch is that whatever data comes in the request body should replace the previous instance of that data 
-delete -> delete some kind of resource on the server
-they exist to represent different kind of actions that a client like a browser can request on a server. instead of every request doing the same thing, method define the intenet
-
-
-
-Idempotent vs non-Idempotent
-
-we can call the same http methods multiple times and expect the same result. 
-
-Idempotent
-get, put, delete
-get -> whenever you try to access a resource, you should not be modifying anything on the server. 
-put -> completely replace the resource on the server, so it doesn't matte how many times you replace the old data with the new data. because the result will always be new data.
-delete -> you can only delete a resource from the server once, because after that you cannot perform the action multiple times and expect different result. 
-
-
-non-Idempotent
-post, because say your users can create a note on your app. the first time the user sends some data to the server a new note is created and the second time you send the same request body a new note is created, now there are two notes on the serve with the same body 
-
-
-http method options, used in the cors flow (same origin policy in browser). you don't directly use them but will see it in pre-flight requests in browsers. used to fetch the capabilities of the server for a cross origin request . without cors browsers block the request made from some different origin than the website. 
-
-
-in a cross origin request there are two kinds of request
-1. simple request 
-2. preflight request 
-
-simple request
-say you frontend is on example.com and your api is on api.example.com.
-
-your frontend sends a request to your api with all the headers.
-```
-get /api/products/123 http1.1
-host: api.anotherdomain.COM
-origin: https://example.COM
-accept: application/json
+ ________                     __________
+|        |   -- request -->  |          |
+| Client |                   |  Server  |
+|________|  <-- response --  |__________|
 ```
 
-the backend gets the request and checks the origin of the request `https://example.com` if this origin is available in its cors configuration it will send the request back with `access-control-allow-origin`: `your origin url`. the browser gets the response and it checks this header `access-control-allow-origin`. if that header is either `*` or the url of the frontend the response goes through to the user otherwise it gets blocked. 
+**Client** — Typically a browser or application that initiates communication by sending a request. The client is responsible for providing all necessary information such as headers and body.
 
+**Server** — Hosts resources like websites or APIs and waits for incoming requests. When it receives a request, it processes it and sends back an appropriate response.
 
-pre-flight request -> the browsers have to do a request before the original request to inquire some stuff. 
+HTTP states that communication must always be initiated by the client.
 
-when does a request qualifies as a preflight request (any of these conditions have to be true):
-mandatory condition is that it has to be a cross origin request. 
-1. the method is not get, post or head. it is put or delete
-2. the request includes non-simple headers like authorization, x-custom-header
-3. the request has a content-type other than application/x-www-form-urlencoded, multiport/form-data or text/plain 
+---
 
-what a preflight request looks like:
+## HTTP vs HTTPS vs TLS vs SSL
+
+**SSL (Secure Sockets Layer)** was the original protocol for securing communications between a client and server. It encrypts data in transit but has since been deprecated due to known security vulnerabilities.
+
+**TLS (Transport Layer Security)** is the modern, more secure replacement for SSL. It encrypts data in transit, ensuring that anything sent between client and server is protected from interception and tampering. TLS uses certificates to authenticate the server and establish an encrypted connection, preventing eavesdropping and man-in-the-middle attacks.
+
+**HTTPS** is simply HTTP with TLS underneath. The underlying mechanism of HTTPS is TLS, not SSL — though the terms are sometimes used interchangeably.
+
+---
+
+## HTTP Versions
+
+|Version|Key Feature|
+|---|---|
+|HTTP/1.0|Each request opened a new TCP connection — inefficient|
+|HTTP/1.1|Persistent connections, chunked transfer encoding, better caching|
+|HTTP/2.0|Multiplexing, binary framing, header compression, server push|
+|HTTP/3.0|Built on UDP (via QUIC), faster connection setup, no head-of-line blocking|
+
+**HTTP/1.0** — Every request opened and closed a new TCP connection, creating significant overhead.
+
+**HTTP/1.1** — Introduced persistent connections, allowing multiple requests and responses over a single TCP connection. Also added chunked transfer encoding and improved caching mechanisms.
+
+**HTTP/2.0** — Added multiplexing, allowing multiple requests and responses to travel over a single connection simultaneously. Uses binary framing instead of plain text and supports header compression (HPACK). Server push lets the server send resources before the client asks for them. However, head-of-line blocking is still an issue at the TCP level.
+
+**HTTP/3.0** — Built on top of UDP via a protocol called QUIC rather than TCP. This improves performance with faster connection establishment, reduced latency, and better handling of packet loss. Fully solves head-of-line blocking since QUIC handles streams independently.
+
+---
+
+## HTTP Messages
+
+### Request Message
+
 ```
-options /api/resouce http1.1
-host: api.example.COM
-orgiin: http://example.COM
-access-control-request-method: put
-access-control-request-headers: authorization 
+PUT /api/user/12345 HTTP/1.1
+Host: example.com
+User-Agent: Mozilla/5.0
+Authorization: Bearer <token>
+Content-Type: application/json
+Cookie: session_id=abc123
+
+{ "name": "John" }
 ```
 
-`access-control-request-method` is asking the server if this method is supported or not. it also asks whether server supports `access-control-request-headers` header.
+- `PUT` — HTTP method
+- `/api/user/12345` — Resource URL being requested
+- `HTTP/1.1` — HTTP version
+- `Host: example.com` — The backend domain being targeted
+- Lines after the method line until the blank line — Request headers
+- After the blank line — Request body
 
-this request does not include any request body. it is just a general inquiry to the server about its capability.
+### Response Message
 
-  if the server is configured properly with cors (otherwise the request will be blocked), it will respond with something like this:
-  ```
-  http1.1 204 no content
-  access-control-allow-origin: https://example.COM
-  access-control-allow-methods: put, delete
-  access-control-allow-headers: Authorization
-  access-control-max-age: 86400
-  ```
+```
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 256
+Cache-Control: max-age=3600
 
-`access-control-allow-origin` means that the server is saying that it allows request from example.com. server also could have used `*`. 
+{ "id": 12345, "name": "John" }
+```
 
-`access-control-allow-methods` tells what methods does it support for that route.
+- `HTTP/1.1` — HTTP version
+- `200 OK` — Status code
+- Lines after the status line until the blank line — Response headers
+- After the blank line — Response body
 
-`access-control-allow-headers` what headers are allowed
+---
 
-`access-control-max-age`: it means that the aboev thing will be same for the next 24 hours (86400), so client don't have to keep making the same request again. 
+## HTTP Headers
 
+Headers are key-value pairs that carry metadata about a request or response.
 
-HTTP response codes
-they exist to communicate the result of a request in a standardized way. you can just look at the response code and see whether the request was successful or not or what is the state of the server without looking into the body or judging from the entire response message.  They also helps client handle errors by providing specific codes to identify the problem. another reason is standardiation. http response codes are standardized across all web services enabling consistency how serverse communicate with different clients regardless of the platform or language used. before http response code clients would have to guess outcome of the request based on the content response leading to inconssitencies and inefficiences. http status code solve this by providing a universal Language that all client and servers understand streamlinig interactions and error handling. 
+**Why headers and not just the URL or body?** The URL is meant to identify a resource, and the body carries the data payload. Headers serve a distinct purpose: they carry metadata and control instructions — things like what format is acceptable, who the client is, how to cache the response, and security policies. Mixing this metadata into the URL would make it unwieldy and expose sensitive information. Putting it in the body would conflate transport concerns with data concerns. Headers keep these concerns cleanly separated.
 
+### Request Headers
 
+|Header|Purpose|
+|---|---|
+|`User-Agent`|Identifies the client (browser, Postman, etc.)|
+|`Authorization`|Carries credentials like tokens for server-side identity verification|
+|`Accept`|Tells the server what content types the client can handle|
+|`Accept-Language`|Preferred language for the response|
+|`Accept-Encoding`|Compression formats the client supports (gzip, br, etc.)|
 
-broad categories of http response codes:
-1xx -> information, used by server to tell the client that it has received the headers and client can proceed to send the request body. commonly used in large uploads. client Firstly sends the headers and if the server is ok with it, it sends a 100 code to continue sending data. used for switching protocols requested by the client such as upgrading from http to https or web sockets.
-2xx -> success, used for success responses. 200 request was successul and server is returning the requested resource or performing the requested action. , 201 request has been fulfilled and it resulted in a creation of a resource., 204, used in preflight request. server says that there is no content but here is some information in form of headers. also used for delete requests. 
-3xx -> redirection, 301 moved permanently. requested resoured has been moved permanently to a new url and the future request should use the new url, 302 temporary redirect. requested resource
- is located at a new url but the client should use the original url for future request, 304 resource has not been modified since the last time the client requested it. used in conjunction with conditional get request to allow efficient caching. it also means that the resource has not been modified so the client should just use the old response. 
-4xx -> client error, 400 bad request, when the client sends invalid data, illogical data. expecting some kind of data but got something else. 401, unauthroized, 403 forbidden, server understood the request but the server refused to reply. this can happen to authenticated users also for example when a user tries to access a resource that they don't have permission to access, 404 not found, client requests a resource that is Unavailable. 405, method not allowed, when a invalid http method is used. 409, conflict, lets say that your app allows users to create folders, but the folder names should be unique, if some user tries to duplicate folder names, we can invoke this http response. 429, too many request. 
-5xx -> server error, 500 internal server error, unexpected conditions in server. you also return 500 internal server error instead of some explicit error for security reason so that client doesn't know too much about the server.  501, not implemented, when the server doesn't support a particular http method or functionlity but plans to add it soon. 502, bad gateway. 503, service Unavailable, 504, gateway time out, server failed to respond within given timelimit. 
+### General Headers (used in both requests and responses)
 
+|Header|Purpose|
+|---|---|
+|`Date`|Timestamp of the message|
+|`Cache-Control`|Directives for caching behavior|
+|`Connection`|Controls whether the connection stays open|
 
+### Representation Headers
 
-http caching -> it is a techinque to store copies of response for reuse reducing repeated request to the server. this reduces load time bandwidth and decreases server load. client doesn't need to download a lot of data and server doesn't need to send a lot of data. 
+These describe the format or encoding of the resource being transferred.
 
-when responding server tells for what time the response should be cached.
-`cache-control: max-age-10, public`. response also sends etag and last modified. etag is a unique identifier of that resource. 
+|Header|Purpose|
+|---|---|
+|`Content-Type`|Media type of the body (e.g. `application/json`)|
+|`Content-Length`|Size of the body in bytes|
+|`Content-Encoding`|Encoding applied to the body (e.g. gzip)|
+|`ETag`|Unique identifier for a resource version, primarily used for caching|
+|`Last-Modified`|Timestamp of when the resource was last changed|
 
-So in future when client sends request for the same resource, request will contain that etag and modified since. what these two mean is that if etag doesn't match or it has been modified since the timestamp mentioned in the request send us the new resource, else use the cached copy.
+### Security Headers
 
+|Header|Purpose|
+|---|---|
+|`Strict-Transport-Security`|Forces the client to communicate over HTTPS only, preventing protocol downgrade attacks|
+|`Content-Security-Policy`|Restricts sources from which JS, CSS, etc. can be loaded — prevents XSS attacks|
+|`X-Frame-Options`|Prevents the page from being embedded in an iframe, mitigating clickjacking|
+|`X-Content-Type-Options`|Prevents the browser from guessing MIME types, stopping MIME sniffing attacks|
+|`Set-Cookie`|Sets cookies with `HttpOnly` or `Secure` flags to ensure they travel only over HTTPS|
 
-**content negotiation** -> it is basically a mechanism using which client and server agree on the best format to exchange data. the client can indicate its preferred format and the server will try to respond with a compatible format or if not available a fallback format.  
+### Why Headers Matter
 
-types of content negotiation
-1. media type -> means that the client specifies the desired format througth the accept format.
-2. language negotation -> client requests data in a specific language using the accept language header. 
-3. encoding negotation -> client specifies which encoding it supports using the accept encoding header.
+**Extensibility** — HTTP is highly extensible because headers can be added or customized without changing the underlying protocol. Developers can even define custom headers to alter behavior without touching the core spec.
 
+**Content negotiation** — Headers like `Accept`, `Accept-Language`, and `Accept-Encoding` let the server serve different versions of content based on what the client can handle.
 
-explain about http compression and its different formats?
+**Remote control** — Headers act like a remote control on the server. Clients can specify preferred formats, control caching, pass credentials for access control, and more — all without changing the resource URL.
 
+---
 
-persistent connections and keep-alive -> each request response required a seperate connection to the server. this created inefficines since establishing and closing tcp connections is resource intensive and slow. to solve this issue persistent connections were introduced in http 1.1. with persistent connection, a single tcp connection can be reused for multiple requests and responses avoiding the overhead of opening and closing a connection for every req / res cycle. for acheiveing that a new header was introduced.
-`keep-alive` -> it is the mechanism that enables persistent connections. it allows the client and server to reuse the same connection for multiple request responses until one of them decides to close it. in http1.1 connections are persistent by default. even if it is by default, `keep-alive` header is still sometimes used to ask the server to keep the connection open. it can also include options like how long should the connection be opened or how many requests can be sent before the connection is closed. by default connection is only closed after the response has been sent. 
+## HTTP Methods
 
+Methods exist to represent the different types of actions a client can request on a server. Instead of every request doing the same thing, the method declares the intent.
 
-handling large requests and responses -> 
+|Method|Purpose|Has Body|
+|---|---|---|
+|`GET`|Retrieve a resource. Must not modify anything on the server|No|
+|`POST`|Create a new resource on the server|Yes|
+|`PUT`|Replace an existing resource entirely with the request body|Yes|
+|`PATCH`|Partially update a resource — prefer this over PUT for partial updates|Yes|
+|`DELETE`|Remove a resource from the server|No|
+|`OPTIONS`|Inquire about what methods/headers the server supports for a route|No|
 
-multipart requests -> used by client to send large files to the server. data/binary data of the file is transferred to the server in parts. 
+### Idempotent vs Non-Idempotent
 
-as the data is sent in parts, you need some kind of delimiter to sepearate those parts, you specify this delemiter in `content-type` header by the name of boundary
+An **idempotent** method means calling it multiple times with the same input produces the same result.
 
-when sending data from server to client, we use something called streaming. you tell this by specifying in resonse header. `content-type: text/event-stream`. server will send multiple responses each containing a certain chunk of the requested data.  another header is `connection: keep-alive` which just means to keep the connection alive until all the data is at the client side. 
+**Idempotent:** `GET`, `PUT`, `DELETE`
 
-ssl? https? tls?
+- `GET` — Reads a resource without modifying it. Same result every time.
+- `PUT` — Completely replaces a resource. No matter how many times you replace old data with the same new data, the result is always that new data.
+- `DELETE` — After the first call, the resource is gone. Subsequent calls either get 404 or no-op — the server state doesn't keep changing.
 
-ssl was the original protcol for securing commnucations between client like a web browser and server it encrypts data. 
+**Non-Idempotent:** `POST`
 
-ssl has been replaced by tls due to some security vulnerabilities. it is a more modern and secure version of ssl. it encrypts data in transit ensuring that any data sent between the client and server is protected from interception and tampering. tls uses certifcates to authenticate the server and establish a encrypted connection preventing eves dropping. 
+- `POST` — Creates a new resource on each call. Sending the same body twice results in two separate resources being created.
 
-https underlying mechanism is tls. 
+`PATCH` is technically non-idempotent in the general case (e.g. "increment counter by 1"), though in practice most PATCH implementations are written to be idempotent.
+
+---
+
+## CORS and the OPTIONS Method
+
+### Same-Origin Policy
+
+Browsers enforce a same-origin policy: a page on `example.com` cannot make requests to `api.anotherdomain.com` unless that server explicitly allows it. This is where CORS (Cross-Origin Resource Sharing) comes in.
+
+### Simple Requests
+
+A simple request is sent directly to the server without a preflight. The browser attaches an `Origin` header and the server responds with `Access-Control-Allow-Origin`. The browser checks that header — if it's `*` or matches the frontend origin, the response is passed through. Otherwise it's blocked.
+
+```
+GET /api/products/123 HTTP/1.1
+Host: api.anotherdomain.com
+Origin: https://example.com
+Accept: application/json
+```
+
+### Preflight Requests
+
+For requests that might have side effects, the browser first sends an OPTIONS request to ask the server whether the real request is allowed.
+
+**A request triggers a preflight if any of the following are true (and it's cross-origin):**
+
+1. The method is not `GET`, `POST`, or `HEAD` (e.g. `PUT`, `DELETE`)
+2. It includes non-simple headers like `Authorization` or custom headers
+3. The `Content-Type` is not `application/x-www-form-urlencoded`, `multipart/form-data`, or `text/plain`
+
+**Preflight request:**
+
+```
+OPTIONS /api/resource HTTP/1.1
+Host: api.example.com
+Origin: http://example.com
+Access-Control-Request-Method: PUT
+Access-Control-Request-Headers: Authorization
+```
+
+**Preflight response (if server is configured correctly):**
+
+```
+HTTP/1.1 204 No Content
+Access-Control-Allow-Origin: https://example.com
+Access-Control-Allow-Methods: PUT, DELETE
+Access-Control-Allow-Headers: Authorization
+Access-Control-Max-Age: 86400
+```
+
+- `Access-Control-Allow-Origin` — Which origins are permitted
+- `Access-Control-Allow-Methods` — Which methods are supported on this route
+- `Access-Control-Allow-Headers` — Which headers are permitted
+- `Access-Control-Max-Age` — How long (in seconds) this preflight result can be cached — `86400` means 24 hours, so the browser won't repeat the preflight for a day
+
+---
+
+## HTTP Status Codes
+
+Status codes exist to communicate the result of a request in a standardized way. Without them, clients would have to guess outcomes from the response body, leading to inconsistencies. Status codes provide a universal language all clients and servers understand.
+
+### 1xx — Informational
+
+Used to communicate interim responses before the final response.
+
+- `100 Continue` — Server received the headers and the client should proceed to send the request body. Useful for large uploads: the client sends headers first; if the server is okay with them, it sends 100 before the client sends the potentially large body.
+- `101 Switching Protocols` — Server agrees to switch protocols as requested (e.g. upgrading from HTTP to WebSockets).
+
+### 2xx — Success
+
+- `200 OK` — Request was successful. Server is returning the requested resource or has performed the action.
+- `201 Created` — Request was fulfilled and a new resource was created.
+- `204 No Content` — Request succeeded but there is no body to return. Common in preflight responses and DELETE operations.
+
+### 3xx — Redirection
+
+- `301 Moved Permanently` — Resource has been permanently moved to a new URL. Future requests should use the new URL.
+- `302 Found (Temporary Redirect)` — Resource is temporarily at a different URL but the client should continue using the original URL in future.
+- `304 Not Modified` — Used with conditional requests and caching. The resource hasn't changed since the client last fetched it, so the client should use its cached copy.
+
+### 4xx — Client Errors
+
+- `400 Bad Request` — The client sent invalid or illogical data.
+- `401 Unauthorized` — The client is not authenticated. Credentials are missing or invalid.
+- `403 Forbidden` — The server understood the request but refuses to fulfill it. This can happen to authenticated users who lack permission to access a resource.
+- `404 Not Found` — The requested resource doesn't exist.
+- `405 Method Not Allowed` — The HTTP method used is not supported for this route.
+- `409 Conflict` — Request conflicts with the current state of the server (e.g. trying to create a resource with a name that must be unique).
+- `429 Too Many Requests` — The client has sent too many requests in a given time (rate limiting).
+
+### 5xx — Server Errors
+
+- `500 Internal Server Error` — An unexpected condition was encountered on the server. Often returned as a generic error to avoid leaking server internals to the client.
+- `501 Not Implemented` — The server doesn't support the requested HTTP method or functionality but may in the future.
+- `502 Bad Gateway` — The server, acting as a gateway or proxy, received an invalid response from an upstream server.
+- `503 Service Unavailable` — The server is temporarily unable to handle requests (overloaded or down for maintenance).
+- `504 Gateway Timeout` — The server, acting as a gateway, didn't receive a timely response from an upstream server.
+
+---
+
+## HTTP Caching
+
+Caching stores copies of responses for reuse, reducing repeated requests to the server. This reduces load times, bandwidth usage, and server load.
+
+**How it works:**
+
+When the server responds, it includes caching instructions:
+
+```
+Cache-Control: max-age=3600, public
+ETag: "abc123"
+Last-Modified: Tue, 03 Jun 2025 10:00:00 GMT
+```
+
+On subsequent requests for the same resource, the client sends:
+
+```
+If-None-Match: "abc123"
+If-Modified-Since: Tue, 03 Jun 2025 10:00:00 GMT
+```
+
+The server checks: if the ETag still matches and the resource hasn't been modified since that timestamp, it returns `304 Not Modified` with no body — the client uses its cached copy. Otherwise it sends the full updated resource with a new ETag.
+
+**Cache-Control directives:**
+
+- `max-age=N` — Cache the response for N seconds
+- `public` — Response can be cached by any cache (browsers, CDNs)
+- `private` — Response can only be cached by the individual user's browser
+- `no-cache` — Must revalidate with the server before using cached copy
+- `no-store` — Do not cache at all
+
+---
+
+## Content Negotiation
+
+A mechanism by which client and server agree on the best format to exchange data. The client indicates its preferences and the server responds in a compatible format, or falls back to a default.
+
+**Types:**
+
+1. **Media type negotiation** — Client specifies desired format via the `Accept` header. Example: `Accept: application/json, text/html`
+2. **Language negotiation** — Client requests a specific language via `Accept-Language`. Example: `Accept-Language: en-US, hi`
+3. **Encoding negotiation** — Client specifies supported compression formats via `Accept-Encoding`. Example: `Accept-Encoding: gzip, br, deflate`
+
+---
+
+## HTTP Compression
+
+Compression reduces the size of response bodies before they are sent over the network, improving transfer speed and reducing bandwidth.
+
+**How it works:** The client advertises supported compression algorithms via the `Accept-Encoding` header. The server compresses the response body using one of those algorithms and declares which one it used in the `Content-Encoding` response header.
+
+**Common compression formats:**
+
+- **gzip** — The most widely supported format. Uses the DEFLATE algorithm. Good compression ratio with fast decompression. Supported by virtually all browsers and servers.
+- **br (Brotli)** — Developed by Google. Achieves better compression than gzip (typically 15–25% smaller) at comparable speeds. Ideal for text-based content like HTML, CSS, and JS. Supported by all modern browsers. Only works over HTTPS.
+- **deflate** — The raw DEFLATE algorithm. Less commonly used than gzip because of inconsistent implementation across servers and clients.
+- **zstd (Zstandard)** — Newer format from Facebook. Excellent compression ratio with very fast decompression. Gaining support in modern browsers and servers.
+
+**What gets compressed:** Text-based content — HTML, CSS, JavaScript, JSON, XML — benefits the most. Binary formats like images, videos, and already-compressed files (ZIP, PDF) generally should not be compressed as they're already compressed and the overhead isn't worth it.
+
+---
+
+## Persistent Connections and Keep-Alive
+
+In HTTP/1.0, each request-response cycle required opening and closing a new TCP connection — expensive and slow.
+
+HTTP/1.1 introduced **persistent connections**: a single TCP connection is reused for multiple request-response cycles, eliminating the overhead of repeatedly establishing connections.
+
+**Keep-Alive header:**
+
+```
+Connection: keep-alive
+Keep-Alive: timeout=5, max=100
+```
+
+- `timeout=5` — Keep the connection open for up to 5 seconds of inactivity
+- `max=100` — Allow up to 100 requests over this connection before closing it
+
+In HTTP/1.1, connections are persistent by default. The `keep-alive` header can still be used to negotiate specific timeout and max-request parameters. The connection closes when either the server or client sends `Connection: close`, or when the timeout or max limit is reached.
+
+HTTP/2 and HTTP/3 make this largely irrelevant since they handle multiplexing at the protocol level — multiple requests fly over a single connection simultaneously without needing any keep-alive negotiation.
+
+---
+
+## Handling Large Requests and Responses
+
+### Multipart Requests (Client → Server)
+
+Used when a client needs to send large files or multiple pieces of data in one request. The file's binary data is split into parts, each separated by a **boundary** delimiter specified in the `Content-Type` header.
+
+```
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="photo.jpg"
+Content-Type: image/jpeg
+
+<binary data here>
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+```
+
+### Chunked Transfer / Streaming (Server → Client)
+
+Used when the server sends a large response incrementally rather than all at once. The server sends multiple chunks, each containing a portion of the data.
+
+```
+Content-Type: text/event-stream
+Transfer-Encoding: chunked
+Connection: keep-alive
+```
+
+This is commonly used in:
+
+- Server-Sent Events (SSE) for real-time data
+- AI/LLM streaming responses
+- Large file downloads where the total size isn't known upfront
