@@ -13,6 +13,7 @@
 - [EF Core and ADO.Net](EF%20Core%20and%20ADO.Net.md)
 - [OOPS](OOPS.md)
 - [Access Specifiers & Access Modifiers](Access%20Specifiers%20&%20Access%20Modifiers.md)
+- [Namespaces in .NET](Namespaces%20in%20.NET.md)
 
 Tags:
 #csharp 

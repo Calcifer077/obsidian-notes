@@ -17,6 +17,7 @@ Use `dotnet watch run` for hot reload in your application.
 - [Routing in MVC and API](Routing%20in%20MVC%20and%20API.md)
 - [Testing in .NET](Testing%20in%20.NET.md)
 - [Complete Request Journey](Complete%20Request%20Journey.md)
+- [View Components](View%20Components.md)
 
 Tags:
 #development 

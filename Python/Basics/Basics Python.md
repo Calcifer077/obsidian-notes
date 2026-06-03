@@ -29,6 +29,7 @@ Links:
 - [Docstrings](Docstrings.md)
 - [Exceptions](Exceptions.md)
 - [Operator Overloading](Operator%20Overloading.md)
-
+- [Functions](Functions.md)
+- [With](With.md)
 Tags:
 #python
