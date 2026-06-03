@@ -12,7 +12,7 @@ SELECT column_name alias_name
 FROM table_name;
 ```
 
-The following syntax illustrates how to set an alias for an expression in the [Select](Select.md) clause:
+The following syntax illustrates how to set an alias for an expression in the [SELECT](SELECT.md) clause:
 ```PostgreSQL
 SELECT expression AS alias_name
 FROM table_name;
