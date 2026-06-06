@@ -295,3 +295,223 @@ The `await` keyword before a promise makes JavaScript wait until that promise se
 Together they provide a great framework to write asynchronous code that is easy to both read and write.
 
 With `async/await` we rarely need to write `promise.then/catch`, but we still shouldn’t forget that they are based on promises, because sometimes (e.g. in the outermost scope) we have to use these methods. Also `Promise.all` is nice when we are waiting for many tasks simultaneously.
+
+## Questions
+
+### Q. Call async from non-async
+We have a "regular" function called `f`. How can you call the `async` function `wait()` and use its result inside of `f`?
+```js
+async function wait() {
+  await new Promise(resolve => setTimeout(resolve, 1000));
+
+  return 10;
+}
+
+function f() {
+  // ...what should you write here?
+  // we need to call async wait() and wait to get 10
+  // remember, we can't use "await"
+}
+```
+### Ans:
+Just tread `async` call as promise and attack `.then` to it:
+```js
+async function wait() {
+  await new Promise(resolve => setTimeout(resolve, 1000));
+
+  return 10;
+}
+
+function f() {
+  // shows 10 after 1 second
+  wait().then(result => alert(result));
+}
+
+f();
+```
+
+---
+### Q. Dangerous Promise.all
+Let's say we have a connection to a remote service, such as a database. There's two functions: `connect()` and `disconnet()`.
+
+When connected, we can send requests using `database.query(...)` – an async function which usually returns the result but also may throw an error.
+
+Here’s a simple implementation:
+```js
+let database;
+
+function connect() {
+  database = {
+    async query(isOk) {
+      if (!isOk) throw new Error('Query failed');
+    }
+  };
+}
+
+function disconnect() {
+  database = null;
+}
+
+// intended usage:
+// connect()
+// ...
+// database.query(true) to emulate a successful call
+// database.query(false) to emulate a failed call
+// ...
+// disconnect()
+```
+
+Now here's the problem. We wrote the code to connect and send 3 queries in parallel (all of them take different time, e.g. 100, 200 and 300ms), then disconnect:
+```js
+// Helper function to call async function `fn` after `ms` milliseconds
+function delay(fn, ms) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => fn().then(resolve, reject), ms);
+  });
+}
+
+async function run() {
+  connect();
+
+  try {
+    await Promise.all([
+      // these 3 parallel jobs take different time: 100, 200 and 300 ms
+      // we use the `delay` helper to achieve this effect
+      delay(() => database.query(true), 100),
+      delay(() => database.query(false), 200),
+      delay(() => database.query(false), 300)
+    ]);
+  } catch(error) {
+    console.log('Error handled (or was it?)');
+  }
+
+  disconnect();
+}
+
+run();
+```
+
+Two of these queries happen to be unsuccessful, but we’re smart enough to wrap the `Promise.all` call into a `try..catch` block.
+
+However, this doesn’t help! This script actually leads to an uncaught error in console!
+
+Why? How to avoid it?
+
+### Ans:
+Before answer, some things about the above code. How does the code get access to `database`. `database` is a global variable, and when we call `connect` in `run`, it is initialized with query function. Due to which we can access it all over the code, until we `disconnect` it which marks it as `null`.
+
+The root of the problem is that `Promise.all` immediately rejects when one of its promises rejects, but it do nothing to cancel other promises. 
+
+In our case, the second query fails, so `Promise.all` rejects, and the `try...catch` block catches this error. Meanwhile, other promises are _not affected_ - they continue their execution. In our case, the third query throws an error of its own after a bit of time, And that error is never caught, we can see it in the console. The problem is especially dangerous in server-side environments, such as Node.js, when an uncaught error may cause the process to crash.
+
+An ideal solution would be to cancel all unfinished queries when one of them fails. This way we avoid any potential errors.
+
+However, the bad news is that service calls (such as `database.query`) are often implemented by a 3rd-party library which doesn't support cancellation. Then there's no way to cancel a call.
+
+#### Solutions
+**Solution 1: Custom `Promise.all` that ignores late errors.**
+```js
+function customPromiseAll(promises) {
+  return new Promise((resolve, reject) => {
+    const results = [];
+    let resultsCount = 0;
+    let hasError = false; // we'll set it to true upon first error
+
+    promises.forEach((promise, index) => {
+      promise
+        .then(result => {
+          if (hasError) return; // ignore the promise if already errored
+          results[index] = result;
+          resultsCount++;
+          if (resultsCount === promises.length) {
+            resolve(results); // when all results are ready - successs
+          }
+        })
+        .catch(error => {
+          if (hasError) return; // ignore the promise if already errored
+          hasError = true; // wops, error!
+          reject(error); // fail with rejection
+        });
+    });
+  });
+}
+```
+This prevents the uncaught error, but has a trade-off - remaining promises are still running, you're just silently ignoring them. If a still-running query does something important (like a DB write), you've abandoned it.
+
+**Solution 2: Wait for ALL promises to settle before rejecting**
+```js
+function customPromiseAllWait(promises) {
+  return new Promise((resolve, reject) => {
+    const results = new Array(promises.length);
+    let settledCount = 0;
+    let firstError = null;
+
+    promises.forEach((promise, index) => {
+      Promise.resolve(promise)
+        .then(result => {
+          results[index] = result;
+        })
+        .catch(error => {
+          if (firstError === null) {
+            firstError = error;
+          }
+        })
+        .finally(() => {
+          settledCount++;
+          if (settledCount === promises.length) {
+            if (firstError !== null) {
+              reject(firstError);
+            } else {
+              resolve(results);
+            }
+          }
+        });
+    });
+  });
+}
+```
+This is safer - it waits until all 3 queries are done before resolving/rejecting. So `disconnect()` won't run prematurely. The downside is you still only surface the _first_ error, silently dropping the rest.
+
+**Solution 3 – `Promise.allSettled` + `AggregateError`**
+```js
+// wait for all promises to settle
+// return results if no errors
+// throw AggregateError with all errors if any
+function allOrAggregateError(promises) {
+  return Promise.allSettled(promises).then(results => {
+    const errors = [];
+    const values = [];
+
+    results.forEach((res, i) => {
+      if (res.status === 'fulfilled') {
+        values[i] = res.value;
+      } else {
+        errors.push(res.reason);
+      }
+    });
+
+    if (errors.length > 0) {
+      throw new AggregateError(errors, 'One or more promises failed');
+    }
+
+    return values;
+  });
+}
+```
+`Promise.allSettled` never short-circuits - it always waits for every promise to finish. Then you collect all errors and bundle them into a single `AggregateError`. This is the most thorough approach: nothing is dropped, nothing runs unhandled.
+
+**How to use any of them?**
+Before:
+```js
+await Promise.all([query1, query2, query3]);
+```
+After:
+```js
+await customPromiseAllWait([query1, query2, query3]);
+// or
+await allOrAggregateError([query1, query2, query3]);
+```
+
+
+
+---
