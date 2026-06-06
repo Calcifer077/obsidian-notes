@@ -1,3 +1,4 @@
 - [Objects](Objects/Objects.md)
 - [Data types](Data%20types/Data%20types.md)
+- [Error handling](Error%20handling/Error%20handling.md)
 - [Promises, async, await](Promises,%20async,%20await/Promises,%20async,%20await.md)
