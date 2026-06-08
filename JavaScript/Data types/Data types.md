@@ -1,3 +1,7 @@
 - [Methods of primitives](Methods%20of%20primitives.md)
 - [Numbers](Numbers.md)
 - [Strings](Strings.md)
+- [Arrays](Arrays.md)
+- [Array methods](Array%20methods.md)
+- [Iterables](Iterables.md)
+- [Map and Set](Map%20and%20Set.md)
