@@ -25,7 +25,7 @@ Where’s the code that generates the string `"[object Object]"`? That’s a bui
 Here’s what’s going on:
 ![](../../assets/tostring_native_prototype_modern_javascript_tutorial.png)
 
-When `new Object()` is called (or a literal object `{...}` is created), the `[[Prototype]]` of it is set to `Object.prototype` according to the rule that we discussed in the previous chapter:
+When `new Object()` is called (or a literal object `{...}` is created), the `[[Prototype]]` of it is set to `Object.prototype` according to the rule that we discussed in the [previous chapter](F.Protoype.md):
 ![](../../assets/things_discussed_in_f.prototype_native_prototypes_modern_javascript_tutorial.png)
 
 So then when `obj.toString()` is called the method is taken from `Object.prototype`.
@@ -192,3 +192,86 @@ Borrowing methods is flexible, it allows to mix functionalities from different o
 		- The object itself stores only the data (array items, object properties, the date)
 - Primitives also store methods in prototypes of wrapper objects: `Number.prototype`, `String.prototype` and `Boolean.prototype`. Only `undefined` and `null` do not have wrapper objects
 - Built-in prototypes can be modified or populated with new methods. But it’s not recommended to change them. The only allowable case is probably when we add-in a new standard, but it’s not yet supported by the JavaScript engine
+
+## Questions
+
+### Ques 1) Add method "f.defer(ms)" to functions
+Add to the prototype of all functions the method `defer(ms)`, that runs the function after `ms` milliseconds.
+
+After you do it, such code should work:
+
+```javascript
+function f() {
+  alert("Hello!");
+}
+
+f.defer(1000); // shows "Hello!" after 1 second
+```
+
+### Ans:
+```js
+Function.prototype.defer = function(ms) {
+  setTimeout(this, ms);
+};
+
+function f() {
+  alert("Hello!");
+}
+
+f.defer(1000); // shows "Hello!" after 1 sec
+```
+
+### Ques 2) Add the decorating "defer()" to functions
+Add to the prototype of all functions the method `defer(ms)`, that returns a wrapper, delaying the call by `ms` milliseconds.
+
+Here’s an example of how it should work:
+
+```javascript
+function f(a, b) {
+  alert( a + b );
+}
+
+f.defer(1000)(1, 2); // shows 3 after 1 second
+```
+
+Please note that the arguments should be passed to the original function.
+
+### Ans:
+```javascript
+Function.prototype.defer = function(ms) {
+  let f = this;
+  return function(...args) {
+    setTimeout(() => f.apply(this, args), ms);
+  }
+};
+
+// check it
+function f(a, b) {
+  alert( a + b );
+}
+
+f.defer(1000)(1, 2); // shows 3 after 1 sec
+```
+
+Please note: we use `this` in `f.apply` to make our decoration work for object methods.
+
+So if the wrapper function is called as an object method, then `this` is passed to the original method `f`.
+```js
+Function.prototype.defer = function(ms) {
+  let f = this;
+  return function(...args) {
+    setTimeout(() => f.apply(this, args), ms);
+  }
+};
+
+let user = {
+  name: "John",
+  sayHi() {
+    alert(this.name);
+  }
+}
+
+user.sayHi = user.sayHi.defer(1000);
+
+user.sayHi();
+```
