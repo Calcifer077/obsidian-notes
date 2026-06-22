@@ -195,7 +195,7 @@ alert( user.name ); // John
 alert( user.age );  // 30
 ```
 
-You can find more detailed information about JSON in the [JSON methods, toJSON](https://javascript.info/json) chapter.
+You can find more detailed information about JSON in the [JSON methods, toJSON](../Data%20types/JSON%20methods,%20toJSON.md) chapter.
 
 **If `json` is malformed, `JSON.parse` generates an error, so the script “dies”.**
 
