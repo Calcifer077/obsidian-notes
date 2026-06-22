@@ -5,3 +5,8 @@
 - [Array methods](Array%20methods.md)
 - [Iterables](Iterables.md)
 - [Map and Set](Map%20and%20Set.md)
+- [WeakMap and WeakSet](WeakMap%20and%20WeakSet.md)
+- [Object.keys, values, entries](Object.keys,%20values,%20entries.md)
+- [Destructuring assignment](Destructuring%20assignment.md)
+- [Date and time](Date%20and%20time.md)
+- [JSON methods, toJSON](JSON%20methods,%20toJSON.md)
