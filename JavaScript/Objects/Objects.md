@@ -381,13 +381,13 @@ References:
 [JS Info](https://javascript.info/object)
 
 ## Links:
-[Object references and copying](Object%20references%20and%20copying.md)
-[Garbage collection](Garbage%20collection.md)
-[Object methods, `this`](Object%20methods,%20`this`.md)
-[Constructor, operator `new`](Constructor,%20operator%20`new`.md)
-[Optional chaining](Optional%20chaining.md)
-[Symbol type](Symbol%20type.md)
-[Object to primitive conversion](Object%20to%20primitive%20conversion.md)
+- [Object references and copying](Object%20references%20and%20copying.md)
+- [Garbage collection](Garbage%20collection.md)
+- [Object methods, `this`](Object%20methods,%20`this`.md)
+- [Constructor, operator `new`](Constructor,%20operator%20`new`.md)
+- [Optional chaining](Optional%20chaining.md)
+- [Symbol type](Symbol%20type.md)
+- [Object to primitive conversion](Object%20to%20primitive%20conversion.md)
 
 Tags:
 #javascript 
