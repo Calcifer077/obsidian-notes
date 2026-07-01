@@ -1,6 +1,6 @@
 ---
 title: How vector databases actually work
-source 1: https://open.substack.com/pub/sahilserver/p/how-vector-databases-actually-work?r=6uc2m1&utm_campaign=post-expanded-share&utm_medium=web
+source 1: https://open.substack.com/pub/sahilserver/p/how-vector-databases-actually-work
 source 2: https://www.pinecone.io/learn/vector-database/
 created: 2026-06-30
 tags:
