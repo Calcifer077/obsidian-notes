@@ -1,5 +1,6 @@
 - [Objects](Objects/Objects.md)
 - [Data types](Data%20types/Data%20types.md)
+- [Advanced working with functions](Advanced%20working%20with%20functions/Advanced%20working%20with%20functions.md)
 - [Object properties configuration](Object%20properties%20configuration/Object%20properties%20configuration.md)
 - [Prototypes, inheritance](Prototypes,%20inheritance/Prototypes,%20inheritance.md)
 - [Error handling](Error%20handling/Error%20handling.md)
