@@ -310,6 +310,34 @@ Visualization:
 
 If you want to select values from your array that fulfil certain conditions, it's straightforward with NumPy.
 
+For example, if you create a 2D array.
+
+```python
+Z = np.zeros((8,8))
+```
+
+How slicing would work:
+
+```python
+Z[1::2,::2] = 1
+Z[::2,1::2] = 1
+```
+
+`1::2` means that rows 1,3,5,7. Start from the first row and the than take next by skipping one. `::2` means start from 0, so 0,2,4,6 columns.
+
+It will create a result like below:
+
+```
+[[0 1 0 1 0 1 0 1]
+ [1 0 1 0 1 0 1 0]
+ [0 1 0 1 0 1 0 1]
+ [1 0 1 0 1 0 1 0]
+ [0 1 0 1 0 1 0 1]
+ [1 0 1 0 1 0 1 0]
+ [0 1 0 1 0 1 0 1]
+ [1 0 1 0 1 0 1 0]]
+```
+
 For example, if you start with this array:
 ```python
 >>> a = np.array([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]])
