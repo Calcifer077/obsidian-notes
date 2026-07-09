@@ -1,1 +1,4 @@
 - [Rest parameters and spread syntax](Rest%20parameters%20and%20spread%20syntax.md)
+- [Variable scope, closure](Variable%20scope,%20closure.md)
+- [The old `var`](The%20old%20`var`.md)
+- [Global object](Global%20object.md)
