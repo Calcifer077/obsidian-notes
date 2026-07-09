@@ -2,3 +2,4 @@
 - [Variable scope, closure](Variable%20scope,%20closure.md)
 - [The old `var`](The%20old%20`var`.md)
 - [Global object](Global%20object.md)
+- [Function object, NFE](Function%20object,%20NFE.md)
