@@ -3,3 +3,4 @@
 - [The old `var`](The%20old%20`var`.md)
 - [Global object](Global%20object.md)
 - [Function object, NFE](Function%20object,%20NFE.md)
+- [The new function syntax](The%20new%20function%20syntax.md)
