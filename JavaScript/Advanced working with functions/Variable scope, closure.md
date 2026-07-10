@@ -135,6 +135,8 @@ All functions remember the Lexical Environment in which they were made. All func
 
 ![](../../assets/Pasted%20image%2020260709103059.png)
 
+_Note `[[Environment]]` is a hidden property which is created for each function creation. This property is set once, at creation time, and stores a reference to the lexical env that was active at the moment._
+
 So `counter.[[Enviornment]]` has the reference to `{count: 0}`. That's how the function remembers where it was created, no matter where it's called. The `[[Enviornment]]` reference is set once and forever at function creation time. 
 
 Later, when `counter()` is called, a new lexical env is created for the call, and its outer lexical env is taken from the `counter.[[Enviornment]]`:
