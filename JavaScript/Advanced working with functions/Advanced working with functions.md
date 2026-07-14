@@ -4,3 +4,4 @@
 - [Global object](Global%20object.md)
 - [Function object, NFE](Function%20object,%20NFE.md)
 - [The new function syntax](The%20new%20function%20syntax.md)
+- [Scheduling - setTimeout and setInterval](Scheduling%20-%20setTimeout%20and%20setInterval.md)
