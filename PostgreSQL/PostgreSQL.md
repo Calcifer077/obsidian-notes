@@ -3,4 +3,4 @@
 - [Filtering Data](Filtering%20Data/Filtering%20Data.md)
 - [Join Tables](Join%20Tables/Join%20Tables.md)
 - [Group Data](Group%20Data/Group%20Data.md)
-
+- [Set Operations](Set%20Operations/Set%20Operations.md)
