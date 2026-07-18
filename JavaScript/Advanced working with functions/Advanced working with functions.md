@@ -6,3 +6,4 @@
 - [The new function syntax](The%20new%20function%20syntax.md)
 - [Scheduling - setTimeout and setInterval](Scheduling%20-%20setTimeout%20and%20setInterval.md)
 - [Decorators and forwarding, call, apply](Decorators%20and%20forwarding,%20call,%20apply.md)
+- [Function binding](Function%20binding.md)
