@@ -116,7 +116,7 @@ Let's fix it.
 There’s a special built-in function method [func.call(context, …args)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/call) that allows to call a function explicitly setting `this`.
 
 ```js
-func.call(contex, arg1, arg2, ...);
+func.call(context, arg1, arg2, ...);
 ```
 
 If runs `func` providing the first argument as `this`, and the next as the arguments. 
