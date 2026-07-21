@@ -41,7 +41,7 @@ The model is called the ISO OSI (Open Systems interconnection) reference model b
 
 Note that the OSI model itself is not a network architecture because it does not specify the exact services and protocols to be used in each layer. It just tells what each layer should do.
 
-![[../assets/Pasted image 20260720171848.png]]
+![][../assets/Pasted%20image%2020260720171848.png]]
 
 Below I have briefly discussed about each layer:
 
