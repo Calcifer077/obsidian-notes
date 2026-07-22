@@ -41,7 +41,7 @@ The model is called the ISO OSI (Open Systems interconnection) reference model b
 
 Note that the OSI model itself is not a network architecture because it does not specify the exact services and protocols to be used in each layer. It just tells what each layer should do.
 
-![][../assets/Pasted%20image%2020260720171848.png]]
+![](../assets/Pasted%20image%2020260721210411.png)
 
 Below I have briefly discussed about each layer:
 
@@ -86,7 +86,7 @@ This layer contains a variety of protocols that are commonly needed by users lik
 
 ### The TCP/IP Reference Model
 
-_Source: Page number 69 - _
+_Source: Page number 69 - 72_
 
 This model originated from DoD during WWII. The main concern that the DoD had about this model was that even if some nodes (routers, internet work gateways) might get blown away by soviet union, the entire network shouldn't go down. As long as source and destination machines were functioning, the whole network should be functional.
 
@@ -103,4 +103,22 @@ The **internet layer** is the linchpin (most essential part) that holds the whol
 The internet layer defines an official packet format and protocol called **IP (Internet Protocol)**, plus a companion protocol called **ICMP (Internet Control Message Protocol)** that helps it function. The job of the internet layer is to deliver IP packets where they are supposed to go.
 
 #### The Transport Layer
+
+This layer is designed to allow peer entities on the source and destination hosts to carry on a conversation, just as in the OSI transport layer. Two end-to-end transport protocols have been defined here. The first one, **TCP (Transmission Control Protocol)**, is a reliable connection-oriented protocol that allows a byte stream originating on one machine to be delivered without error on any other machine in the internet. It segments the incoming byte stream into discrete messages and passes each one on to the internet layer. At the destination, the receiving TCP process reassembles the received messages into the output stream. TCP also handles flow control to make sure a fast sender cannot swamp a slow receiver with more messages than it can handle. 
+
+The second protocol in this layer, **UDP (User Datagram Protocol)**, is an unreliable, connectionless protocol for applications that do not want TCP's sequencing or flow control and wish to provide their own. It is also widely used for one-shot, client-server-type request reply queries and applications in which prompt delivery is more important then accurate delivery, such as transmitting speech or video. 
+
+#### The Application Layer
+
+The TCP/IP model does not have sessions or presentation layers like OSI. No need for them was perceived. Instead applications simply include any session and presentation functions that they require. 
+
+The **Application Layer** contains all the higher-level protocols. The early ones included virtual terminal (TELNET), file transfer (FTP), and electronic mail (SMTP). Many other protocols have been added to these over the years.
+
+![](../assets/Pasted%20image%2020260721211435.png)
+
+## Comparison of OSI and TCP/IP reference model
+
+_Source: Page number 73 - 75._
+
+The main difference that I found was that the OSI supports both connection-oriented and connection-less communication in the network layer, but only connection-oriented communication in the transport layer, where it counts (because the transport service is visible to users). The TCP/IP model supports only one mode in the network layer (connectionless) but both in the transport layer, giving the users a choice. 
 
