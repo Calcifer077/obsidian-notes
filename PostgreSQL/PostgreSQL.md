@@ -5,3 +5,4 @@
 - [Group Data](Group%20Data/Group%20Data.md)
 - [Set Operations](Set%20Operations/Set%20Operations.md)
 - [Common Table Expression](Common%20Table%20Expression/Common%20Table%20Expression.md)
+- [Modifying Data](Modifying%20Data/Modifying%20Data.md)

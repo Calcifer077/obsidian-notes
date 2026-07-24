@@ -1,6 +1,6 @@
 Most of the content in this note comes from **Andrew S. Tanenbaum - Computer Networks.** This is the main source, if I have used something else, it will be mentioned accordingly.
 
-## Connection-oriented and Connection-less
+# Connection-oriented and Connection-less
 
 _Source: Page number 59 - 61._
 
@@ -23,7 +23,7 @@ Different types of services
 | Connection-less     | Acknowledged datagram   | Text messaging       |
 | Connection-less     | Request-reply           | Database query       |
 
-## The relation of services and protocols
+# The relation of services and protocols
 
 _Source: Page number 64_
 
@@ -31,7 +31,7 @@ A _service_ is a set of of primitives (operations) that a layer provides to the 
 
 A _protocol_ is a set of rules governing the format and meaning of the packets, or messages that are exchanged by the peer entities within a layer. Entities use protocol to implement their service implementation. 
 
-## Reference models
+# Reference models
 
 ### The OSI Reference model
 
@@ -121,4 +121,8 @@ The **Application Layer** contains all the higher-level protocols. The early one
 _Source: Page number 73 - 75._
 
 The main difference that I found was that the OSI supports both connection-oriented and connection-less communication in the network layer, but only connection-oriented communication in the transport layer, where it counts (because the transport service is visible to users). The TCP/IP model supports only one mode in the network layer (connectionless) but both in the transport layer, giving the users a choice. 
+
+# Thy Physical Layer
+
+_Source: Page number 113 - ._
 
