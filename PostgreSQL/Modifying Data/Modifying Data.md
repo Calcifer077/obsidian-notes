@@ -4,3 +4,6 @@ Backlinks:
 - [UPDATE Join](UPDATE%20Join.md)
 - [DELETE](DELETE.md)
 - [DELETE Join](DELETE%20Join.md)
+- [DELETE CASCADE](DELETE%20CASCADE.md)
+- [UPSERT](UPSERT.md)
+- [MERGE](MERGE.md)
