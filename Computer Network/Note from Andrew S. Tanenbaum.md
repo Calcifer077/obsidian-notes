@@ -126,3 +126,82 @@ The main difference that I found was that the OSI supports both connection-orien
 
 _Source: Page number 113 - ._
 
+The physical layer is about turning bits (0s and 1s) into actual electric/light/radio signals, sending them over a wire or through the air, and getting them back. 
+
+## Fourier analysis
+
+_Source: Page number 114 - 117_
+
+Any repeating signal can be broken down into a sum of sine and cosine waves at different frequencies. This is Fourier's big result. So instead of thinking of our bit pattern `01100010` as one weird square-wave shape, you can think of it as many pure tones added together.
+
+Why does this matter? Because...
+
+### Real wires don't transmit all frequencies equally
+
+Every physical medium (copper wire, fiber, air) has a **cutoff frequency** — above that frequency, the signal gets heavily attenuated (weakened). The range of frequencies that pass through reasonably intact is called the **bandwidth** (measured in Hz — this is the _analog_ meaning of bandwidth, as opposed to the "bits/sec" meaning computer scientists usually use).
+
+**Bandwidth** - The width of the frequency range transmitted without being strongly attenuated is called the **bandwidth**. The bandwidth is a physical property of the transmission medium that depends on, for example, the construction, thickness, and length of a wire or fiber. Signals that run from 0 up to a maximum frequency are called **baseband** signals. Signals that are shifted to occupy a higher range of frequencies, as is the case for all wireless transmissions, are called **passband** signals.
+
+## The maximum data rate of a channel
+
+_Source: Page number 118 - 119_
+
+In 1924, Henry Nyquist, realized that even a perfect channel has a finite transmission capacity. He derived an equation expression the maximum data rate for a finite-bandwidth _noiseless_ channel.
+
+$$
+\text{Maximum Data Rate} = 2B \log_2(V)\ \text{bits/sec}
+$$
+For example, a noiseless 3-kHz channel cannot transmit binary signals at a rate exceeding 6000 bps.
+
+Above we only considered noiseless channel but there is always random (thermal) noise present due to the motion of the molecules in the system. The amount of _thermal noise_ present is measured by the ratio of the signal power to the noise power, called the **SNR (Signal-to-Noise Ratio)**. 
+
+$$
+\text{Signal to noise ratio} = S / N
+$$
+_S -> Signal, N -> noise_
+
+Usually, the ratio is expressed on a log scale as the quantity 
+
+$$
+\mathrm{SNR}_{\mathrm{dB}} = 10 \log_{10}\left(\frac{S}{N}\right)
+$$
+
+because it can vary over a tremendous range. The units of this log scale are called **decibels (dB)**. 
+
+Shannon's major result is that the maximum data rate or capacity of a noisy channel whose bandwidth is `B` Hz and whose signal-to-noise ratio is $S/N$ is given by:
+
+$$
+\text{maximum number of bits / sec} = B \log_2\left(1 + \frac{S}{N}\right)
+$$
+## Guided transmission Media
+
+_Source: Page number 119 - _
+
+### Magnetic Media
+
+_Source: Page number 119_
+
+One of the most common ways to transport data from one computer to another is to write them onto magnetic tape or removable media, physically transport the tape or disks to the destination machine, and read them back in again. This method is often more cost effective, where cost per bit transported is the key factor.
+
+A simple calculation. An industry-standard Ultrium tape can hold 800 gigabytes. A box 60 x 60 x 60 cm can hold about 1000 of these tapes, for a total capacity of 800 terabytes, or 6400 terabits. These bod of tapes can be delivered anywhere in the US in 24 hours. The effective bandwidth of this transmission is 6400 terabits/86,400 sec, or a bit over 70 Gpbs which is fucking fast. 
+
+If we now look at cost, the cost of an ultrium tape is around $40 when bought in bulk. A tape can be reused at least 10 times, so the tape is maybe $4000 per box per usage. Add to this another $1000 for shipping, and we have a cost of roughly $5000 to ship 800TB. This amounts to shipping a gigabyte for a little over half a cent.
+
+### Twisted Pairs
+
+_Source: Page number 120 - 121_
+
+A twisted pair consists of two insulated copper wires, typically about 1mm thick. The wires are twisted together in a helical form, just like a DNA molecule. When the wires are twisted, the waves from different twists cancel out, so the wire radiates less effectively. A signal is usually carried as the difference in voltage between the two wires in the pair. This provides better immunity to external noise because the noise tends to affect both wires the same, leaving the differential unchanged. 
+
+Twisted pairs are most commonly used in the telephone system.
+
+Twisted pairs can be used for transmitting either analog or digital information. The bandwidth depends on the thickness of the wire and the distance travelled, but several megabits/sec can be achieved for a few kilometres in many cases. 
+
+Twisted pair cabling comes in several varieties. Most deployed is **Category 5** cabling, or "Cat 5". A category 5 twisted pair consists of two insulated wires gently twisted together. Four such pairs are typically grouped in a plastic sheath to protect the wires and keep them together.
+
+![](../assets/Pasted%20image%2020260728224443.png)
+
+Different LAN standards may use the twisted pairs differently. For example, 100-Mbps Ethernet uses two (out of the four) pairs, one pair for each direction. To reach higher speeds, 1-Gbps Ethernet uses all four pairs in both directions simultaneously; this requires the receiver to factor out the signal that is transmitted locally.
+
+Links that can be used in both directions at the same time, like a two-lane road, are called **full-duplex** links. In contrast, links that can be used in either direction, but only one way at a time, like a single track railroad line. are called **half-duplex** links. A third category consists of links that allow traffic in only one direction, like a one-way  street. They are called **simplex** link.
+
