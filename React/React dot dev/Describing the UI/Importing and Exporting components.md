@@ -87,6 +87,7 @@ How you export your component dictates how you must import it.
 | ------- | ------------------------------------- | --------------------------------------- |
 | Default | `export default function Button() {}` | `import Button from './Button.js';`     |
 | Named   | `export function Button() {}`         | `import { Button } from './Button.js';` |
+
 When you write a default import, we can put any name we want after `import`. In contrast, with named imports, the name has to match on both sides. That's why they are called _named_ imports!
 
 **People often use default exports if the file exports only one component, and use named exports if it exports multiple components and values.**
