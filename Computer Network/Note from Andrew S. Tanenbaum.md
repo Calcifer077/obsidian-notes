@@ -205,3 +205,50 @@ Different LAN standards may use the twisted pairs differently. For example, 100-
 
 Links that can be used in both directions at the same time, like a two-lane road, are called **full-duplex** links. In contrast, links that can be used in either direction, but only one way at a time, like a single track railroad line. are called **half-duplex** links. A third category consists of links that allow traffic in only one direction, like a one-way  street. They are called **simplex** link.
 
+### Coaxial Cable
+
+_Source: Page number 121 - 122_
+
+Coaxial cable (also known as "coax") has better shielding and greater bandwidth than unshielded twisted pairs, so it can span longer distances at higher speeds. Two kinds of coaxial cable are widely used. One kind, 50-ohm cable is used when it is intended for digital transmission. The other 75-ohm is used for analog transmission and cable television.
+
+A coaxial cable consists of a stiff copper wire as the core, surrounded by an insulating material. The insulator is encased by a cylindrical conductor, often as a closely woven braided mesh. The outer conductor is covered in a protective plastic sheath. 
+
+![](../assets/Pasted%20image%2020260730101513.png)
+
+### Power Lines
+
+_Source: Page number 122 - 123_
+
+Power lines delivery electrical power to houses, and electrical wiring within houses distributes the power to electrical outlets.
+
+The convenience of using power lines for networking should be clear. Simply plug a TV and a receiver into the wall, which you must do anyway because they need power, and they can send and receive movies over the electric wiring. 
+
+![](../assets/Pasted%20image%2020260730104229.png)
+
+The difficulty with using household electrical wiring for a network is that is was designed to distribute power signals. Electrical signals are sent at 50-60Hx and the wiring attenuates the much higher frequency signals needed for high-rate data communication. The electrical properties of the wiring vary from one house to the next and change as appliances are turned on and off, which causes data signals to bounce around the wiring. Transient currents when appliances switch on and off create electrical noise over a wide range of frequencies.
+
+Despite these difficulties, it is practical to send at least 100 Mbps over typical household electrical wiring by using communication schemes that resist impaired frequencies and bursts of errors. 
+
+### Fiber Optics
+
+_Source: Page Number: 123 - 129_
+
+Fiber optics are used for long-haul transmission in network backbones, high-speed LANs and high-speed Internet access. An optical fiber has three key components: the light source, the transmission medium, and the detector.
+
+A pule of light indicates a 1 bit and the absence of light indicates a 0 bit. The transmission medium is an ultra-thin fiber of glass. The detector generates an electric pulse when light falls on it. By attaching a light source to one end of an optical fiber and a detector to the other, we have a unidirectional data transmission system that accepts an electrical signal, converts and transmits it by light pulses, and then reconverts the output to an electrical signal at the receiving end. 
+
+The physics that makes this work is **total internal reflection**: when light traveling in a denser medium (glass) hits a boundary with a less dense medium (air) at a shallow enough angle, instead of escaping, it bounces entirely back into the glass. Below a critical angle, light refracts out and is lost; above that critical angle, it's fully reflected inward and stays trapped, bouncing along inside the fiber for kilometers with almost no loss.
+
+![](../assets/Pasted%20image%2020260730124837.png)
+
+- **Multimode fiber**: fiber diameter is wide enough that many light rays enter at different angles and bounce around at different "modes" simultaneously.
+- **Single-mode fiber**: fiber diameter is shrunk down to just a few wavelengths of light, so there's no room for bouncing — light travels straight through like in a waveguide. This is more expensive to make but suffers less signal degradation, so it's used for long distances (100 Gbps over 100 km without needing amplifiers).
+
+**Transmission of light through fiber**
+
+Optical fibers are made of glass, which, in turn, is made from sand, an inexpensive raw material available in unlimited amounts. 
+
+The attenuation (loss of power) of light through glass depends on the wavelength of the light. It is defined as the ratio of input to output signal power. 
+
+Three wavelengths bands are most commonly used at present for optical communication. They are centred at 0.85, 1.30, and 1.55 microns. All three bands are 25,000 to 30,000 GHz wide. 0.85 has the most attenuation and thus is used for shorter distances. 1.30 and 1.55 has less attenuation comparatively ( less than 5% per kilo meter). The 1.55 band is now widely used.
+
