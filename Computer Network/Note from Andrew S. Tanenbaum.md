@@ -252,3 +252,40 @@ The attenuation (loss of power) of light through glass depends on the wavelength
 
 Three wavelengths bands are most commonly used at present for optical communication. They are centred at 0.85, 1.30, and 1.55 microns. All three bands are 25,000 to 30,000 GHz wide. 0.85 has the most attenuation and thus is used for shorter distances. 1.30 and 1.55 has less attenuation comparatively ( less than 5% per kilo meter). The 1.55 band is now widely used.
 
+#### Fiber Cables
+
+_Source: Page number 127 - 128_
+
+A fiber is built in layers, like concentric tubes:
+- **Core** (centre) — the glass strand light actually travels through. Multimode fibers have a wider core (~50 microns), single-mode fibers a narrower one (8–10 microns).
+- **Cladding** — glass surrounding the core, but with a _lower_ refractive index. This difference is what traps light inside the core via total internal reflection — same principle as light bouncing endlessly inside a prism instead of escaping.
+- **Jacket** — plastic layer for physical protection.
+- Multiple fibers get bundled into a **sheath** for deployment.
+
+![](../assets/Pasted%20image%2020260730214720.png)
+
+**Deployment**: buried underground for terrestrial runs, plowed into trenches near shore, and simply resting on the ocean floor for deep-sea transoceanic cables.
+
+**Connecting fibers**
+
+|Method|Loss|Notes|
+|---|---|---|
+|Connectors|10-20%|Easy to plug/unplug, worst loss|
+|Mechanical splice|~10%|Align two cut ends in a sleeve, ~5 min by a technician|
+|Fusion splice|minimal|Actually melts the two ends together — closest to one continuous fiber|
+
+_Note: Mechanical splice is a device that joins two optical fiber ends together by precisely aligning and holding them in a self-contained assembly rather than melting them with heat._
+
+**Light sources: LED vs. laser**
+
+- **LEDs**: cheap, long-lasting, low data rate, only work with multimode fiber, short range.
+- **Semiconductor lasers**: expensive, shorter lifetime, temperature-sensitive, but high data rate and long range, and work with single-mode fiber.
+
+The receiving end of an optical fiber consists of a photodiode, which gives off an electrical pulse when struck by light.
+
+**Comparison of Fiber optics and Copper Wire**
+
+Fiber has many advantages over copper wire. To start with, it can handle much higher bandwidths than copper. Due to low attenuation, repeaters are needed only about every 50 km on long lines, versus about every 5 km for copper, resulting in a big cost saving. Fiber also has the advantage of not being affected by power surges, electromagnetic interference, or power failures. Nor is it affected by corrosive chemicals in the air, important for harsh factory environments. Fiber optics are thin and lightweight. One thousand twisted pairs 1 km long weigh 8000 kg. Two fibers have more capacity and weigh only 100kg.
+
+## Wireless Transmission
+
