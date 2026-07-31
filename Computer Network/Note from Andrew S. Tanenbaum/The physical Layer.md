@@ -1,129 +1,8 @@
-Most of the content in this note comes from **Andrew S. Tanenbaum - Computer Networks.** This is the main source, if I have used something else, it will be mentioned accordingly.
-
-# Connection-oriented and Connection-less
-
-_Source: Page number 59 - 61._
-
-**Connection-oriented** service is modelled after the telephone system. To talk to someone, you pick up the phone, dial the number, talk, and then hang up. Similarly, to use a connection-oriented network service, the service user first establishes a connection, uses the connection, and then releases the connection. The essential aspect of a connection is that it acts like a tube: the sender pushes objects (bits) in at one end, and the receiver takes them out at the other end. In most cases the order is preserved so that the bits arrive in the order they were sent.
-
-In contrast to connection-oriented service, **connectionless** service is modelled after the postal system. Each message (letter) carries the full destination address, and each one is routed through the intermediate nodes inside the system independent of all the subsequent messages. There are different names for messages in different contexts; a packet is a message at the network layer. When the intermediate nodes receive a message in full before sending it on to the next node, this is called store-and-forward switching. The alternative, in which the onward transmission of a message at a node starts before it is completely received by the node, is called cut-through switching. Normally, when two messages are sent to the same destination, the first one sent will be the first one to arrive. However, it is possible that the first one sent can be delayed so that the second one arrives first.
-
-Unreliable (meaning not acknowledged) connectionless service is often called **datagram** service, in analogy with telegram service, which also does not return an acknowledgment to the sender. 
-
-One type of service is **acknowledged datagram** service. It is like sending a registered letter and requesting a return receipt. When the receipt comes back, the sender is absolutely sure that the letter was delivered to the intended party.
-
-Different types of services
-
-|                     | Service                 | Example              |
-| ------------------- | ----------------------- | -------------------- |
-| Connection-oriented | Reliable message stream | Sequence of pages    |
-| Connection-oriented | Reliable byte stream    | Movie download       |
-| Connection-oriented | Unreliable connection   | Voice over IP        |
-| Connection-less     | Unreliable datagram     | Electronic junk mail |
-| Connection-less     | Acknowledged datagram   | Text messaging       |
-| Connection-less     | Request-reply           | Database query       |
-
-# The relation of services and protocols
-
-_Source: Page number 64_
-
-A _service_ is a set of of primitives (operations) that a layer provides to the layer above it. The service defines what operations the layers is prepared to perform on behalf of its users, but it says nothing about the implementation of these operations. A service relates to an interface between two layers, with lower layer being the service provider and the upper layer being the service user.
-
-A _protocol_ is a set of rules governing the format and meaning of the packets, or messages that are exchanged by the peer entities within a layer. Entities use protocol to implement their service implementation. 
-
-# Reference models
-
-### The OSI Reference model
-
-_Source: Page number 65 - 69_
-
-The model is called the ISO OSI (Open Systems interconnection) reference model because it deals with connecting open systems, the systems that are open for communication with other systems.
-
-Note that the OSI model itself is not a network architecture because it does not specify the exact services and protocols to be used in each layer. It just tells what each layer should do.
-
-![](../assets/Pasted%20image%2020260721210411.png)
-
-Below I have briefly discussed about each layer:
-
-#### The physical layer
-_Source: Page number 67_
-
-The **physical layer** is concerned with transmitting raw bits over a communication channel. The design issues have to do with making sure that when one side sends a 1 bit it is received by the other side as 1 bit, not as a 0 bit.
-
-#### The Data Link Layer
-_Source: Page number 67_
-
-The main task of this layers is to break the sender input data into **data frames** (typically a few hundred or a few thousand bytes) and transmit the frames sequentially. If the service is reliable, the receiver confirms correct receipt of each frame by sending back an **acknowledgment frame**. 
-
-#### The Network Layer
-_Source: Page number 67
-
-The **network layer** controls the operation of the subnet. A key design issue is determining how packets are routed from source to destination. Handling congestion (too many packets in the subnet) is a also a responsibility of the network layer. Generally, the quality of service provided (delay, transit time, jitter etc.) is also a network layer issue. Connecting different kinds of networks (maybe the two don't follow the same protocol, maybe their packet size are different) are also handled by network layer.
-
-#### The Transport Layer
-_Source: Page number 68_
-
-The basic function of this layers is to accept data from above it, split it up into smaller units if need be, pass these to the network layer, and ensure that the pieces all arrive correctly at the other end. Additionally, all this must be done in a way that isolates the upper layers from the inevitable changes in the hardware technology over the course of time. 
-
-This layer also determines what type of service (error-free, point to point, no guarantee about order of delivery) to provide to the session layer. The type of service is determined when the connection is established. 
-
-The transport layer is a trye end-to-end layer; it carries data all the way from the source to the destination. In the lower layers, each protocols is between a machine and its immediate neighbours, and not between the ultimate source and destination machines, which may be separated by many routers.
-
-#### The session layer
-_Source: Page number: 68_
-
-This layer allows users on different machines to establish sessions between them. Sessions offer various services, including **dialog control** (keeping track of whose turn it is to transmit), **token management** (preventing two parties from attempting the same critical operation simultaneously), and **synchronization** ( checkpointing long transmissions to allow them to pick up from where they left off.)
-
-#### The presentation layer
-_Source: Page number 69_
-
-This layer is concerned with the syntax and semantics of the information transmitted in order to make it possible for computers with different internal data representations to communicate.
-
-#### The application layer
-_Source: Page number 69_
-
-This layer contains a variety of protocols that are commonly needed by users like HTTP, FTP and more.
-
-### The TCP/IP Reference Model
-
-_Source: Page number 69 - 72_
-
-This model originated from DoD during WWII. The main concern that the DoD had about this model was that even if some nodes (routers, internet work gateways) might get blown away by soviet union, the entire network shouldn't go down. As long as source and destination machines were functioning, the whole network should be functional.
-
-#### The Link Layer
-
-All the above requirements led to the choice of a packet-switching network based on a connection less layer that runs across different networks. The lowest layer in the model, the **link layer** describes what links such as serial lines and classic Ethernet must do to meet the needs of this connection less internet layer.
-
-#### The Internet Layer
-
-The **internet layer** is the linchpin (most essential part) that holds the whole architecture together. Its job is to permit hosts to inject packets into any network and have them travel independently to the destination. They may even arrive in a  completely different order then they were sent, in which case it is the job of higher layers to rearrange them, if in-order delivery is desired.
-
-![](../assets/Pasted%20image%2020260721205843.png)
-
-The internet layer defines an official packet format and protocol called **IP (Internet Protocol)**, plus a companion protocol called **ICMP (Internet Control Message Protocol)** that helps it function. The job of the internet layer is to deliver IP packets where they are supposed to go.
-
-#### The Transport Layer
-
-This layer is designed to allow peer entities on the source and destination hosts to carry on a conversation, just as in the OSI transport layer. Two end-to-end transport protocols have been defined here. The first one, **TCP (Transmission Control Protocol)**, is a reliable connection-oriented protocol that allows a byte stream originating on one machine to be delivered without error on any other machine in the internet. It segments the incoming byte stream into discrete messages and passes each one on to the internet layer. At the destination, the receiving TCP process reassembles the received messages into the output stream. TCP also handles flow control to make sure a fast sender cannot swamp a slow receiver with more messages than it can handle. 
-
-The second protocol in this layer, **UDP (User Datagram Protocol)**, is an unreliable, connectionless protocol for applications that do not want TCP's sequencing or flow control and wish to provide their own. It is also widely used for one-shot, client-server-type request reply queries and applications in which prompt delivery is more important then accurate delivery, such as transmitting speech or video. 
-
-#### The Application Layer
-
-The TCP/IP model does not have sessions or presentation layers like OSI. No need for them was perceived. Instead applications simply include any session and presentation functions that they require. 
-
-The **Application Layer** contains all the higher-level protocols. The early ones included virtual terminal (TELNET), file transfer (FTP), and electronic mail (SMTP). Many other protocols have been added to these over the years.
-
-![](../assets/Pasted%20image%2020260721211435.png)
-
-## Comparison of OSI and TCP/IP reference model
-
-_Source: Page number 73 - 75._
-
-The main difference that I found was that the OSI supports both connection-oriented and connection-less communication in the network layer, but only connection-oriented communication in the transport layer, where it counts (because the transport service is visible to users). The TCP/IP model supports only one mode in the network layer (connectionless) but both in the transport layer, giving the users a choice. 
-
-# Thy Physical Layer
-
+---
+title: The Physical Layer
+source: Andrew S. Tanenbaum book
+created: 2026-07-31
+---
 _Source: Page number 113 - ._
 
 The physical layer is about turning bits (0s and 1s) into actual electric/light/radio signals, sending them over a wire or through the air, and getting them back. 
@@ -199,7 +78,7 @@ Twisted pairs can be used for transmitting either analog or digital information.
 
 Twisted pair cabling comes in several varieties. Most deployed is **Category 5** cabling, or "Cat 5". A category 5 twisted pair consists of two insulated wires gently twisted together. Four such pairs are typically grouped in a plastic sheath to protect the wires and keep them together.
 
-![](../assets/Pasted%20image%2020260728224443.png)
+![](../../assets/Pasted%20image%2020260728224443.png)
 
 Different LAN standards may use the twisted pairs differently. For example, 100-Mbps Ethernet uses two (out of the four) pairs, one pair for each direction. To reach higher speeds, 1-Gbps Ethernet uses all four pairs in both directions simultaneously; this requires the receiver to factor out the signal that is transmitted locally.
 
@@ -213,7 +92,7 @@ Coaxial cable (also known as "coax") has better shielding and greater bandwidth 
 
 A coaxial cable consists of a stiff copper wire as the core, surrounded by an insulating material. The insulator is encased by a cylindrical conductor, often as a closely woven braided mesh. The outer conductor is covered in a protective plastic sheath. 
 
-![](../assets/Pasted%20image%2020260730101513.png)
+![](../../assets/Pasted%20image%2020260730101513.png)
 
 ### Power Lines
 
@@ -223,7 +102,7 @@ Power lines delivery electrical power to houses, and electrical wiring within ho
 
 The convenience of using power lines for networking should be clear. Simply plug a TV and a receiver into the wall, which you must do anyway because they need power, and they can send and receive movies over the electric wiring. 
 
-![](../assets/Pasted%20image%2020260730104229.png)
+![](../../assets/Pasted%20image%2020260730104229.png)
 
 The difficulty with using household electrical wiring for a network is that is was designed to distribute power signals. Electrical signals are sent at 50-60Hx and the wiring attenuates the much higher frequency signals needed for high-rate data communication. The electrical properties of the wiring vary from one house to the next and change as appliances are turned on and off, which causes data signals to bounce around the wiring. Transient currents when appliances switch on and off create electrical noise over a wide range of frequencies.
 
@@ -239,7 +118,7 @@ A pule of light indicates a 1 bit and the absence of light indicates a 0 bit. Th
 
 The physics that makes this work is **total internal reflection**: when light traveling in a denser medium (glass) hits a boundary with a less dense medium (air) at a shallow enough angle, instead of escaping, it bounces entirely back into the glass. Below a critical angle, light refracts out and is lost; above that critical angle, it's fully reflected inward and stays trapped, bouncing along inside the fiber for kilometers with almost no loss.
 
-![](../assets/Pasted%20image%2020260730124837.png)
+![](../../assets/Pasted%20image%2020260730124837.png)
 
 - **Multimode fiber**: fiber diameter is wide enough that many light rays enter at different angles and bounce around at different "modes" simultaneously.
 - **Single-mode fiber**: fiber diameter is shrunk down to just a few wavelengths of light, so there's no room for bouncing — light travels straight through like in a waveguide. This is more expensive to make but suffers less signal degradation, so it's used for long distances (100 Gbps over 100 km without needing amplifiers).
@@ -262,7 +141,7 @@ A fiber is built in layers, like concentric tubes:
 - **Jacket** — plastic layer for physical protection.
 - Multiple fibers get bundled into a **sheath** for deployment.
 
-![](../assets/Pasted%20image%2020260730214720.png)
+![](../../assets/Pasted%20image%2020260730214720.png)
 
 **Deployment**: buried underground for terrestrial runs, plowed into trenches near shore, and simply resting on the ocean floor for deep-sea transoceanic cables.
 
@@ -289,3 +168,53 @@ Fiber has many advantages over copper wire. To start with, it can handle much hi
 
 ## Wireless Transmission
 
+_Source: Page number: 129 - _
+
+### The Electromagnetic Spectrum
+
+_Source: Page number: 129 - 133_
+
+When electrons move, they create electromagnetic waves that can propagate through space (even in a vacuum). The number of oscillations per second of a wave is called its **frequency**, $f$, and is measured in **Hz** (Hertz). The distance between two consecutive maxima (or minima) is called the **wavelength**, which is designated by the Greek letter $λ$ (lambda).
+
+When an antenna of the appropriate size is attached to an electrical circuit, the electromagnetic waves can be broadcast efficiently and received by a receiver some distance away. All wireless communication is based on this principle. 
+
+In a vacuum, all electromagnetic waves travel at the same speed, no matter what their frequency. This speed, is the **speed of light**, $c$, is approximately $3 x 10^8 m/sec$. 
+
+The fundamental relation between $f$, $λ$, and c (in a vacuum) is:
+
+$$
+λf = c
+$$
+
+Since $c$ is a constant, if we know $f$, we can find $λ$, and vice versa. 
+
+![](../../assets/Pasted%20image%2020260731145701.png)
+
+The electromagnetic spectrum is show in above figure. The radio, microwave, infrared, and visible light portions of the spectrum can all be used for transmitting information by modulating the amplitude, frequency, or phase of waves. Ultraviolet light, X-rays, and gamma rays would be even better, due to their high frequency, but they are hard to produce and modulate, do no propagate well through buildings, and are dangerous to living things. The bands listed at the bottom of the figure are the official ITU (International  Telecommunication Union) names and are based on the wavelengths. 
+
+We know from **Shannon** that the amount of information that a signal such as an electromagnetic wave can carry depends on the received power and is proportional to its bandwidth. 
+
+Most transmissions use a relatively narrow frequency band (i.e. $Δf / f << 1$). They concentrate their signals in this narrow band to use the spectrum efficiently and obtain reasonable data rates by transmitting with enough power. 
+
+However, in some cases, a wider band is used, with three variations. In **frequency hopping spread spectrum**, the transmitter hops from frequency to frequency hundreds of times per second. It is popular for military communication because it makes transmissions hard to detect and next to impossible to jam. It also offers good resistance to multipath fading and narrowband interference because the receiver will not be stuck on an impaired frequency for long enough to shut down communication. This technique is used in Bluetooth. 
+
+A second form of spread spectrum **direct sequence spread spectrum**, uses a code sequence to spread the data signal over a wider frequency band. It is widely used commercially as a spectrally efficient way to let multiple signals share the same frequency band. These signals can be given different codes with a method called **CDMA (Code Division Multiple Access)**. It forms the basis of 3G mobile phone networks, and is also used in GPS. Even without different codes, direct sequence spread spectrum, like frequency hopping spread spectrum, can tolerate narrowband interference and multipath fading because only a fraction of the desired signal is lost.
+
+A third method of communication with a wider badn is **UWB (Ultra-WideBand)** communication. UWB sends a series of rapid pulses, varying their positions to communicate information. The rapid transitions lead to a signal that is spread thinly over a very wide frequency band. UWB has the potential to communicate at high rates. Because it is spread across a wide band of frequencies, it can tolerate a substantial amount of relatively strong interference from other narrowband signals. It has applications in PANs that run up to 1 Gbps. It can also be used for imaging through solid objects or part of precise location systems.
+
+![](../../assets/Pasted%20image%2020260731165915.png)
+
+### Radio Transmission
+
+_Source: Page number: 133 - _
+
+Radio frequency (RF) waves are easy to generate, can travel long distances, and can penetrate buildings easily, so they are widely used for communication, both indoors and outdoors. Radio waves also are omnidirectional, meaning that they travel in all directions from the source, so the transmitter and receiver do not have to be carefully aligned physically. 
+
+The properties of radio waves are frequency dependent. At low frequencies, radio waves pass through obstacles well, but the power falls off sharply with distance from the source—at least as fast as $1/r^2$ in air—as the signal energy is spread more thinly over a larger surface. This attenuation is called path loss. At high frequencies, radio waves tend to travel in straight lines and bounce off obstacles. Path loss still reduces power, though the received signal can depend strongly
+on reflections as well. High-frequency radio waves are also absorbed by rain and other obstacles to a larger extent than are low-frequency ones. At all frequencies, radio waves are subject to interference from motors and other electrical equipment.
+
+In the VLF, LF, and MF bands, radio waves follow the ground, as illustrated in below figure. These waves can be detected for perhaps 1000 km at the lower frequencies, less at the higher ones. 
+
+In the HF and VHF bands, the ground waves tend to be absorbed by the earth. However, the waves that reach the ionosphere, a layer of charged particles circling the earth at a height of 100 to 500 km, are refracted by it and sent back to earth. 
+
+![](../../assets/Pasted%20image%2020260731171826.png)
