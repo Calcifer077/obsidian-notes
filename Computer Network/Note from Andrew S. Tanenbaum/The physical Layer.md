@@ -7,7 +7,7 @@ _Source: Page number 113 - ._
 
 The physical layer is about turning bits (0s and 1s) into actual electric/light/radio signals, sending them over a wire or through the air, and getting them back. 
 
-## Fourier analysis
+# Fourier analysis
 
 _Source: Page number 114 - 117_
 
@@ -15,13 +15,13 @@ Any repeating signal can be broken down into a sum of sine and cosine waves at d
 
 Why does this matter? Because...
 
-### Real wires don't transmit all frequencies equally
+## Real wires don't transmit all frequencies equally
 
 Every physical medium (copper wire, fiber, air) has a **cutoff frequency** — above that frequency, the signal gets heavily attenuated (weakened). The range of frequencies that pass through reasonably intact is called the **bandwidth** (measured in Hz — this is the _analog_ meaning of bandwidth, as opposed to the "bits/sec" meaning computer scientists usually use).
 
 **Bandwidth** - The width of the frequency range transmitted without being strongly attenuated is called the **bandwidth**. The bandwidth is a physical property of the transmission medium that depends on, for example, the construction, thickness, and length of a wire or fiber. Signals that run from 0 up to a maximum frequency are called **baseband** signals. Signals that are shifted to occupy a higher range of frequencies, as is the case for all wireless transmissions, are called **passband** signals.
 
-## The maximum data rate of a channel
+# The maximum data rate of a channel
 
 _Source: Page number 118 - 119_
 
@@ -52,11 +52,11 @@ Shannon's major result is that the maximum data rate or capacity of a noisy chan
 $$
 \text{maximum number of bits / sec} = B \log_2\left(1 + \frac{S}{N}\right)
 $$
-## Guided transmission Media
+# Guided transmission Media
 
 _Source: Page number 119 - _
 
-### Magnetic Media
+## Magnetic Media
 
 _Source: Page number 119_
 
@@ -66,7 +66,7 @@ A simple calculation. An industry-standard Ultrium tape can hold 800 gigabytes. 
 
 If we now look at cost, the cost of an ultrium tape is around $40 when bought in bulk. A tape can be reused at least 10 times, so the tape is maybe $4000 per box per usage. Add to this another $1000 for shipping, and we have a cost of roughly $5000 to ship 800TB. This amounts to shipping a gigabyte for a little over half a cent.
 
-### Twisted Pairs
+## Twisted Pairs
 
 _Source: Page number 120 - 121_
 
@@ -84,7 +84,7 @@ Different LAN standards may use the twisted pairs differently. For example, 100-
 
 Links that can be used in both directions at the same time, like a two-lane road, are called **full-duplex** links. In contrast, links that can be used in either direction, but only one way at a time, like a single track railroad line. are called **half-duplex** links. A third category consists of links that allow traffic in only one direction, like a one-way  street. They are called **simplex** link.
 
-### Coaxial Cable
+## Coaxial Cable
 
 _Source: Page number 121 - 122_
 
@@ -94,7 +94,7 @@ A coaxial cable consists of a stiff copper wire as the core, surrounded by an in
 
 ![](../../assets/Pasted%20image%2020260730101513.png)
 
-### Power Lines
+## Power Lines
 
 _Source: Page number 122 - 123_
 
@@ -108,7 +108,7 @@ The difficulty with using household electrical wiring for a network is that is w
 
 Despite these difficulties, it is practical to send at least 100 Mbps over typical household electrical wiring by using communication schemes that resist impaired frequencies and bursts of errors. 
 
-### Fiber Optics
+## Fiber Optics
 
 _Source: Page Number: 123 - 129_
 
@@ -147,11 +147,11 @@ A fiber is built in layers, like concentric tubes:
 
 **Connecting fibers**
 
-|Method|Loss|Notes|
-|---|---|---|
-|Connectors|10-20%|Easy to plug/unplug, worst loss|
-|Mechanical splice|~10%|Align two cut ends in a sleeve, ~5 min by a technician|
-|Fusion splice|minimal|Actually melts the two ends together — closest to one continuous fiber|
+| Method            | Loss    | Notes                                                                  |
+| ----------------- | ------- | ---------------------------------------------------------------------- |
+| Connectors        | 10-20%  | Easy to plug/unplug, worst loss                                        |
+| Mechanical splice | ~10%    | Align two cut ends in a sleeve, ~5 min by a technician                 |
+| Fusion splice     | minimal | Actually melts the two ends together — closest to one continuous fiber |
 
 _Note: Mechanical splice is a device that joins two optical fiber ends together by precisely aligning and holding them in a self-contained assembly rather than melting them with heat._
 
@@ -166,11 +166,11 @@ The receiving end of an optical fiber consists of a photodiode, which gives off 
 
 Fiber has many advantages over copper wire. To start with, it can handle much higher bandwidths than copper. Due to low attenuation, repeaters are needed only about every 50 km on long lines, versus about every 5 km for copper, resulting in a big cost saving. Fiber also has the advantage of not being affected by power surges, electromagnetic interference, or power failures. Nor is it affected by corrosive chemicals in the air, important for harsh factory environments. Fiber optics are thin and lightweight. One thousand twisted pairs 1 km long weigh 8000 kg. Two fibers have more capacity and weigh only 100kg.
 
-## Wireless Transmission
+# Wireless Transmission
 
-_Source: Page number: 129 - _
+_Source: Page number: 129 - 140_
 
-### The Electromagnetic Spectrum
+## The Electromagnetic Spectrum
 
 _Source: Page number: 129 - 133_
 
@@ -204,9 +204,9 @@ A third method of communication with a wider badn is **UWB (Ultra-WideBand)** co
 
 ![](../../assets/Pasted%20image%2020260731165915.png)
 
-### Radio Transmission
+## Radio Transmission
 
-_Source: Page number: 133 - _
+_Source: Page number: 133 - 134_
 
 Radio frequency (RF) waves are easy to generate, can travel long distances, and can penetrate buildings easily, so they are widely used for communication, both indoors and outdoors. Radio waves also are omnidirectional, meaning that they travel in all directions from the source, so the transmitter and receiver do not have to be carefully aligned physically. 
 
@@ -218,3 +218,39 @@ In the VLF, LF, and MF bands, radio waves follow the ground, as illustrated in b
 In the HF and VHF bands, the ground waves tend to be absorbed by the earth. However, the waves that reach the ionosphere, a layer of charged particles circling the earth at a height of 100 to 500 km, are refracted by it and sent back to earth. 
 
 ![](../../assets/Pasted%20image%2020260731171826.png)
+
+## Microwave Transmission 
+
+_Source: Page number 134 - 138_
+
+Above 100 MHz, the waves travel in nearly straight lines and can therefore be narrowly focused. Concentrating all the energy into a small beam by means of a parabolic antenna gives a much higher signal-to-noise ratio, but the transmitting and receiving antennas must be accurately aligned with each other. In addition, this directionality allows multiple transmitter lined up in a row to communicate with multiple receivers in a row without interference.
+
+Microwaves travel in a straight line, but if the towers are too far apart, we would need repeaters.
+
+Unlike radio waves, microwaves do not pass through buildings well. In addition, even though the beam may be well focused at the transmitter, there is still some divergence in space. Some waves may be refracted and may take slightly longer to arrive than direct waves. This effect is called **multipath fading**.
+
+The demand for more and more spectrum drives operators to yet higher frequencies. Bands up to 10 GHz are now in routine use, but at about 4 GHz a new problem sets in: absorption by water. These waves are only a few centimetres long and are absorbed by rain. As with multipath fading, the only solution is to shut off links that are being rained on and route around them.
+
+Microwave is relatively inexpensive than fiber optics. Putting up two simple towers and putting antennas on each one may be cheaper than burying 50 km of fiber through a congested urban area. 
+
+_Note: Nowadays frequency range of 1GHz to 300 GHz is used for communication._
+
+## Infrared Transmission
+
+_Source: Page number 138_
+
+Unguided infrared waves are widely used for short-range communication. The remote controls used for televisions, VCRs, and stereos all use infrared communication. They are relatively directional, cheap, and easy to build but have a major drawback: they do not pass through solid objects. 
+
+Security of infrared systems against eavesdropping is better than that of radio systems because it can't pass through walls.
+
+**In general, as we go from long-wave radio toward visible light, the waves behave more and more like light and less and less like radio.**
+
+## Light Transmission
+
+_Source: Page number 138 - 140_
+
+Unguided optical signalling or **free-space optics** has been in use for centuries. A modern application is to connect the LANs in two buildings via lasers mounted on their rooftops. Optical signalling using lasers is unidirectional, so each end needs its own laser and its own photodetector. This scheme offers very high bandwidth at very low cost and is relatively secure because it is difficult to tap a narrow laser beam. 
+
+The laser's strength, a very narrow beam, is also its weakness here. Aiming a laser beam 1 mm wide at a target the size of a pin head 500 meters away requires very much precision. Usually, lenses are put into the system to defocus the beam slightly. To add to the difficulty, wind and temperature changes can distort the beam and laser beams also cannot penetrate rain or thick fog, work well on sunny days. However, many of these factors are not an issue when the use is to _connect two spacecraft_. 
+
+
