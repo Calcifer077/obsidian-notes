@@ -253,4 +253,107 @@ Unguided optical signalling or **free-space optics** has been in use for centuri
 
 The laser's strength, a very narrow beam, is also its weakness here. Aiming a laser beam 1 mm wide at a target the size of a pin head 500 meters away requires very much precision. Usually, lenses are put into the system to defocus the beam slightly. To add to the difficulty, wind and temperature changes can distort the beam and laser beams also cannot penetrate rain or thick fog, work well on sunny days. However, many of these factors are not an issue when the use is to _connect two spacecraft_. 
 
+# Communication Satellites
 
+_Source: Page number 140 - 149_
+
+In its simplest form, a communication satellite can be thought of as a big microwave repeater in the sky. It contains several **transponders**, each of which listens to some portion of the spectrum, amplifies the incoming signal, and then rebroadcasts it at another frequency to avoid interference with incoming signal. This mode of operation is known as **bent pipe**.
+
+Kepler law is used to determine how much time does it take for the satellite to revolve around earth.
+
+A satellite position is also important, we can't just place them anywhere in the sky, due to the presence of Van Allen belts, layers of highly charged particles trapped by the earth's magnetic field. Any satellite flying withing them would be destroyed fairly quickly by the particles. 
+
+![](../../assets/Pasted%20image%2020260801142723.png)
+
+## Geostationary Satellites
+
+_Source: Page number 141 - 145_
+### History
+
+- **1945**: Arthur C. Clarke calculated that a satellite at **35,800 km** altitude in a circular equatorial orbit would appear motionless in the sky (geostationary). He designed a full manned satellite communication system but rejected it as impractical due to vacuum tube amplifiers being too power-hungry/fragile for orbit.
+- **1962**: Invention of the transistor solved this problem → **Telstar**, the first artificial communication satellite, launched July 1962.
+- Communication satellites are now a multibillion-dollar business — the only profitable outer space activity. Called **GEO (Geostationary Earth Orbit)** satellites.
+
+### Orbit Slots
+
+- Minimum spacing: **2°** apart in the 360° equatorial plane → max **180 satellites** at once (360/2).
+- Transponders can use multiple frequencies/polarizations to increase bandwidth despite this limit.
+- Slot allocation managed by **ITU** — politically contentious:
+    - Some countries claim "their" orbital slots to lease out.
+    - Others argue no nation has rights to space above its territory.
+    - Competing users: telecom, TV broadcasters, governments, military.
+
+### Satellite Specs & Lifecycle
+
+- Modern satellites: >5000 kg, several kW power (solar panels).
+- Gravity (solar/lunar/planetary) perturbs orbit/orientation → corrected via **station keeping** (onboard rocket motors).
+- Fuel exhausted after ~**10 years** → satellite drifts/tumbles, must be shut off.
+- Orbit eventually decays → reentry/burn-up (rarely crashes to Earth).
+
+### Frequency Bands (ITU-allocated)
+
+|Band|Notes|
+|---|---|
+|**C band**|First commercial band; separate uplink/downlink ranges; overcrowded (shared with terrestrial microwave)|
+|**L & S bands**|Added 2000; narrow, also crowded|
+|**Ku band**|Not congested; allows 1° spacing; vulnerable to rain fade (water absorbs signal) — mitigated via multiple geographically separated ground stations|
+|**Ka band**|Allocated for commercial use; equipment is expensive|
+|Govt/military bands|Also exist separately|
+
+### Transponders
+
+- Modern satellite: ~**40 transponders**, typically **36 MHz** bandwidth each.
+- Usually operate as a **bent pipe** (simple relay); newer satellites have on-board processing.
+- Channel division evolved:
+    - **Early**: static frequency division (fixed bands).
+    - **Now**: time slots shared by multiple users (FDM and TDM covered later).
+
+### Beams & Footprints
+
+- Early GEO satellites: single spatial beam covering ~1/3 of Earth's surface (**footprint**).
+- Modern satellites: multiple antennas/transponders with **spot beams** — elliptical, as small as a few hundred km diameter — enabling simultaneous transmissions to small regions.
+- Example: US satellite = one wide beam (48 contiguous states) + spot beams for Alaska & Hawaii.
+
+### VSATs (Very Small Aperture Terminals)
+
+- Low-cost microstations: ~1 m antennas (vs. 10 m standard GEO antenna), ~1 W output power.
+- Uplink: up to ~1 Mbps; downlink: up to several Mbps.
+- Used for direct broadcast satellite TV (one-way).
+- Often lack power for direct VSAT-to-VSAT communication → need a **hub** ground station (large, high-gain antenna) to relay traffic.
+- Trade-off: cheaper end-user stations, but longer delay via hub.
+- Valuable for rural/Third World connectivity — over half the world's population lives more than an hour's walk from a phone; VSAT + solar power is often more feasible than wiring villages.
+
+### Key Properties of Satellite Links
+
+1. **Propagation delay**:
+    - GEO round-trip: **250–300 msec** (typical ~270 msec; ~540 msec for VSAT-hub systems).
+    - Terrestrial microwave: ~3 μsec/km.
+    - Coax/fiber: ~5 μsec/km (slower than air because light travels slower in solid media).
+2. **Broadcast medium**: Cost to send to many stations ≈ cost to send to one within footprint. Useful (e.g., broadcasting popular web content to caches) but a **privacy risk** — everyone in footprint can listen; encryption essential.
+3. **Distance-independent cost**: Transmission cost doesn't depend on distance covered (ocean call = across-the-street call).
+4. **Reliability**: Excellent error rates; can be deployed almost instantly — valuable for disaster response and military use.
+
+## Medium-Earth Orbit Satellites
+
+_Source: Page number 145_
+
+At much lower altitudes, between the two Van Allen belts, we find the **MEO (Medium-Earth Orbit)** satellites. These drift slowly in altitude taking something like 6 hours to circle the earth. They are used for navigation systems.
+
+_Source: [WikiPedia](https://en.wikipedia.org/wiki/Medium_Earth_orbit)_
+_Note: Not in mentioned in book (maybe because I have older version), but MEO satellites are also used for low-latency broadband and data backhaul to maritime, aero and remote locations._
+
+## Low-Earth Orbit Satellites
+
+_Source: Page number 145 - 147_
+
+Moving down in altitude, we come to the **LEO (Low-Earth Orbit)** satellites. Due to their rapid motion, large numbers of them are needed for a complete system. On the other hand, because the satellites are so close to the earth, the ground stations do not need much power, and the round-trip delay is only a few milliseconds. The launch cost is substantially cheaper too. 
+
+The book have discussed two examples of satellite constellations for voice service, Iridium and Globalstar.
+
+Iridium consists of 66 LEO satellites which cover the entire earth. Iridium relays calls from satellite to satellite, which requires sophisticated switching equipment in satellites. Earlier it was a failure but nowadays is being used for communication in remote regions of earth. 
+
+![](../../assets/Pasted%20image%2020260801154733.png)
+
+Globalstar consists of 48 LEO satellites. Globalstar uses a traditional bent-pipe design. The call originating at the North pole is sent back to earth and picked up by the large ground station at Santa's workshop. The call is then routed via a terrestrial network to the ground station nearest the callee and delivered by a bent pip  connection as shown. 
+
+![](../../assets/Pasted%20image%2020260801155013.png)
