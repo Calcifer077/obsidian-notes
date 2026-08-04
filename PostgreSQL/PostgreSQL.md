@@ -8,3 +8,4 @@
 - [Modifying Data](Modifying%20Data/Modifying%20Data.md)
 - [Transaction](Transaction/Transaction.md)
 - [Import & Export](Import%20&%20Export/Import%20&%20Export.md)
+- [Managing Tables](Managing%20Tables/Managing%20Tables.md)
