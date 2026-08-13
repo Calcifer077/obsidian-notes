@@ -58,3 +58,91 @@ const fullName = firstName + ' ' + lastName;
 ```
 
 ### Don't mirror props in state 
+
+A common example of redundant state is code like this:
+
+```JSX
+function Message({ messageColor }) {
+  const [color, setColor] = useState(messageColor);
+```
+
+Here, a `color` state variable is initialized to the `messageColor` prop. The problem is that if the parent component passes a different value of `messageColor` later, the `color` state _variable_ would not be updated! The state is only initialized during the first render. 
+
+**Why above thing happens?**
+
+When react renders your component it keeps a persistent record somewhere outside your function (refer to further reading), think of it as a slot in memory tied to that specific component in the tree. Each call to `useState` in your component corresponds to one of these slot, in the order they're called.
+
+The first time your component mounts:
+
+```JSX
+const [color, setColor] = useState(messageColor);
+```
+
+React sees that there is no "slot" for this `useState` call, so it creates one, and initializes it with whatever you passed in (`messageColor`). From now on, that slot holds that value and for every subsequent render, may it be due to parent re rendering, state update etc. React will see that it already has a "slot" for this state and will just return that. It wouldn't update it unless you update it using state setter function.
+
+>Note: If you do need to update state in child, use state setter function from parent itself. 
+
+## Avoid duplication in state 
+
+Below example demonstrates a menu list component that lets you choose a single travel snack out of several:
+
+```JSX
+const initialItems = [
+  { title: 'pretzels', id: 0 },
+  { title: 'crispy seaweed', id: 1 },
+  { title: 'granola bar', id: 2 },
+];
+
+const [items, setItems] = useState(initialItems);
+const [selectedItem, setSelectedItem] = useState(items[0]);
+```
+
+> Note: visit source for full version of code.
+
+If the user were to select any items we would have to do the hassle of keeping them in sync. We could do selection of items easily but it would be a problem to maintain integrity. In the below code we allow the user to update items but we the `selectedItem` would go out of sync.
+
+```JSX
+ function handleItemChange(id, e) {
+    setItems(items.map(item => {
+      if (item.id === id) {
+        return {
+          ...item,
+          title: e.target.value,
+        };
+      } else {
+        return item;
+      }
+    }));
+  }
+```
+
+An easier approach would be to derive the state and avoid duplication. 
+
+```JSX
+const [selectedId, setSelectedId] = useState(0);
+
+const selectedItem = items.find(item =>
+    item.id === selectedId
+);
+```
+
+Now, even if the selected item is updated, the state will remain consistent.
+
+## Avoid deeply nested state 
+
+If you have too deeply nested state it would be be difficult to update it, Why? Because you would have to copy the entire object and update it and than set it.
+
+**If the state is too nested to update easily, consider making it "flat".**
+
+## Recap 
+
+- If two state variables always update together, consider merging them into one.
+- Choose your state variables carefully to avoid creating “impossible” states.
+- Structure your state in a way that reduces the chances that you’ll make a mistake updating it.
+- Avoid redundant and duplicate state so that you don’t need to keep it in sync.
+- Don’t put props _into_ state unless you specifically want to prevent updates.
+- For UI patterns like selection, keep ID or index in state instead of the object itself.
+- If updating deeply nested state is complicated, try flattening it.
+## Further reading 
+
+- [More reasoning for **Don't mirror props in state**](https://react.dev/learn/state-a-components-memory#how-does-react-know-which-state-to-return)
