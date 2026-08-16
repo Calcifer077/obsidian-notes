@@ -1,0 +1,1 @@
+This note contains links from vercel and things related to vercel
