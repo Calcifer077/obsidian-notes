@@ -1,3 +1,11 @@
+---
+title: Linear Regression
+source: https://developers.google.com/machine-learning/crash-course/linear-regression
+created: 2026-08-15
+tags:
+  - aiml
+---
+
 Linear Regression is a statistical technique used to find the relationship between variables. In an ML context, linear regression finds the relationship between features and a label.
 
 > **feature** - an input variable to a machine learning model.
@@ -213,7 +221,7 @@ Below is a example dataset:
 | 4.42                          | 14                           |
 | 2.37                          | 24                           |
 
-1. The model starts training by setting the weights and bias to zero:
+1. **The model starts training by setting the weights and bias to zero:**
 $weight$ = $0$, $bias$ = $0$
 
 Formula of linear gradient:
@@ -231,7 +239,7 @@ y = 0 + 0(x_1)
 $$
 So the output (predicted value) is $0$.
 
-2. Calculate MSE loss with the current model parameters:
+2. **Calculate MSE loss with the current model parameters:**
 
 $$
 Loss = \frac{(18-0)^2 + (15-0)^2 + (18-0)^2 + (16-0)^2 + (15-0)^2 + (14-0)^2 + (24-0)^2}{7}
@@ -241,7 +249,7 @@ $$
 Loss = 303.71
 $$
 
-3. Calculate the slop of weight and bias:
+3. **Calculate the slop of weight and bias:**
 
 It uses partial derivates, which I don't know yet (don't want to learn the again, will update after I have learned them).
 
@@ -301,7 +309,7 @@ $$
 Weight slope: $-119.72$
 Bias slope: $-34.29$
 
-4. Move a small amount 
+4. **Move a small amount** 
 
 Move a small amount in the direction of the negative slope to get the next weight and bias. For now, we'll use "small amount" as $0.01$:
 
@@ -429,7 +437,7 @@ _Batch size_ is a hyperparameter that refers to the number of examples the model
 
 Two common techniques to get the right gradient on average without needing to look at every example in the dataset are _stochastic gradient descent_ and _min-batch stochastic gradient descent_:
 
-- **Stochastic gradient descent (SGD)**: This uses only a single example (a batch size of one) per iteration. Given enough iterations, SGD works but is very noisy. "Noise" refers to variations during training that cause the loss to increase rather than decrease during an iteration. The term "stochastic" indicates that the one example comprising each batch is chosen at random.
+- **Stochastic gradient descent (SGD)**: This uses only a single example (a batch size of one) per iteration. Given enough iterations, SGD works but is very noisy. "Noise" refers to variations during training that cause the loss to increase rather than decrease during an iteration. The term "stochastic" indicates that the one example comprising each batch is chosen at random. In this case, we will take one example from our dataset and apply gradient descent as given by the formulas above. After every iteration we will pick a new example and do it for some user specified iteration.
 
   Notice in the following image how loss slightly fluctuates as the model updates its weights and bias during SGD, which can lead to noise in the loss graph:
 
@@ -437,7 +445,7 @@ Two common techniques to get the right gradient on average without needing to lo
 
 **Fig .** Model trained with stochastic gradient descent showing noise in the loss curve.
 
-- **Mini-batch stochastic gradient descent**: This technique is a compromise between full-batch and SGD. For $N$ number of data points, the batch size can be any number greater than $1$ and less than $N$. The model choose the examples included in each batch at random, averages their gradients, and then updates the weights and bias once per iteration.
+- **Mini-batch stochastic gradient descent**: This technique is a compromise between full-batch and SGD. For $N$ number of data points, the batch size can be any number greater than $1$ and less than $N$. The model choose the examples included in each batch at random, averages their gradients, and then updates the weights and bias once per iteration. It will work similarly as SGD with the difference being batch size. If you use the formula for gradient descent $N$ will be equal to the batch size.
 
   Determining the number of examples for each batch depends on the dataset and the available compute resources. In general, small batch sizes behaves like SGD, and larger batch sizes behaves like full-batch gradient descent.
 
@@ -463,4 +471,8 @@ The following table describes how batch size and epochs  relate to the number of
 | Stochastic gradient descent            | After the model looks at a single example from the dataset. For instance, if a dataset contains $1,000$ examples and trains for $20$ epochs, the model updates the weights and bias $20,000$ times.                               |
 | Mini-batch stochastic gradient descent | After the model looks at the examples in each batch. For instance, if a dataset contains $1,000$ examples, and the batch size is $100$, and the model trains for $20$ epochs, the model updates the weights and bias $200$ times. |
 
+# Further reading
+
+- [Datacamp - Gradient descent](https://www.datacamp.com/tutorial/tutorial-gradient-descent)
+- [ML cheatsheet - Linear regression](https://ml-cheatsheet.readthedocs.io/en/latest/linear_regression.html)
 
