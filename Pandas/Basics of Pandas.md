@@ -133,8 +133,6 @@ Above we have a DataFrame stored in `animals` variable which we are saving to di
 
 ## Native accessors
 
-Native Python objects provide good ways of indexing data. Pandas carries all of these over, which helps make it easy to start with.
-
 Consider a `reviews` DataFrame with columns like `country`, `description`, `points`.
 
 In Python, we can access the property of an object by accessing it as an attribute. A `book` object, for example, might have a `title` property, which we can access by calling `book.title`. Columns in a pandas DataFrame work in much the same way.
