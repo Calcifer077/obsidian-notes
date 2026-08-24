@@ -357,3 +357,103 @@ Iridium consists of 66 LEO satellites which cover the entire earth. Iridium rela
 Globalstar consists of 48 LEO satellites. Globalstar uses a traditional bent-pipe design. The call originating at the North pole is sent back to earth and picked up by the large ground station at Santa's workshop. The call is then routed via a terrestrial network to the ground station nearest the callee and delivered by a bent pip  connection as shown. 
 
 ![](../../assets/Pasted%20image%2020260801155013.png)
+
+# Digital Modulation and Multiplexing 
+
+_Source: Page number: 149 - 162_ 
+
+Wires and wireless channels carry analog signals such as continuously varying voltage, light intensity, or sound intensity. To send digital information, we must devise analog signals to represent bits. The process of converting between bits and signals that represent them is called **digital modulation**.
+
+## Baseband Transmission
+
+_Source: Page number 149 - 154_
+
+The most straightforward form of digital modulation is to use a positive voltage to represent a `1` and a negative voltage to represent a `0`. For an optical fiber, the presence of light might represent a `1`  and the absence of light might represent a `0`. This scheme is called **NRZ (Non-Return-to-Zero)**.
+
+Once sent, the NRZ signal propagates down the wire. At the other end, the receiver converts it into bits by sampling the signal at regular intervals of time.
+
+### Bandwidth Efficiency 
+
+_Source: Page number 150_
+
+With NRZ, the signal may cycle between the positive and negative levels up to every 2 bits. This means that we need a bandwidth of at least $B/2$ Hz when bit rate is $B$ bits/sec. This relation comes from the Nyquist rate. It is a fundamental limit, so we cannot run NRZ faster without using more bandwidth.
+
+One strategy for using limited bandwidth more efficiently is to use more than two signaling levels. By using four voltages, we can send 2 bits at once as a single **symbol**. This design will work as long as the signal at the receiver end is strong enough to distinguish the four levels.
+
+The rate at which the signal changes is called **symbol rate** which is different from **bit rate** which is the symbol rate multiplied by the number of bits per symbol. An older name for symbol rate used in telephone modems is called **baud rate**. 
+
+>The number of signal level does not need to be a power of two. Some levels are used for protecting against errors and simplifying the design of the receiver.
+
+### Clock recovery 
+
+_Source: Page number 151 - 153_
+
+For all schemes that encode bits into symbols, the receiver must know when one symbol ends and the next symbol begins to correctly decode the bits.  
+
+We can use accurate clocks but they are very expensive.
+
+One strategy is to send a separate clock signal to the receiver, but this uses a extra signal which could have been used to send data itself leading to wastage of bandwidth. A clever trick here is to mix the clock signal with the data signal by XORing them together so that no extra line is needed. This scheme is called **Manchester encoding** and was used for classic ethernet. The downside of Manchester encoding is that it requires twice as much bandwidth as NRZ because of the clock.
+
+A different strategy is to code such that there are enough transitions (don't have consecutive bits) in the data. As a step in right direction, we can simplify the situation by coding a $1$ as a transition and a $0$ as no transition. This coding is called **NRZI (Non-Return-to-Zero Inverted)**.  
+
+![](../../assets/Pasted%20image%2020260824183639.png)
+
+**USB (Universal Serial Bus)** uses NRZI. With it, long runs of $1$s do not cause problems. But long runs of $0$s still cause a problem. To fix this problem we can break consecutive $0$ bits so that groups with successive $0$s are mapped slightly longer patterns that do not have too many consecutive $0$s. 
+
+A well-known code to do this is called **$4B/5B$**. Every $4$ bits is mapped into a $5$ bit pattern with a fixed translation table. This scheme adds $20\%$ overhead, which is better than the $100\%$ overhead of Manchester encoding.
+
+![](../../assets/Pasted%20image%2020260824184127.png)
+
+Some output combinations are not used so they are used to represent physical layer control signals. For example, in some uses $11111$ represents an idle line and $11000$ represents the start of a frame.
+
+An alternative approach is to make the data look random, known as **scrambling**. A **scrambler** works by XORing the data with a pseudorandom sequence before it is transmitted.
+
+### Balanced Signals 
+
+_Source: Page number: 153_
+
+Signals that have as much positive voltage as negative voltage even over short periods of time are called **balanced signals**. They average to zero, which means that they have no DC electrical component. The lack of a DC component is an advantage because some channels, such as coaxial cable or lines with transformers, strongly attenuate a DC component due to their physical properties. 
+
+Balancing helps to provide transitions for clock recovery since there is a mix of positive and negative voltages. 
+
+A straightforward way to construct a balanced code is to use two voltage levels to represent a logical $1$, (say $+1$ V or $-1$ V ) with $0$ V representing a logical zero. To send a $1$, the transmitter alternates between $+1$ V and $-1$ V levels so that they always average out. This scheme is called **bipolar encoding**. 
+
+Bipolar encoding adds a voltage level to achieve balance. Alternatively we can use a mapping like $4B/5B$ to achieve balance. An example of this kind of balance code is the $8B/10B$ line code. It maps $8$ bits of input  to $10$ bits of output, so it is $80\%$ efficient. The $8$ bits are split into a group of $5$ bits and $3$ bits. The $5$ bit group is encoded into a $6$ bit group and the $3$ bit group is encoded to a $4$ bit group.
+
+## Frequency Division Multiplexing 
+
+_Source: Page number 156 - 159_
+
+This multiplexing takes advantage of passband transmission (is a technique that shifts a low-frequency data signal to a higher frequency range by modulating a carrier wave) to share a channel. It divides the spectrum into frequency bands, with each user having exclusive possession of some band. AM radio broadcasting uses FDM. 
+
+To prevent multiple frequencies to interfere with each other, **guard band** are used. 
+
+![](../../assets/Pasted%20image%2020260824205505.png)
+
+This scheme has been used to multiplex calls in the telephone system for many years, but multiplexing in time is now preferred instead. However, FDM continues to be used in telephone networks, as well as cellular, terrestrial wireless and satellite networks. 
+
+When sending digital data, it is possible to divide the spectrum efficiently without using guard bands. In **OFDM (Orthogonal frequency division multiplexing)**, the channel bandwidth is divided into many subcarriers that independently send data. The subcarriers are packed tightly together in the frequency domain. Thus, signals from each subcarrier extend into adjacent ones. 
+
+![](../../assets/Pasted%20image%2020260824205925.png)
+
+OFDM is used in $802.11$, cable networks and power line networking and $4$G.
+
+## Time division multiplexing 
+
+_Source: Page number 159_
+
+Here, the users take turns (in a round-robin fashion), each one periodically getting the entire bandwidth for a little burst of time. Bits from input streams are taken in a fixed **time slot** and output to the aggregate stream.  Small intervals of **guard time** analogous to a frequency guard band may be added to accommodate small timing variations.
+
+![](../../assets/Pasted%20image%2020260824210907.png)
+
+## Code division multiplexing 
+
+_Source: Page number 159 - 162_
+
+CDM (Code Division Multiplexing) is a form of spread spectrum communication in which a narrowband signal is spread out over a wider frequency band. This can make it more tolerant of interference, as well as allowing multiple signals from different users to share the same frequency band.
+
+CDMA allows each station to transmit over the entire frequency spectrum all the time. Multiple simultaneous transmissions are separated using coding theory. Let's consider an analogy to better understand CDMA, Say there is an airport lounge with many pairs of people conversing. TDM is comparable to pairs of people in the room taking turns speaking. FDM is comparable to the pairs of people speaking at different pitches, some high-pitched and some low-pitched such that each pair can hold its own conversation at the same time as but independently of the others. CDMA is comparable to each pair of people talking at once, but in a different language. The French-speaking couple just hones in on the French, rejecting everything that is not French as noise. Thus, the key to CDMA is to able to extract the desired signal while rejecting everything else as random noise. 
+
+> I haven't discussed about the mathematics behind CDMA, go through the book to know more.
+
+CDMA is used by satellites, cable networks, cellular networks. 
