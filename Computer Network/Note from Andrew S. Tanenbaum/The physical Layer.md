@@ -30,6 +30,7 @@ In 1924, Henry Nyquist, realized that even a perfect channel has a finite transm
 $$
 \text{Maximum Data Rate} = 2B \log_2(V)\ \text{bits/sec}
 $$
+
 For example, a noiseless 3-kHz channel cannot transmit binary signals at a rate exceeding 6000 bps.
 
 Above we only considered noiseless channel but there is always random (thermal) noise present due to the motion of the molecules in the system. The amount of _thermal noise_ present is measured by the ratio of the signal power to the noise power, called the **SNR (Signal-to-Noise Ratio)**. 
@@ -37,6 +38,7 @@ Above we only considered noiseless channel but there is always random (thermal) 
 $$
 \text{Signal to noise ratio} = S / N
 $$
+
 _S -> Signal, N -> noise_
 
 Usually, the ratio is expressed on a log scale as the quantity 
