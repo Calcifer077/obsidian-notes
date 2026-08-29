@@ -459,3 +459,27 @@ CDMA allows each station to transmit over the entire frequency spectrum all the 
 > I haven't discussed about the mathematics behind CDMA, go through the book to know more.
 
 CDMA is used by satellites, cable networks, cellular networks. 
+
+# The public switched telephone network
+
+_Source: Page number 162 - _
+
+## Structure of the Telephone System 
+
+_Source: Page number 163 - 166_
+
+The original idea of telephone system was by Alexander Graham Bell, in which local telephones ( one used by people in their homes ) connected to some switching office. To make a call customer would call the switching office nearest to them which will further divert the call to the destination. When the number of switching offices became huge, more number of switching offices were made hierarchically to connect different customers.
+
+Modern telephone system work in the same way with some improvements. Each telephone has two copper wires coming out of it that go directly to the telephone company's nearest end office (called local central office). This hierarchy goes upwards and is better described in below diagram.
+
+![](../../assets/Pasted%20image%2020260825210035.png)
+
+## The Local Loop: Modems, ADSL, and Fiber 
+
+_Source: Page number 168_
+
+### Telephone Modems
+
+_Source: Page number 169_
+
+A device that converts between a stream of digital bits and an analog signal that represents the bits is called a **modem**, which is short for "_modulator demodulator_". Modems come in many varieties: telephone modems, DSL modems, cable modems, wireless modems etc. Telephone modems are used to send bits between two computers over a voice-grade telephone lines.
