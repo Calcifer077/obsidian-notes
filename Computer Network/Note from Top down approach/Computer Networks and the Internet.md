@@ -114,3 +114,66 @@ _Source: Page number 31_
 An optical fiber is a thin, flexible medium that conducts pulses of light, with each pulse representing a bit. A single optical fiber can support tremendous bit rates, up to tens or even hundreds of gigabits per second. They are immune to electromagnetic interference, have very low signal attenuation up to 100 kilometers, and are very hard to tap. They are also very expensive. 
 
 Their speed range is 51.8 Mbps to 39.8 Gbps deduced by $OCn$ where the link speed equals to $n \times 51.8\text{ Mbps}$. Standard in use today include  OC-1, OC-3, OC-12, OC-24, OC-48, OC-96, OC-192, OC-768.
+
+### Terrestrial Radio Channels 
+_Source: Page number 32_
+
+Radio channels carry signals in the electromagnetic spectrum. They don't require any physical wire, can penetrate through walls, provide connectivity to a mobile user, and can carry a signal for long distances. 
+
+Terrestrial radio channels can be broadly classified into three groups: those that operate over very short distance (e.g., with one or two meters); those that operate in local areas, typically spanning from ten to a few hundred meters; and those that operate in the wide area, spanning tens of kilometers. Personal devices like wireless mouse and keyboard falls into first category, wireless lan in second category and cellular access in third category. 
+
+### Satellite Radio channels 
+_Source: Page number 32_
+
+A communication satellite links two or more earth based microwave transmitter/receivers, known as ground stations. The satellite transmissions on one frequency band, regenerates the signal using a repeater, and transmits the signal on another frequency band. Two types of satellites are used in communications: **geostationary satellites** and **low-earth orbiting satellites**.
+
+Geostationary satellites permanently remain above the same spot on Earth. They are placed 36,000 KM above Earth's surface. These satellites are used for communication (in remote areas), broadcasting, and weather tracking. 
+
+LEO satellites are placed much closer (160 to 2000 KM) to Earth and do not remain permanently above one spot on Earth. They rotate around Earth and may communicate with each other, as well as with ground stations. They are used in fast data transmission.
+
+# The Network Core 
+_Source: Page number 33 - 45_
+
+Now let's learn about the links that interconnects the Internet's end systems. Network core is highlighted with thick, shaded lines.
+
+![](../../assets/Pasted%20image%2020260906212620.png)
+
+## Packet switching
+_Source: Page number 34 - 37_
+
+In a network, end systems exchange **messages** with each other. Messages can contain anything ranging from a control function ("Hi" message in one of our earlier example), data like email, JPEG. To send data from source to destination, the source breaks long messages into smaller chunks of data known as **packets**. Between source and destination each packet travels through communication links and **packet switches**. Packets are transmitted over each communication link at a rate equal to _full_ transmission rate of the link. So, if a source end system is sending a packet at $L$ bits over a link with transmission rate $R$ bits/sec, then the time to transmit the packet is $L/R$ seconds.
+
+### Store-and-Forward Transmission 
+_Source: Page number 34 - 35_
+
+Most packets switches use **store and forward transmission** at the inputs to the links. It means that the packet switch must receive the entire packet before it can begin to transmit the first bit of the packet onto the outbound link. 
+
+Let's consider a simple example of how much time it will take for a router to transmit a packet without considering propagation delay.
+
+![](../../assets/Pasted%20image%2020260906215537.png)
+
+The source sends a packet of length $L$ bits and can send at $R$ bits per sec. Than the time it takes to reach packet from source to router will be $L/R$ and than again $L/R$ for sending packet from router to destination making the total to be $2L/R$. 
+
+**What if there are multiple packets?** Let's say source has 3 packets. At time $L/R$, the router has received the first packet and is ready to be forwarded, by that time, the source is also ready to send second packet. At time $2L/R$ the first packet has reached destination and second packet has reached router. At time $3L/R$, second packet has reached destination and fourth packet has reached the router bringing the total time to $4L/R$. 
+
+**What if there are multiple links?** Let's say there are $N$ links each of rate $R$ (thus, there are $N - 1$ routers between source and destination). Applying the same logic as above, we see that the end-to-end delay is:
+
+$$
+d_(end-to-end) = N(L/R)
+$$
+
+### Queuing Delays and Packet Loss 
+_Source: Page number 35_
+
+Each packet switch has multiple links attached to it. For each attached link, the packet switch has an **output buffer** (also called an output queue), for each outgoing link, which stores packets that the router is about to send into that link. If an arriving packet needs to be transmitted onto a link but finds the link busy with the transmission of another packet, the arriving packet must wait in the output buffer. Thus, in addition to the store-and-forward delays, packets suffer output buffer **queuing delays**. These delays are variable and depend on the level of congestion in the network.
+
+```md
+buffer space -> finite -> new packet comes -> buffer already full -> packet loss 💀
+```
+
+### Forwarding Tables and Routing Protocols 
+_Source: Page number 36_
+
+Earlier, we learned that a packet arriving at a packet switch will get forwarded to some outgoing link, but how does the packet switch know which outgoing link to use. This packet forwarding is done in different ways in different types of computer networks. Below we briefly discuss how it is done in Internet.
+
+In Internet, each device has a IP address (by which it can be recognized on the internet). When a source wants to send a packet, it attaches the destination IP address to the packet's header. When this packet comes to a router, the router examines a portion of the packet's destination address and forwards the packet to an adjacent router. More specifically, each router has a **forwarding table** that maps destination addresses (or portions of the destination addresses) to that router's outbound links. When a packet arrives at a router, the router examines the address and searches its forwarding table, using this destination address, to find the appropriate outbound link. The router then directs the packet to this outbound link.
