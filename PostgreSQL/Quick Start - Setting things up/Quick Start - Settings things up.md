@@ -46,7 +46,7 @@ After giving database directory location, you will be asked to enter password fo
 
 By adding the bin directory of the PostgreSQL to the `PATH` environment variable, you enable the execution of common PostgreSQL tools, such as `plsql` and `pg_restore`, from any directory without the need to navigate the bin directory first.
 
-First, find the path of the `bin` directory from Postgres installation directory. Copy that path. Open environment variables (go to start and search for them). Add the copied pat to **System variables**. 
+First, find the path of the `bin` directory from Postgres installation directory. Copy that path. Open environment variables (go to start and search for them). Add the copied path to **System variables**. 
 
 ## Connect to a PostgreSQL Database server [](https://neon.com/postgresql/getting-started/connect-to-postgresql-database)
 
