@@ -1,1 +1,2 @@
 - [How vector databases actually work](How%20vector%20databases%20actually%20work.md)
+- [Understanding Redis in System Design](Understanding%20Redis%20in%20System%20Design.md)
