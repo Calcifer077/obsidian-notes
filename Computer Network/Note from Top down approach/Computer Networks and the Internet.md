@@ -208,3 +208,44 @@ Packet switching is used more (used even in 5G) as compared to circuit switching
 # Delay, Loss, and Throughput in Packet-Switched Networks 
 _Source: Page number 46 - 57_
 
+## Overview of Delay in Packet-Switched Networks 
+_Source: Page number 46 - 50_
+
+As a packet travels from source to destination through a series of routers, there are subsequent delays at each node. The most important of these delays are the **nodal processing delay**, **queuing delay**, **transmission delay**, and **propagation delay**; together these are called **total nodal delay**.
+
+### Types of Delay 
+_Source: Page number 46 - 50_
+
+![](../../assets/Pasted%20image%2020260928122627.png)
+
+We will take the above diagram to describe various delays. The PC's on the left will send packets through the router A. This router needs to check the information stored in the packet to know where to send it. There is also a queue which will hold packets until some are being processed.
+
+**Processing Delay**
+
+The time required to examine the packet's header and determine where to direct the packet is part of the **processing delay**. This delay can also include other factors, such as the time needed to check for bit-level errors in the packet that occurred in transmitting.
+
+**Queuing Delay**
+
+At the queue, the packet experiences a **queuing delay** as it waits to be transmitted onto the link. The length of the queuing delay of a specific packet will depend on the number of earlier-arriving packets that are queued and waiting for transmission onto the link. 
+
+**Transmission Delay**
+
+Assuming that packets are transmitted in a first-come-first-server manner, as is common in packet-switched networks, our packet can be transmitted only after all the packets that have arrived before it have been transmitted. Let's say the length of the packet be $L$ bits, and denote the transmission rate of the link from router A to router B be $R$ bits/sec. A 10 Mbps ethernet link, the rate will be 10 Mbps. The transmission delay will be $L/R$. 
+
+**Propagation Delay**
+
+Once a bit is pushed into the link, it needs to propagate to router B. the time required to propagate from the beginning of the link to router B is the **propagation delay**. The bit propagates at the propagation speed of the link. The propagation speed depends on the physical medium of the link and is in the range of
+
+$$
+2 \cdot 10^8\ \text{meters/sec to } 3 \cdot 10^8\ \text{meters/sec}
+$$
+
+The propagation delay is the distance between two routers divided by the propagation speed. That is, the propagation delay is $d/s$, where $d$ is the distance between router A and router B and $s$ is the propagation speed of the link. Once the packet is at router B, the whole process repeats.
+
+**Comparing Transmission and Propagation Delay**
+
+The transmission delay is the amount of time required for the router to push out the packet, it is a function of the packet's length and the transmission rate of the link. The propagation delay, is the time it takes a bit to propagate from one router to next, it is a function of the distance between the two routers.
+
+## Queuing Delay and Packet Loss 
+_Source: Page number 50 - 52_
+
