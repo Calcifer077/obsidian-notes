@@ -172,8 +172,39 @@ buffer space -> finite -> new packet comes -> buffer already full -> packet loss
 ```
 
 ### Forwarding Tables and Routing Protocols 
-_Source: Page number 36_
+_Source: Page number 36 - 37_
 
 Earlier, we learned that a packet arriving at a packet switch will get forwarded to some outgoing link, but how does the packet switch know which outgoing link to use. This packet forwarding is done in different ways in different types of computer networks. Below we briefly discuss how it is done in Internet.
 
 In Internet, each device has a IP address (by which it can be recognized on the internet). When a source wants to send a packet, it attaches the destination IP address to the packet's header. When this packet comes to a router, the router examines a portion of the packet's destination address and forwards the packet to an adjacent router. More specifically, each router has a **forwarding table** that maps destination addresses (or portions of the destination addresses) to that router's outbound links. When a packet arrives at a router, the router examines the address and searches its forwarding table, using this destination address, to find the appropriate outbound link. The router then directs the packet to this outbound link.
+
+>Internet has a number of special **routing protocols** that are used to automatically set the forwarding tables. These protocols will be further discussed later on.
+
+## Circuit Switching 
+_Source: Page number 38 - 42_
+
+In circuit-switched networks, the resources needed along a path (buffers, link transmission rate) to provide for communication between the end systems are _reserved_ for the duration of the communication session between the end systems. Not like packet-switched networks where resources are given on demand. 
+
+Traditional telephone networks are examples of circuit-switched networks. Before the sender can send the information, the network must establish a connection between the sender and the receiver. In terms of technology this connection is called a **circuit** which remains / stays open for the duration of call or communication.
+
+### Multiplexing in Circuit-Switched Networks 
+_Source: Page number 39 - 41_
+
+A circuit in a link is implemented with either **Frequency division multiplexing (FDM)** or **Time division multiplexing (TDM)**. With FDM, the frequency spectrum of a link is divided up among the connections established across the link. 
+
+For a TDM link, time is divided into frames of fixed duration, and each frame is divided into a fixed number of time slots. When the network establishes a connection across a link, the network dedicated one time slot in every frame to this connection. These slots are dedicated for the sole use of that connection, with one time slot available for use (in every frame) to transmit the connection's data. 
+
+![](../../assets/Pasted%20image%2020260928103303.png)
+
+Circuit switching is _considered_ bad in comparison to packet switching because of idleness called **silent periods** when the connection is not used but is still allocated.
+
+### Packet Switching Versus Circuit Switching 
+_Source: Page number 41 - 42_
+
+Packet switching is used more (used even in 5G) as compared to circuit switching. Main reason being that there is very small chance that all users will use the link at the same time and that it can handle burst of data from a single user while others are busy.
+
+>Read the official source.
+
+# Delay, Loss, and Throughput in Packet-Switched Networks 
+_Source: Page number 46 - 57_
+
