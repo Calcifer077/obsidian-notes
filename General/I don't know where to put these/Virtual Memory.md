@@ -56,3 +56,5 @@ It due to two reasons: performance and security.
 > | **Anonymous** | Allocated using `malloc()` or `mmap()`. Used for dynamic program data. |
 > | **File-backed** | Memory backed by a file. |
 
+## How are virtual Addresses Translated to Physical Addresses 
+

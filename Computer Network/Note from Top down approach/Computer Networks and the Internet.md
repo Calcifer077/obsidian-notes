@@ -249,3 +249,42 @@ The transmission delay is the amount of time required for the router to push out
 ## Queuing Delay and Packet Loss 
 _Source: Page number 50 - 52_
 
+A router can only push bits onto a link at a fixed rate. If packets arrive faster than that, they wait in a queue. That waiting time is the **queuing delay** $d_{queue}$.
+
+Processing, transmission, and propagation delay are different from queuing delays because they are fixed (roughly) fixed for a given packet and link. Queuing delay varies from packet to packet. If 10 packets arrive at an empty queue at once, the first waits 0 seconds, and the tenth waits for the other nine to be sent.
+
+### Packet Loss 
+
+The length of the queue is not infinite. This length depends on the router. When a packet comes to a queue and finds it full, that packet will be dropped. 
+
+From an end-system viewpoint, a packet loss will look like a packet having been transmitted into the network core but never emerging at the destination.
+
+## End-to-End Delay 
+_Source: Page number 52 - 54_
+
+Till now we have learned about nodal delay, delay at a single router. Let's now consider the total delay from source to destination. Suppose there are N - 1 routers between the source and destination. We are assuming that all different delays are same at all routers and there is no queuing dely.
+
+$$
+d_{end-end} = N(d_{proc} + d_{trans} + d_{prop})
+$$
+
+where:
+- $d_{proc}$ is processing delay 
+- $d_{trans}$ is transmission delay
+- $d_{prop}$ is propagation delay 
+
+### Traceroute 
+
+**Traceroute** is a simple program which can run on any Internet host. It sends out N packets from source to destination where there are N - 1 routers in between. Each packet is marked from 1 to N and every router when receives a packet designated for it, will send back a message to the source telling about the time taken.
+
+You can run this in your terminal by simply using `tracert <website-address>`.
+
+### End System, Application, and Other Delays 
+
+In addition to processing, transmission, and propagation delays, there can be additional delays in the end systems. These delays depend on the protocols used by different end devices and will be talked about later on.
+
+## Throughput in Computer Networks 
+_Source: Page number 54 - 57_
+
+Suppose you are sending a large file from Host A to Host B. The **instantaneous throughput** at any instant is the rate (in bits/sec) at which Host B is receiving the file. If the file consists of $F$ bits and the transfer takes $T$ seconds for Host B to receive all $F$ bits, then the **average throughput** of the file transfer is $F/T$ bits / sec. For some applications it is desirable to have at least a minimum throughput.
+
