@@ -136,3 +136,69 @@ Everything above assume that the kernel is free to evict any page when memory pr
 The most common reason to pin memory today is GPU data transfers. DMA (Direct Memory Access) engines, which move data between host RAM and GPU memory without CPU involvement, require that the source or destination buffer remain at a fixed physical address for the duration of the transfer. If the kernel were to evict a page mid-transfer and reassign the frame, the DMA engine would read or write the wrong physical location. Pinning prevents this by fixing the physical address in place.
 
 ## Copy-on-Write and Fork 
+
+`fork()` creates a new process (the _child_) that is an exact copy of the parent at the moment of the call. Naively, this would require copying every byte of the parent’s virtual memory, a multi-gigabyte operation for large processes. Copy-on-write (COW) makes `fork()` efficient by deferring that copy until it is actually necessary.
+
+When `fork()` is called:
+
+1. The kernel allocates a new process descriptor for the child.
+2. The kernel creates a new set of page tables for the child, initially pointing to the same physical frames as the parent.
+3. For every private writable mapping, the kernel marks the entry as read-only in _both_ parent and child. Read-only pages (code) are shared as-is, they were already protected.
+
+The kernel tracks reference and mapping state for each physical frame. After a fork, private pages that were writable in the parent are now mapped by both processes, so their state records that they are shared.
+
+When either process subsequently writes to a COW-protected page, the MMU detects a write to a read-only PTE and raises a _protection fault_. The kernel’s COW handler:
+
+1. Checks whether the page is still shared. If it is, a copy is needed. If the kernel can determine the faulting process is now the only relevant owner, it can simply restore write permission without copying.
+2. If a copy is needed: allocates a new frame, copies the contents, updates the faulting process’s PTE to point to the new frame with write permission. The other process’s PTE is left pointing to the original frame, still read-only.
+
+## Memory-Mapped Files
+
+When a process need to access a large file, it can use `mmap` instead of using `read()` in a loop. With `mmap` entire file (using demand paging) is given to a process in its VMA. When the process asks for that file, the kernel will load the file on demand. 
+
+After the kernel fetches the data from disk lazily, it puts it in _page cache_. This is a pool of physical frames kernel uses to cache file data. This page cache is not reserved memory, when some other process need some page and it can't find one, kernel will just use some page cache. If the original process needs that page again, there will be a page fault and kernel will resolve it. 
+
+You shouldn't just blindly use `mmap()` instead of `read()`. `read()` is great for simple sequential streaming, especially with large buffers. `mmap` should be used when the access is random, repeated, shared across process, or naturally pointer-based. 
+
+### What if a forked process also needs the same file?
+
+The forked process can also `mmap()` the same file and it will read from the page cache, so it will be faster. If the forked or the original process needs to write to that file. If when `mmap` was called with `MAP_SHARED` flag, your write will go directly into the shared page cache frame or if `MAP_PRIVATE` was used, write will trigger a COW fault and the writing process gets a private copy. The changes go to the disk asynchronously. If you need to guarantee that it has been written to disk, you can use `msync()` or `fsync()`.
+
+## Anonymous, File-Backed, and Shared Memory 
+
+Virtual memory mappings can be classified along two axes:
+
+- **Anonymous memory**: Memory with no ordinary file behind it. Heap, stack, and `MAP_ANONYMOUS` mappings are common examples. New anonymous pages are zero-filled on first touch. If modified anonymous pages must be evicted, they need swap because there is no file to reload them from.
+- **File-backed memory**: Memory whose contents come from a file. Executable code, shared libraries, and file mappings are examples. Clean file-backed pages can be dropped and later reloaded from the file. Dirty file-backed pages must be written back before reclaim.
+- **Private mappings**: Writes are private to the process. A private file mapping can initially share clean file pages, but the first write creates an anonymous copy through COW.
+- **Shared mappings**: Writes are visible to other processes mapping the same object. `MAP_SHARED` and POSIX shared memory use this model.
+
+![](../../assets/Pasted%20image%2020261010142729.png)
+
+## Page Reclaim: How the Kernel Chooses What to Evict 
+
+Page reclaim is the kernel’s mechanism for freeing physical frames under memory pressure. It is approximate, not perfect LRU. Two complementary mechanisms make it practical without being prohibitively expensive:
+
+- **Accessed bits**: Every page table entry has a hardware-maintained accessed bit that the MMU sets automatically when the CPU uses that mapping. The kernel reads and clears these bits periodically to estimate recency without trapping every memory access.
+    
+- **Reverse mappings (rmap)**: The page table is a forward map (virtual → physical). The kernel also maintains the reverse: metadata on each physical frame that lets it find the VMAs and page table entries that map it. Reclaim uses rmap to check accessed bits on candidate frames only, without scanning every process’s page table. This means reclaim starts from lists of physical frames, not from virtual address spaces, so the cost scales with the number of frames under consideration, not with the total size of all processes’ virtual memory.
+    
+
+**[Active/inactive LRU](https://alexeydemidov.com/2025/05/13/linux-inactive-memory/)**: Pages move between active and inactive lists. In Linux, these are split further into anonymous and file-backed LRUs, maintained per memory-management domain. New pages generally enter as inactive candidates. Pages age toward the tail as newer pages arrive. Reclaim scans from the **tail of inactive**, checking accessed bits via rmap for mapped pages:
+
+- Accessed bit set means that the page was recently used; clear the bit to give it a reprieve.
+- Accessed bit clear means that the page is cold; evict it.
+
+Pages that are consistently accessed get promoted to the **active list**. When the active list grows too large, its tail pages are demoted back to the head of inactive. Pages cycle through this until they consistently fail to show any access.
+
+**[MGLRU](https://lpc.events/event/18/contributions/1781/attachments/1592/3304/mglru-updates-lpc2024.pdf)** [(multi-generational LRU)](https://lpc.events/event/18/contributions/1781/attachments/1592/3304/mglru-updates-lpc2024.pdf) extends this with several age generations instead of two lists, allowing finer-grained decisions about what is truly cold.
+
+The reclaim cost also depends heavily on page type:
+
+**Clean file-backed page**: cheapest. Drop it immediately; a future access reloads from the file.
+
+**Dirty file-backed page**: must be written back to storage before the frame can be reused.
+
+**Anonymous page with private data**: generally needs swap before reclaim, because there is no file to reload it from. Without swap configured, ordinary anonymous pages are much harder to reclaim.
+
+The practical consequence: “used memory” is not automatically bad. The RAM used for clean page cache is readily reclaimable. However, the real danger is when the combined hot working set of applications exceeds RAM, forcing the kernel to evict pages that will soon be needed again, causing thrashing.
