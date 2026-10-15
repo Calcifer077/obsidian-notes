@@ -288,3 +288,61 @@ _Source: Page number 54 - 57_
 
 Suppose you are sending a large file from Host A to Host B. The **instantaneous throughput** at any instant is the rate (in bits/sec) at which Host B is receiving the file. If the file consists of $F$ bits and the transfer takes $T$ seconds for Host B to receive all $F$ bits, then the **average throughput** of the file transfer is $F/T$ bits / sec. For some applications it is desirable to have at least a minimum throughput.
 
+Overall throughput depends on the slowest component of the entire network because the slowest component will act like a bottleneck for the rest of the network.
+
+# Protocol layers and their Service Models
+_Source: Page number 58_
+
+## Layered Architecture
+_Source: Page number 58 - 63_
+
+In this architecture one layer is above another and provides some set of services to the layer below it and uses some services from the layer above it. You can just reverse the order on receiving end to decode or receive data.
+
+![](../../assets/Pasted%20image%2020261011222254.png)
+
+Above is a very simple example of airlines. 
+
+### Protocol Layering 
+_Source: Page number 60_
+
+If you take the above example of airlines for networking, we can divide different components into layer where each layer use some protocols which can be either for software and hardware. 
+
+When taken together, the protocols of the various layers are called the **protocol stack**. The Internet protocol stack consists of five layers: the physical, link, network, transport, and application layers. 
+
+![](../../assets/Pasted%20image%2020261011224106.png)
+
+### Application Layer 
+_Source: Page number 61_
+
+The application layer is where network applications and their application-layer protocols reside. The Internet's application layer includes many protocols, such as the HTTP, SMTP, FTP. 
+
+An application-layer protocol is distributed over multiple end systems, with the application in one end system using the protocol to exchange packets of information with the application in another end system. This packet of information is called **message**. 
+
+### Transport Layer 
+_Source: Page number 61_
+
+The Internet's transport layer transports application-layer messages between application endpoints. In the Internet, there are two transport protocols, TCP and UDP, either of which can transport application-layer messages. TCP provides a connection-oriented service to its applications. This service includes guaranteed delivery of application-layer messages to the destination. The UDP protocol provides a connectionless service to its applications. Transport layer packet is called as **segment**. 
+
+### Network Layer 
+_Source: Page number 62_
+
+The Internet's network layer is responsible for moving network-layer packets known as **datagrams** from one host to another. The Internet transport-layer protocol in a source host passes a transport-layer segment and a destination address to the network layer. The network layer then provides the service of delivering the segment to the transport layer in the destination host. 
+
+Network layer also contains routing protocols that determine the routes that datagrams take between sources and destinations. This layer also include the IP protocol.
+
+### Link Layer
+_Source: Page number 62_
+
+The Internet's network layer routes a datagram through a series of routers between the source and destination. To move a packet from one node to the next node in the route, the network layer relies on the services of the link layer. In particular, at each node, the network layer passes the datagram down to the link layer, which delivers the datagram to the next node along the route. At this next node, the link layer passes the datagram up to the network layer.
+
+At each node, there can be different link layer protocols (like Ethernet, WIFI etc.).  A datagram may be handled by different link layer protocols at different links along its route. 
+
+Link-layer packets are referred as **frames**.
+
+### Physical Layer 
+_Source: Page number 63_
+
+The job of physical layer is to move the _individual bits_ within the frame from one node to the next. The protocols in this layer are again link dependent and further depend on the actual transmission medium of the link. 
+
+## Encapsulation 
+_Source: Page number 63_
