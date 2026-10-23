@@ -9,3 +9,4 @@ Backlinks:
 - [Date Data Type](Date%20Data%20Type.md)
 - [Timestamp Data Type](Timestamp%20Data%20Type.md)
 - [Interval Data Type](Interval%20Data%20Type.md)
+- [TIME Data Type](TIME%20Data%20Type.md)
