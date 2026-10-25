@@ -16,3 +16,6 @@ Backlinks:
 - [Array Data Type](Array%20Data%20Type.md)
 - [User-defined Data Type](User-defined%20Data%20Type.md)
 - [ENUM Data Type](ENUM%20Data%20Type.md)
+- [XML Data Type](XML%20Data%20Type.md)
+- [BYTEA Data Type](BYTEA%20Data%20Type.md)
+- [Composite Types](Composite%20Types.md)
