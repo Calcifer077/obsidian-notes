@@ -1,4 +1,5 @@
 ---
+title: The Node.js Platform
 created: 2026-11-01
 tags:
   - nodejs
@@ -90,3 +91,18 @@ A Node.js application will exit when there are no more pending operations in the
 Each OS has its own interface for the event demultiplexer. To create a higher-level abstraction with the objective that Node.js is compatible with all the major operating systems, Libuv was created. 
 
 Other than abstracting the underlying system calls, libuv also implements the reactor pattern, thus providing an API for creating event loops, managing the event queue, running asynchronous I/O operations, and queuing other types of task.
+
+## The recipe for Node.js
+
+The reactor pattern and libuv are the basic building blocks of Node.js, but we need three more components to build the full platform: 
+- A set of bindings responsible for wrapping and exposing libuv and other low-level functionalities to JS.
+- V8, the JS engine.
+- A core JS library that implements the high-level Node.js API. 
+
+# JS in Node.js
+
+JS in browser and server are somewhat different. One difference can be on browser we have things like dom, window which are not present in a server. But server side JS gets access to operating system capabilities.
+
+Node.js can run native code (written in C/C++). Native code is fast and efficient and companies wouldn't have to migrate their legacy codebases. Another benefit is that low level languages can talk to hardware which makes Node.js a popular choice for Internet of things.
+
+Nowadays, most JS virtual machines and also Node.js support WebAssembly (Wasm), a low-level instruction format that allows us to compile languages other than JS (such as C++ or Rust) into a format that is "understandable" by JS VMs. This brings many of the advantage of native code without directly interfering with native code. 
