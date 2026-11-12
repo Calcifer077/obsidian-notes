@@ -7,5 +7,4 @@ Links to chapters:
 
 >Will only remain until completion of book.
 
-Have read till: 47
-
+Have read till: 51
