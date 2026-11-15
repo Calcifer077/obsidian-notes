@@ -220,3 +220,474 @@ The module cache is exposed via the `require.cache` variable. You can invalidate
 
 ## Circular dependencies 
 
+Let's walk through an example to see how CommonJS behaves when dealing with circular dependencies. 
+
+![](../../../assets/Pasted%20image%2020261115095256.png)
+
+A module called `main.js` requires `a.js` and `b.js`. In turn, `a.js` requires `b.js`. But `b.js` requires `a.js`. We have a circular dependency here as module `a.js` requires module `b.js` and module `b.js` requires module `a.js`.  Let's have a look at the code of these two modules:
+
+- Module `a.js`:
+
+```js
+exports.loaded = false 
+const b = require('./b')
+module.exports = {
+	b, 
+	loaded: true // overrides the previous export
+}
+```
+
+- Module `b.js`:
+
+```js
+exports.loaded = false 
+const a = require('./a')
+module.exports = {
+	a,
+	loaded: true
+}
+```
+
+`main.js`:
+
+```js
+const a = require('./a')
+const b = require('./b')
+console.log('a ->', JSON.stringify(a, null, 2))
+console.log('b ->', JSON.stringify(b, null, 2))
+```
+
+If we run `main.js`, we will see the following output:
+
+```
+a -> {
+  "b": {
+    "a": {
+      "loaded": false
+    },
+    "loaded": true
+  },
+  "loaded": true
+}
+b -> {
+  "a": {
+    "loaded": false
+  },
+  "loaded": true
+}
+```
+
+In order to understand in more detail what happens above:
+
+![](../../../assets/Pasted%20image%2020261115102146.png)
+
+The steps are as follows:
+
+1. The processing starts in `main.js`, which immediately requires `a.js`.
+2. The first thing that module `a.js` does is set an exported value called `loaded` to `false`.
+3. At this point, module `a.js` requires module `b.js`.
+4. Like `a.js`, the first thing that module `b.js` does is set an exported value called `loaded` to `false`.
+5. Now, `b.js` requires `a.js` (cycle)
+6. Since `a.js` has already been traversed, its currently exported value is immediately copied into the scope of module `b.js`.
+7. Module `b.js` finally changes the `loaded` value to `true`.
+8. Now that `b.js` has been fully executed, the control returns to `a.js`, which now holds a copy of the current state of module `b.js` in its own scope. 
+9. The last step of module `a.js` is to set its `loaded` value to `true`.
+10. Module `a.js` is now completely executed and the control returns to `main.js`, which now has a copy of the current state of module `a.js` in its internal scope.
+11. `main.js` requires `b.js`, which is immediately loaded from cache.
+12. The current state of module `b.js` is copied into the scope of module `main.js` where we can finally see the complete picture of what the state of every module is.
+
+One thing to notice is that module `b.js` has a partial view of module `a.js`, and this partial view gets propagated over when `b.js` is required in `main.js`. The picture can easily be reversed when module `b.js` is required before `a.js`.
+
+# Module definition patterns
+
+The module system, besides being a mechanism for loading dependencies, is also a tool for defining APIs. The aim is to maximize information hiding and API usability, while balancing these with other software qualities, such as _extensibility_ and _code reuse_.
+
+## Named exports 
+
+The most basic method for exposing a public API is using **named exports**, which involves assigning the values we want to make public to properties of the object referenced by `exports` (or `module.exports`). In this way, the resulting exported object becomes a container or namespace for a set of related functionalities. 
+
+The following code shows a module implementing this pattern:
+
+
+```js
+// logger.js
+exports.info = (message) => {
+	console.log(`info: ${message}`)
+}
+
+exports.verbose = (message) => {
+	console.log(`verbose: ${message}`)
+}
+```
+
+The exported functions are then available as properties of the loaded module, as shown in the following code:
+
+```js
+// main.js
+const logger = require('./logger')
+logger.info('This is an informational message')
+logger.verbose('This is a verbose message')
+```
+
+## Exporting a function 
+
+You can also reassign the whole `module.exports` variable to a function. The main strength of this pattern is the fact that it allows you to expose only a single functionality. This way of defining modules is also known as **substack pattern**. 
+
+```js
+// logger.js 
+module.exports = (message) => {
+	console.log(`info: ${message}`)
+}
+```
+
+A possible extension to this pattern is using _named_ exports as well. This is a very powerful combination because it still gives the module the clarity of a single entry point (the main exported function) and at the same time it allows us to expose other functionalities that have secondary or more advanced use cases.
+
+```js 
+module.exports.verbose = (message) => {
+	console.log(`verbose: ${message}`)
+}
+```
+
+Usage: 
+
+```js
+// main.js
+const logger = require('./logger')
+logger('This is an informational message')
+logger.verbose('This is a verbose message')
+```
+
+The above pattern encourages the adoption of the **single-responsibility principle (SRP)**.
+
+## Exporting a class 
+
+A module that exports a class is a specialization of a module that exports a function. The difference is that with this new pattern we allow the user to create new instances using the constructor, but we also give them the ability to extend its protoype and forge new classes.
+
+```js
+class Logger {
+  constructor(name) {
+    this.name = name;
+  }
+
+  log(message) {
+    console.log(`[${this.name}] ${message}`);
+  }
+
+  info(message) {
+    this.log(`INFO: ${message}`);
+  }
+
+  vrebose(message) {
+    this.log(`VERBOSE: ${message}`);
+  }
+}
+
+module.exports = Logger;
+```
+
+And, we can use the preceding module as follows:
+
+```js
+// main.js 
+const Logger = require('./logger')
+const dbLogger = new Logger('DB')
+dbLogger.info('This is an informational message') 
+const accessLogger = new Logger('ACCESS') 
+accessLogger.verbose('This is a verbose message')
+```
+
+## Exporting an instance 
+
+We can leverage the caching mechanism of `require()` to easily define stateful instances created from a constructor or a factory, which can be shared across different modules. 
+
+```JS
+// logger.js
+class Logger {
+  constructor(name){
+    this.count = 0;
+    this.name = name
+  }
+
+  log (message){
+    this.count++;
+    console.log(`[${this.name}] ${message}`);
+  }
+}
+
+module.exports = new Logger('default');
+```
+
+This module can be used as follows:
+
+```js
+// main.js 
+const logger = require('./logger')
+logger.log('This is an informational message')
+```
+
+Because the module is cached, every module that requires the logger module will actually retrieve the same instance of the object, thus sharing its state. 
+
+## Modifying other modules or the global scope 
+
+A module can even export _nothing_. 
+
+We said that a module can modify other modules or object in the global scope; this is called **monkey patching**. It generally refers to the practice of modifying the existing objects at runtime to change or extend their behavior or to apply temporary fixes.
+
+Following example shows us how we can add a new function to another module:
+
+```js
+// patcher.js
+
+// ./logger is another module 
+require('./logger').customMessage = function() {
+	console.log('This is a new functionality')
+}
+```
+
+Using our new patcher module is as easy as writing the following code:
+
+```js
+// main.js
+
+require('./patcher')
+const logger = require('./logger')
+logger.customMessage()
+```
+
+# ESM: ECMAScript modules 
+
+The most important differentiator between ESM and CommonJS is that ES modules are _static_, which means that imports are described at the top level of every module and outside any control flow statement. Also, the name of the imported modules cannot be dynamically generated at runtime using expressions, only constant strings are allowed. 
+
+For instance, the following code wouldn't be valid when using ES modules:
+
+```js
+if(condition){
+	import module1 from 'module1'
+}else {
+	import module2 from 'module2'
+}
+```
+
+While in CommonJS, it is perfectly fine to write something like this:
+
+```js
+let module = null 
+if(condition){
+	module from 'module1'
+}else {
+	module2 from 'module2'
+}
+```
+
+Static imports allow the static analysis of the dependency tree, which allows optimizations such as dead code elimination (tree shaking) and more. 
+
+## Using ESM in Node.js 
+
+Node.js will consider every `.js` file to be written the CommonJS syntax by default; therefore, if we use the ESM syntax inside a `.js` file, the interpreter will simply throw an error. 
+
+There are several ways to tell the Node.js interpreter to consider a given module as an ES module rather than a CommonJS module:
+
+- Give the module file the extension `.mjs`
+- Add to the nearest parent `package.json` a field called `"type"` with a value of `"module"`
+
+## Named exports and imports 
+
+ESM allows us to export functionality from a module through the ==🔴`export`== keyword.
+
+In an ES module, everything is private by default and only exported entities are publicly accessible from other modules. 
+
+The export keyword can be used in front of the entities that we want to make available to the module users. 
+
+```js
+// logger.js
+// exports a function as `log`
+export function log(message) {
+  console.log(message);
+}
+// exports a constant as `DEFAULT_LEVEL`
+export const DEFAULT_LEVEL = "info";
+// exports an object as `LEVELS`
+export const LEVELS = {
+  error: 0,
+  debug: 1,
+  warn: 2,
+  data: 3,
+  info: 4,
+  verbose: 5,
+};
+// exports a class as `Logger`
+export class Logger {
+  constructor(name) {
+    this.name = name;
+  }
+  log(message) {
+    console.log(`[${this.name}] ${message}`);
+  }
+}
+```
+
+If we want to import entities from a module we can use the `import` keyword. The syntax is quite flexible, and it allows us to import one or more entities and even to rename imports. Let's see some examples:
+
+```js
+import * as loggerModule from './logger.js'
+console.log(loggerModule)
+```
+
+In this example, we are using the `*` syntax (also called **namespace import**) to import all the members of the module and assign them to the local `loggerModule` variable. We would get a output of something like this:
+
+```
+[Module] {
+  DEFAULT_LEVEL: 'info',
+  LEVELS: { error: 0, debug: 1, warn: 2, data: 3, info: 4,
+    verbose: 5 },
+  Logger: [Function: Logger],
+  log: [Function: log]
+}
+```
+
+We can use all exported variables, functions by just using `loggerModule.log` or anything else.
+
+If we don't want to import everything:
+
+```js
+import { log } from './logger.js'
+
+// or 
+
+import { log, Logger } from './logger.js'
+```
+
+When we use this type of `import` statement, the entities are imported into the current scope, so there is a risk of a name clash. The following code, would not work:
+
+```js
+import { log } from './logger.js'
+const log = console.log
+```
+
+If we try to execute the preceding snippet, the interpreter fails with the following error:
+
+```
+SyntaxError: Identifier 'log' has already been declared
+```
+
+In situations like this one, we can resolve the clash by renaming the imported entity with the `as` keyword:
+
+```js
+import { log as log2 } from './logger.js'
+const log = console.log 
+
+log('message from log')
+log2('message from log2')
+```
+
+## Default exports and imports 
+
+We read about single responsibility principle and how CommonJS follows it above. You do it with with something like this:
+
+```js
+module.exports = new Logger('default')
+```
+
+In ESM, we can do something similar through what's called a **default export**. A default export makes use of the `export default` keywords and it looks like this:
+
+```js
+// logger.js
+export default class Logger {
+	constructor (name) {
+		this.name = name
+	}
+	
+	log (message) {
+		console.log(`[${this.name}] ${message}`)
+	}
+}
+```
+
+In this case, the name `Logger` is ignored, and is named while importing itself.
+
+```js
+// main.js 
+import MyLogger from './logger.js'
+const logger = new MyLogger('info')
+logger.log('Hello World')
+```
+
+We can name the imported variable anything we want at the time of importing itself without using `as` keyword. 
+
+One thing that we cannot do, though, is import the default entity explicitly. In fact, something like the following will fail:
+
+```js
+import { default } from './logger.js'
+```
+
+The execution will fail with a `SyntaxError`. This happens because the `default` keyword cannot be used as a variable name. It is valid as an object attribute and the following would work:
+
+```js
+import * as loggerModule from './logger.js'
+loggerModule.default
+```
+
+## Module identifiers 
+
+**Module identifiers** (also called _module specifiers_) are the different types of values that we can use in our `import` statements to specify the location of the module we want to load. 
+
+- _Relative specifiers_ like `./logger.js` or `../logger.js`. They are used to refer to a path relative to the location of the importing file. 
+- _Absolute specifiers_ like `file:///opt/nodejs/config.js`. They refer directly and explicitly to a full path. Note that this is the only way with ESM to refer to an absolute path for a module, using a `/` or a `//` prefix won't work. 
+- _Bare specifiers_ are identifiers like `fastify` or `http`, and they represent modules available in the `node_modules` folder and generally installed through a package manager (such as npm) or available as core Nodej.s modules.
+- _Deep import specifiers_ like `fastify/lib/logger.js`, which refer to a path within a package in `node_modules`.
+
+In browser environments, it is possible to import modules directly by specifying the module URL, for instance, `https://unpkg.com/lodash`. This feature is not supported by Node.js.
+
+## Async imports 
+
+As we learned earlier, the `import` statement is static and therefore subject to two important limitations:
+
+- A module identifier cannot be constructed at runtime.
+- Module imports are declared at the top level of every file and they cannot be nested within control flow statements. 
+
+In ESM, we can overcome this by using the special `import()` operator. This process is called as `async imports` or `dynamic imports`.
+
+The `import()` operator is syntactically equivalent to a function that takes a module identifier as an argument and it returns a promise that resolves to a module object.
+
+Let's say we want to build a command line application that can print "Hello World" in different languages. Let's create some example modules for some of the languages we want to support:
+
+```js
+// strings-el.js
+export const HELLO = 'Γεια σου κόσμε'
+// strings-en.js
+export const HELLO = 'Hello World'
+// strings-es.js
+export const HELLO = 'Hola mundo'
+// strings-it.js
+export const HELLO = 'Ciao mondo'
+// strings-pl.js
+export const HELLO = 'Witaj świecie'
+```
+
+Now let's create the main script that takes a language code from the command line and prints "Hello World" in the selected language:
+
+```js
+// main.js 
+const SUPPORTED_LANGUAGES = ['el', 'en', 'es', 'it', 'pl']
+const selectedLanguage = process.argv[2]
+
+if(!SUPPORTED_LANGUAGES.include(selectedLanguage)) {
+	console.error('The specified language is not supported')
+	process.exit(1)
+}
+
+const translationModule = `./strings-${selectedLanguage}.js` // (1)
+import(translationModule)                                    // (2)
+	.then((strings) => {                                       // (3)
+		console.log(strings.HELLO)
+	})
+```
+
+The first three statements are quite simple.
+
+The second part of the code is where we actually use dynamic imports:
+
+1. First of all, we build the name of the module that we want to import. Note that the module name needs to be a relative path to the module file, that's why we are prepending `./` to the filename.
+2. We use the `import()` operator to trigger the dynamic import of the module.
+3. The dynamic import happens asynchronously, so we can use the `.then()` hook on the returned promise to get notified when the module is ready to be used. The function passed to `then()` will be executed when the module is fully loaded and `strings` will be the module namespace imported dynamically. After that, we can access `strings.HELLO` and print its value to the console.
+
