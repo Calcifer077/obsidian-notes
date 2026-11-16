@@ -691,3 +691,56 @@ The second part of the code is where we actually use dynamic imports:
 2. We use the `import()` operator to trigger the dynamic import of the module.
 3. The dynamic import happens asynchronously, so we can use the `.then()` hook on the returned promise to get notified when the module is ready to be used. The function passed to `then()` will be executed when the module is fully loaded and `strings` will be the module namespace imported dynamically. After that, we can access `strings.HELLO` and print its value to the console.
 
+## Module loading in depth 
+
+Let's learn how JS code is parsed and evaluated when using ES modules. 
+
+### Loading phases 
+
+The goal of the interpreter is to build a graph of all the necessary modules (a **dependency graph**). A dependency graph can be defined as a **directed graph** representing the dependencies of a group of objects. 
+
+The dependency graph is needed by the interpreter to figure out how modules depend on each other and in what order the code needs to be executed. When the `node` interpreter is launched, it gets passed some code to execute, generally in the form of a JS file. This file is the starting point for the dependency resolution, and it is called the **entry point**. From the entry point, the interpreter will find and follow all the `import` statements recursively in a depth-first fashion, until all the necessary code is explored and then evaluated. 
+
+This process happens in three separate phases:
+
+- **Phase 1 - Construction (or parsing)**: Find all the imports and recursively load the content of every module from the respective file.
+- **Phase 2 - Instantiation**: For every exported entity, keep a named reference in memory, but don't assign any value yet. Also, references are created for all the `import` and `export` statements tracking the dependency relationship between them (**linking**). No JS code has been executed at this stage. 
+- **Phase 3 - Evaluation**: Node.js finally executes the code so that all the previously instantiated entities can get an actual value. Now running the code form the entry point is possible because all the blanks have been filled. 
+
+In simple terms, we could say that Phase 1 is about finding all the dots, Phase 2 connects those creating paths, and, finally, Phase 3 walks through the paths in the right order.
+
+Due to its dynamic nature, CommonJS will execute all the files while the dependency graph is explored. We have seen that every time a new `require` statement is found, all the previous code has already been executed. This is why you can use `require` even within `if` statements or loops, and construct module identifiers from variables.
+
+In ESM, these three phases are totally separate from each other, no code can be executed until the dependency graph has been fully built, and therefore module imports and exports have to be static. 
+
+### Read-only live bindings 
+
+Another fundamental characteristics of ES modules, which helps with cyclic dependencies, is the idea that imported modules are effectively _read-only live bindings_ to their exported value. TF does that mean?
+
+Let's look at a example:
+
+```js
+// counter.js
+export let count = 0
+export function increment() {
+	count++
+}
+```
+
+If you use this:
+
+```js
+// main.js
+import { count, increment } from './counter.js'
+console.log(count) // prints 0
+increment()
+console.log(count) // print 1
+count++ // TypeError: Assignment to constant variable
+```
+
+What we can see in this code is that we can read the value of count at any time and change it using the increment() function, but as soon as we try to mutate the count variable directly, we get an error as if we were trying to mutate a const binding.
+
+This approach is different from CommonJS. In CommonJS, the entire `exports` object is copied (shallow copy) when required from a module. This means that, if the value of a primitive variables like numbers of strings is changed at a later time, the requiring module won't be able to see those changes.
+
+### Circular dependency resolution 
+
