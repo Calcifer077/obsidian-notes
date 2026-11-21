@@ -744,3 +744,105 @@ This approach is different from CommonJS. In CommonJS, the entire `exports` obje
 
 ### Circular dependency resolution 
 
+Let's reimplement the circular dependency example we saw in the _CommonJS module_ section using the ESM syntax:
+
+![](../../../assets/Pasted%20image%2020261115095256.png)
+
+Let's have a look at the module `a.js` and `b.js` first:
+
+```js
+// a.js
+import * as bModule from './b.js'
+export let loaded = false 
+export const b = bModule
+loaded = true
+
+// b.js
+import * as aModule from './a.js'
+export let loaded = false 
+export const a = aModule 
+loaded = true
+```
+
+Import these in our entry file:
+
+```js
+// main.js 
+import * as a from './a.js'
+import * as b from './b.js'
+console.log('a ->', a)
+console.log('b ->', b)
+```
+
+When we run `main.js`, we will see the following output:
+
+```
+a -> <ref *1> [Module] {
+	b: [Module] { a: [Circular *1], loaded: true},
+	loaded: true
+}
+b -> <ref *1> [Module] {
+	a: [Module] { b: [Cicular *1], loaded: true},
+	loaded: true
+}
+```
+
+The main thing to notice here is that the modules `a.js` and `b.js` have a complete picture of each other, unlike what would happen with commonJS, where they would only hold partial information of each other. We can see that because all the `loaded` values are set to `true`. If we swap the order of imports for the module `a.js` and `b.js`, the final outcome does not change.
+
+Let's learn more about what happens in the three phases of the module resolution:
+
+#### Phase 1: Parsing 
+
+During the parsing phase, the code is explored starting from the entry point (`main.js`). The interpreter looks only for `import` statements to find all the necessary modules and to load the source code from the module files. The dependency graph is explored in a depth-first fashion, and every module is visited only once. This create view of dependencies that look like a tree structure.
+
+![](../../../assets/Pasted%20image%2020261121142050.png)
+
+How it works:
+1. We start from `main.js`, the first import leads us to `a.js`.
+2. In `a.js` we find an import pointing to `b.js`.
+3. In `b.js`, we have an import back to `a.js`, but `a.js` is already visited, so this path is not explored again.
+4. At this point, the exploration starts to wind back: `b.js` doesn't have other imports, so we go back to `a.js`. `a.js` doesn't have other `import` statements so we go back to `main.js`. Here we find another import pointing to `b.js`, but we have already explored this module, so this is ignored. 
+
+At this point, our depth-first visit of the dependency graph has been completed and we have a linear view of the modules, as shown below:
+
+![](../../../assets/Pasted%20image%2020261121142352.png)
+
+#### Phase 2: Instantiation 
+
+In the instantiation phase, the interpreter walks the tree view obtained in the previous (parsing) step from bottom to top. For every module, the interpreter will look out for all the exported properties first and build out a map of the exported names in memory:
+
+![](../../../assets/Pasted%20image%2020261121142549.png)
+
+1. The interpreter starts from `b.js` and discovers that the module exports `loaded` and `a`.
+2. Then, the interpreter moves to `a.js`, which exports `loaded` and `b`.
+3. Finally, it moves to `main.js`, which does not export any functionality.
+4. Note that, in this phase, the exports map keeps track of the exported names only; their associated values are considered uninitialized for now.
+
+After this sequence of steps, the interpreter will do another pass to link the exported names to the modules importing them:
+
+![](../../../assets/Pasted%20image%2020261121150239.png)
+
+1. Module `b.js` will link the exports from `a.js`, referring to them as `aModule`.
+2. In turn, `a.js` will link to all the exports from `b.js`, referring to them as `bModule`.
+3. Finally, `main.js` will import all the exports in `b.js`, referring to them as `b`; similarly, it will import everything from `a.js`, referring to them as `a`.
+4. Again, it's important to note that all the values are still uninitialized. In this phase, we are only linking references to values that will be available at the end of the next phase.
+
+#### Phase 3: Evaluation 
+
+The last step is the evaluation phase. In this phase, all the code in every file is finally executed. The execution order is again bottom-up. With this approach, `main.js` is the last file to be executed. This way, we can be sure that all the exported values have been initialized before we start executing our main business logic:
+
+![](../../../assets/Pasted%20image%2020261121180516.png)
+
+In the above diagram, below steps happen:
+
+1. The execution starts from `b.js` and the first line to be evaluated initializes the `loaded` export to `false` for the module.
+2. Similarly, here the exported property `a` gets evaluated. This time, it will be evaluated to a reference to the module object representing module `a.js`.
+3. The value of the `loaded` property gets changed to `true`. At this point, we have fully evaluated the state of the exports for module `b.js`.
+4. Now the execution moves to `a.js`. Again, we start by setting `loaded` to `false`.
+5. At this point, the `b` export is evaluated to a reference to module `b.js`.
+6. Finally, the `loaded` property is changed to `true`. Now we have finally evaluated all the exports for `a.js` as well.
+
+After all these steps, the code in `main.js` can be executed and all the exported properties are fully evaluated. 
+
+## Modifying other modules 
+
