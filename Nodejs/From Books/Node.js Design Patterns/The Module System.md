@@ -846,3 +846,97 @@ After all these steps, the code in `main.js` can be executed and all the exporte
 
 ## Modifying other modules 
 
+We saw that entities imported through ES modules are _read-only live bindings_, and therefore we cannot reassign them from an external module.
+
+It is true that we can't change the bindings of the default export or named exports of an existing module from another module, but, if one of these bindings is an object, we can still mutate the object itself by reassigning some of the object properties.
+
+For example, let's alter the behavior of the core `fs` module so that it prevents the module from accessing the filesystem and returns mocked data instead.
+
+```js
+// mock-read-file.js
+import fs from "fs"; // (1)
+
+const originalReadFile = fs.readFile; // (2)
+let mockedResponse = null;
+function mockedReadFile(path, cb) {  // (3)
+  setImmediate(() => {
+    cb(null, mockedResponse);
+  });
+}
+export function mockEnable(respondWith) {  // (4)
+  mockedResponse = respondWith;
+  fs.readFile = mockedReadFile;
+}
+
+export function mockDisable() {  // (5)
+  fs.readFile = originalReadFile;
+}
+```
+
+Explanation of above steps:
+
+1. The first thing to do is import the default export of the `fs` module.
+2. We want to replace the `readFile()` function with a mock implementation. Before doing that, we save a reference to the original implementation. We also declare a `mockedResponse` value that we will be using later.
+3. The function `mockedReadFile()` is the actual mocked implementation that we want to use to replace the original implementation. This function invokes the callback with the current value of `mockedResponse`. 
+4. The exported `mockEnable()` function can be used to activate the mocked functionality. 
+5. Finally, the exported `mockDisable()` function can be used to restore the original implementation of the `fs.readFile()` function.
+
+Now let's see a simple example that uses this module:
+
+```js
+// main.js 
+import fs from 'fs' // (1)
+import { mockEnable, mockDisable } from './mock-read-file.js'
+
+mockEnable(Buffer.from('Hello World')) // (2)
+
+fs.readFile('fake-path', (err, data) => { // (3)
+	if(err) {
+		console.error(err)
+		process.exit(1)
+	}
+	console.log(data.toString()) // 'Hello World'
+})
+
+mockDisable()
+```
+
+Let's discuss step by step what happens in this example:
+
+1. The first thing that we do is import the default export of the `fs` module. 
+2. Here we enable the mock functionality. We want, for every file read, to simulate that the file contains the string "Hello World".
+3. We read a file using a fake path. This code will print "Hello World" as it will be using the mocked version of the `readFile()` function. 
+
+The above approach is very fragile. In the `mock-read-file.js`, we could have tried the two following imports for the `fs` module:
+
+```js
+import * as fs from 'fs' // then use fs.readFile
+```
+
+or
+
+```js
+import { readFile } from 'fs'
+```
+
+There are certain issues with the preceding two `import` statements:
+
+- We would get a read-only live binding into the `readFile()` function, and therefore, we would be unable to mutate it from an external module. If we try these approaches, we will get an error when trying to reassign `readFile()`.
+- Another issue is on the consumer side within our `main.js`, where we could use these two alternatives import styles as well. In this case, we won't end up using the mocked functionality, and therefore the code will trigger an error while trying to read a nonexistent file.
+
+This shows us how monkey patching could be much more complicated and unreliable in the context of ESM. 
+
+We could also use the `syncBuiltinESMExports()` function from the `module` package. When this function is invoked, the value of the properties in the default exports object gets mapped again into the equivalent named exports, effectively allowing us to propagate any external change applied to the module functionality even to named exports:
+
+```js
+import fs, { readFileSync } from 'fs'
+import { syncBuiltinESMExports } from 'module'
+
+fs.readFileSync = () => Buffer.from('Hello, ESM')
+syncBuiltinESMExports()
+
+console.log(fs.readFileSync === readFileSync) // true
+```
+
+> Note that `syncBultinESMExports` only work for built-in Node.js modules.
+
